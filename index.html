@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Planlayıcı | Ana Sayfa</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6; 
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- ÜST MENÜ (NAVBAR) --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #3498db;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+
+        .btn-outline:hover {
+            background-color: #3498db;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .user-greeting {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 10px;
+        }
+
+        /* --- ANA İÇERİK (HERO SECTION) --- */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #7f8c8d;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* --- MENÜ BUTONLARI (KARTLAR) --- */
+        .action-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 220px;
+            height: 160px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .action-card i {
+            font-size: 45px;
+            margin-bottom: 15px;
+            color: #3498db;
+            transition: all 0.3s ease;
+        }
+
+        /* Aktif Kart (Ders Planlayıcı) Hover Efekti */
+        .action-card:not(.disabled):hover {
+            transform: translateY(-8px) scale(1.1); /* %10 büyür ve biraz daha yukarı kalkar */
+            box-shadow: 0 12px 35px rgba(52, 152, 219, 0.4); /* Gölge daha derin ve yaygın */
+            border-color: #3498db;
+            z-index: 10;
+        }
+
+        .action-card:not(.disabled):hover i {
+            transform: scale(1.15); /* Kart büyürken içindeki ikon da ekstra büyür */
+        }
+
+        /* Pasif Kartların (Kurumsal, Koçluk) Standart Hali */
+        .action-card.disabled {
+            background-color: #f8f9fa;
+            color: #95a5a6;
+            cursor: not-allowed;
+            border-color: #e0e0e0;
+            box-shadow: none;
+        }
+
+        .action-card.disabled i {
+            color: #bdc3c7;
+        }
+
+        /* YENİ: Pasif Kartlar (Kurumsal, Koçluk) İçin Büyüme Efekti */
+        .action-card.disabled:hover {
+            transform: scale(1.08); /* Pasif butonlar %8 büyür */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12); /* Hafif ama belirgin bir gölge */
+            border-color: #dcdcdc;
+            z-index: 10;
+        }
+
+        .soon-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- MODAL (GİRİŞ/KAYIT) STİLLERİ --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #95a5a6;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover { color: #e74c3c; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .modal-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .modal-submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        /* --- INDEX.HTML AÇILIŞ PERDESİ (ŞIK TASARIM) --- */
+        .index-loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #f4f7f6 0%, #e6f2ff 100%); /* Şık degrade arka plan */
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .index-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .index-loader .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            animation: floatLoader 2s infinite ease-in-out; /* Süzülme efekti */
+        }
+
+        .index-loader .loader-logo {
+            width: 70px;
+            height: 70px;
+            font-size: 30px;
+            color: #3498db;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .index-loader .loader-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #2c3e50;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .index-loader .loader-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #7f8c8d;
+            margin-top: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .index-loader .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #cce5ff;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-top: 5px;
+        }
+
+        @keyframes floatLoader {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- YÜKLEME EKRANI YAZI KONTROLÜ (Sıfır Kayma) --- */
+        .text-from-ders { display: none; }
+        html.from-ders .text-from-ders { display: block; }
+        html.from-ders .text-default { display: none; }
+
+        /* Kayıt modalının yatayda genişleyebilmesi için */
+        .modal-wide {
+            max-width: 650px !important; 
+        }
+
+        /* 2 Sütunlu Grid (Izgara) Yapısı */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+            gap: 0 20px; /* Yan yana kutular arası boşluk */
+        }
+
+        /* Telefondan (dar ekrandan) girilirse yan yana sıkışmasın, alt alta geçsin */
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr; 
+            }
+            .modal-wide {
+                max-width: 90% !important;
+            }
+        }
+
+        /* Hesap Türü İçin İnce / Birleşik Seçim Kutusu */
+        .role-group-container {
+            grid-column: span 2; /* Telefon gidince simetri bozulmasın diye tekrar boydan boya uzattık */
+        }
+
+        .compact-role-toggle {
+            display: flex;
+            background-color: #f4f7f6;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 4px;
+            height: 46px; /* Diğer metin giriş kutularıyla tam olarak aynı yükseklik */
+            width: 100%;
+        }
+
+        .compact-role-toggle input[type="radio"] {
+            display: none; 
+        }
+
+        .compact-role-toggle label {
+            flex: 1;
+            text-align: center;
+            font-size: 13px; /* Tek sütuna 3 kelime sığacağı için boyutu 15px'den 13px'e düşürdük */
+            font-weight: 700; /* Daha okunaklı olması için kalınlaştırdık */
+            color: #7f8c8d;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0; 
+        }
+
+        /* Seçilen öğenin mavi hap şeklini alması */
+        .compact-role-toggle input[type="radio"]:checked + label {
+            background-color: #3498db;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Dinamik form alanlarını gizlemek için */
+        .hidden-field {
+            display: none !important;
+        }
+
+        /* --- ÖZEL AÇILIR MENÜ (CUSTOM SELECT) TASARIMI --- */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 15px; /* Formdaki diğer yazılarla uyumlu */
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 46px; /* Diğer metin kutularıyla tam olarak aynı boy */
+        }
+
+        .custom-select-trigger.active {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .custom-select-trigger i {
+            transition: transform 0.3s ease;
+        }
+
+        .custom-select-trigger.active i {
+            transform: rotate(180deg);
+        }
+
+        .custom-options {
+            position: absolute;
+            display: block;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #3498db;
+            border-top: none;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            z-index: 100;
+            transition: all 0.2s ease;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .custom-select-wrapper.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        .custom-option {
+            display: block;
+            padding: 12px;
+            font-size: 15px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .custom-option:hover {
+            background-color: #f0f8ff;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .custom-option.selected {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* --- ÖZEL BİLDİRİM MODALI (ALERT YERİNE) --- */
+        .notif-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000; /* Loader'dan ve diğerlerinden üstte olsun */
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+
+        .notif-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .notif-modal-box {
+            background: #ffffff;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notif-modal-overlay.show .notif-modal-box {
+            transform: scale(1);
+        }
+
+        .notif-close-x {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .notif-close-x:hover { color: #e74c3c; }
+
+        .notif-modal-box h3 { margin: 0 0 10px 0; font-size: 20px; color: #2c3e50; }
+        .notif-modal-box p { margin: 0; color: #555; line-height: 1.5; font-size: 15px; }
+
+        .notif-actions { margin-top: 25px; }
+        
+        .notif-btn {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+        
+        .notif-btn:hover { background: #2980b9; }
+
+        .notif-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px auto;
+        }
+
+        /* --- ŞİFRE GÖSTER/GİZLE SİMGESİ --- */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 40px; /* Simgenin yazının üstüne binmesini engeller */
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            color: #95a5a6;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .toggle-password:hover {
+            color: #3498db;
+            transform: scale(1.1);
+        }
+
+        /* --- GOOGLE BUTONU VE AYIRICI --- */
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .google-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #95a5a6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #95a5a6;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* --- MODAL ALTI YÖNLENDİRME YAZILARI --- */
+        .auth-switch {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .auth-switch span {
+            color: #3498db;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .auth-switch span:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+    </style>
+
+    <script>
+        if (sessionStorage.getItem('fromDers') === 'true') {
+            document.documentElement.classList.add('from-ders');
+            sessionStorage.removeItem('fromDers');
+        }
+    </script>
+</head>
+</head>
+<body>
+
+    <div class="index-loader" id="indexLoader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h2 class="loader-title">Ders Planlayıcı</h2>
+            <div class="spinner"></div>
+            <p class="loader-text text-default">Sayfa yükleniyor...</p>
+            <p class="loader-text text-from-ders">Ana menüye dönülüyor...</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-book-open"></i>
+            Ders Planlayıcı
+        </div>
+        <div class="auth-buttons" id="authContainer">
+            </div>
+    </header>
+
+    <main>
+        <h1 class="hero-title">Sisteme Hoş Geldiniz</h1>
+        <p class="hero-subtitle">
+            Hangi modülü kullanmak istediğinizi seçin. Yeni özellikler çok yakında sizlerle olacak.
+        </p>
+        
+        <div class="action-buttons">
+            <div class="action-card disabled">
+                <span class="soon-badge">YAKINDA</span>
+                <i class="fa-solid fa-building"></i>
+                Kurumsal
+            </div>
+
+            <a href="ders.html" class="action-card" id="plannerBtn">
+                <i class="fa-solid fa-book-open-reader"></i>
+                Ders Planlayıcı
+            </a>
+
+            <div class="action-card disabled">
+                <span class="soon-badge">YAKINDA</span>
+                <i class="fa-solid fa-user-tie"></i>
+                Koçluk
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Giriş Yap</h2>
+                <button class="close-btn" id="closeLoginBtn">&times;</button>
+            </div>
+            <div class="error-message" id="loginError"></div>
+            <button type="button" class="google-btn">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                Google ile Devam Et
+            </button>
+            <div class="divider"><span>veya</span></div>
+            <div class="form-group">
+                <label>E-posta veya Kullanıcı Adı</label>
+                <input type="text" id="loginIdentifier" placeholder="Kullanıcı adınız veya e-postanız">
+            </div>
+            <div class="form-group">
+                <label>Şifre</label>
+                <div class="password-wrapper">
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                    <i class="fa-regular fa-eye toggle-password" data-target="loginPassword"></i>
+                </div>
+            </div>
+            <button class="modal-submit-btn" id="submitLoginBtn">Giriş Yap</button>
+            <div class="auth-switch">
+                Hesabın yok mu? <span onclick="switchToRegister()">Hemen Kaydol</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <h2>Kaydol</h2>
+                <button class="close-btn" id="closeRegisterBtn">&times;</button>
+            </div>
+            <div class="error-message" id="registerError"></div>
+            <button type="button" class="google-btn">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                Google ile Devam Et
+            </button>
+            <div class="divider"><span>veya</span></div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="registerUsername" placeholder="Benzersiz bir ad">
+                </div>
+                
+                <div class="form-group">
+                    <label>E-posta</label>
+                    <input type="email" id="registerEmail" placeholder="ornek@mail.com">
+                </div>
+
+                <div class="form-group role-group-container">
+                    <label>Hesap Türü</label>
+                    <div class="compact-role-toggle">
+                        <input type="radio" id="roleStudent" name="registerRole" value="ogrenci" checked>
+                        <label for="roleStudent">Öğrenci</label>
+
+                        <input type="radio" id="roleMentor" name="registerRole" value="mentor">
+                        <label for="roleMentor">Mentor</label>
+
+                        <input type="radio" id="roleCorp" name="registerRole" value="kurumsal">
+                        <label for="roleCorp">Kurumsal</label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="examTypeGroup">
+                    <label>Hazırlanılan Sınav</label>
+                    <div class="compact-role-toggle">
+                        <input type="radio" id="examYKS" name="examType" value="yks">
+                        <label for="examYKS">YKS</label>
+
+                        <input type="radio" id="examLGS" name="examType" value="lgs">
+                        <label for="examLGS">LGS</label>
+                    </div>
+                </div>
+
+                <div class="form-group hidden-field" id="yksFieldGroup">
+                    <label>Alanınız</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select-trigger" id="yksFieldTrigger">
+                            <span>Seçiniz...</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="custom-options">
+                            <span class="custom-option" data-value="msu">MSÜ</span>
+                            <span class="custom-option" data-value="tyt">TYT</span>
+                            <span class="custom-option" data-value="sayisal">Sayısal</span>
+                            <span class="custom-option" data-value="esit_agirlik">Eşit Ağırlık</span>
+                            <span class="custom-option" data-value="sozel">Sözel</span>
+                            <span class="custom-option" data-value="belli_degil">Daha Belli Değil</span>
+                        </div>
+                        <input type="hidden" id="yksFieldSelect" value="">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="registerPassword" placeholder="En az 6 karakter">
+                        <i class="fa-regular fa-eye toggle-password" data-target="registerPassword"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Şifre (Tekrar)</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="registerPasswordConfirm" placeholder="Şifrenizi doğrulayın">
+                        <i class="fa-regular fa-eye toggle-password" data-target="registerPasswordConfirm"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="modal-submit-btn" id="submitRegisterBtn">Kaydol</button>
+            <div class="auth-switch">
+                Zaten hesabın var mı? <span onclick="switchToLogin()">Giriş Yap</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-notif-overlay" class="notif-modal-overlay">
+        <div class="notif-modal-box">
+            <button id="notif-close-x" class="notif-close-x" onclick="closeNotif()">&times;</button>
+            
+            <div id="notif-timer-container" class="hidden-field" style="margin: 0 auto 15px auto; width: 50px; height: 50px;">
+                <svg width="50" height="50" viewBox="0 0 50 50">
+                    <circle stroke="#ecf0f1" stroke-width="4" stroke-dasharray="4 4" fill="none" r="20" cx="25" cy="25"></circle>
+                    <circle id="notif-progress-circle" stroke="#3498db" stroke-width="4" fill="none" r="20" cx="25" cy="25" style="stroke-dasharray: 125.6; stroke-dashoffset: 125.6; transform: rotate(-90deg); transform-origin: 50% 50%; stroke-linecap: round;"></circle>
+                </svg>
+            </div>
+
+            <h3 id="notif-title">Bilgilendirme</h3>
+            <p id="notif-message">Mesaj buraya gelecek...</p>
+            
+            <div id="notif-actions" class="notif-actions">
+                <button class="notif-btn" onclick="closeNotif()">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="completeProfileModal">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <h2>Profilini Tamamla</h2>
+                </div>
+            <p style="color: #7f8c8d; margin-bottom: 20px; font-size: 14px; text-align: center;">Aramıza hoş geldin! Devam etmek için lütfen son birkaç detayı belirle.</p>
+            <div class="error-message" id="profileError"></div>
+            
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Kendine Bir Kullanıcı Adı Belirle</label>
+                    <input type="text" id="profileUsername" placeholder="Bitişik ve benzersiz bir ad">
+                </div>
+
+                <div class="form-group role-group-container">
+                    <label>Hesap Türü</label>
+                    <div class="compact-role-toggle">
+                        <input type="radio" id="pRoleStudent" name="profileRole" value="ogrenci" checked>
+                        <label for="pRoleStudent">Öğrenci</label>
+
+                        <input type="radio" id="pRoleMentor" name="profileRole" value="mentor">
+                        <label for="pRoleMentor">Mentor</label>
+
+                        <input type="radio" id="pRoleCorp" name="profileRole" value="kurumsal">
+                        <label for="pRoleCorp">Kurumsal</label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="pExamTypeGroup">
+                    <label>Hazırlanılan Sınav</label>
+                    <div class="compact-role-toggle">
+                        <input type="radio" id="pExamYKS" name="pExamType" value="yks">
+                        <label for="pExamYKS">YKS</label>
+
+                        <input type="radio" id="pExamLGS" name="pExamType" value="lgs">
+                        <label for="pExamLGS">LGS</label>
+                    </div>
+                </div>
+
+                <div class="form-group hidden-field" id="pYksFieldGroup">
+                    <label>Alanınız</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select-trigger" id="pYksFieldTrigger">
+                            <span>Seçiniz...</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="custom-options">
+                            <span class="custom-option" data-value="msu">MSÜ</span>
+                            <span class="custom-option" data-value="tyt">TYT</span>
+                            <span class="custom-option" data-value="sayisal">Sayısal</span>
+                            <span class="custom-option" data-value="esit_agirlik">Eşit Ağırlık</span>
+                            <span class="custom-option" data-value="sozel">Sözel</span>
+                            <span class="custom-option" data-value="belli_degil">Daha Belli Değil</span>
+                        </div>
+                        <input type="hidden" id="pYksFieldSelect" value="">
+                    </div>
+                </div>
+            </div>
+            <button class="modal-submit-btn" id="submitProfileBtn" style="margin-top: 15px;">Kaydet ve Başla</button>
+        </div>
+    </div>
+
+    <script>
+        let notifTimeout;
+
+        window.showNotif = function(message, autoCloseTime = null) {
+            const overlay = document.getElementById('custom-notif-overlay');
+            const msgText = document.getElementById('notif-message');
+            const timerContainer = document.getElementById('notif-timer-container');
+            const progressCircle = document.getElementById('notif-progress-circle');
+
+            // Önceki zamanlayıcıları temizle ki çakışma olmasın
+            clearTimeout(notifTimeout);
+            
+            // Mesajı ayarla
+            msgText.innerText = message;
+
+            // Animasyonu başlangıç noktasına sıfırla
+            progressCircle.style.transition = 'none';
+            progressCircle.style.strokeDashoffset = '125.6';
+
+            if (autoCloseTime) {
+                // Süre verildiyse çemberi göster
+                timerContainer.classList.remove('hidden-field');
+                
+                // Tarayıcının animasyonu algılaması için ufak bir gecikme
+                setTimeout(() => {
+                    progressCircle.style.transition = `stroke-dashoffset ${autoCloseTime}ms linear`;
+                    progressCircle.style.strokeDashoffset = '0';
+                }, 50);
+
+                // Süre dolunca otomatik kapat
+                notifTimeout = setTimeout(() => {
+                    closeNotif();
+                }, autoCloseTime);
+            } else {
+                // Süre verilmediyse (sadece okumalık bildirimse) çemberi gizle
+                timerContainer.classList.add('hidden-field');
+            }
+
+            // Modalı ekranda göster
+            overlay.classList.add('show');
+        }
+
+        window.closeNotif = function() {
+            document.getElementById('custom-notif-overlay').classList.remove('show');
+            // Kullanıcı butona basıp erken kapatırsa arka planda sayan süreyi durdur
+            clearTimeout(notifTimeout); 
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        // GoogleAuthProvider ve signInWithPopup eklendi
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        // getDoc eklendi
+        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKpk8odLUEZTJh_4qvyrcu59t4eoNNIe8",
+            authDomain: "tripturkey-79e75.firebaseapp.com",
+            projectId: "tripturkey-79e75",
+            storageBucket: "tripturkey-79e75.firebasestorage.app",
+            messagingSenderId: "69790477258",
+            appId: "1:69790477258:web:6ad1f6bc4f9bc437e2bd33",
+            measurementId: "G-7YGJJEPL8Y"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const authContainer = document.getElementById('authContainer');
+        const plannerBtn = document.getElementById('plannerBtn');
+
+        window.openLogin = () => { loginModal.style.display = 'flex'; clearErrors(); }
+        window.openRegister = () => { registerModal.style.display = 'flex'; clearErrors(); }
+        document.getElementById('closeLoginBtn').addEventListener('click', () => loginModal.style.display = 'none');
+        document.getElementById('closeRegisterBtn').addEventListener('click', () => registerModal.style.display = 'none');
+
+        // --- PENCERELER ARASI HIZLI GEÇİŞ ---
+        window.switchToRegister = () => { document.getElementById('loginModal').style.display = 'none'; openRegister(); };
+        window.switchToLogin = () => { document.getElementById('registerModal').style.display = 'none'; openLogin(); };
+
+        // Dışarı tıklayınca kapatma (Sürükleme problemini çözen gelişmiş yöntem)
+        let isMouseDownOnOverlay = false;
+
+        window.addEventListener('mousedown', (e) => {
+            // Fare tuşuna tam olarak gri arka plan üzerinde mi basıldı?
+            if (e.target === loginModal || e.target === registerModal) {
+                isMouseDownOnOverlay = true;
+            } else {
+                isMouseDownOnOverlay = false;
+            }
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            // Fare tuşu arka planda basılıp yine arka planda bırakıldıysa kapat
+            if (isMouseDownOnOverlay && e.target === loginModal) {
+                loginModal.style.display = "none";
+            }
+            if (isMouseDownOnOverlay && e.target === registerModal) {
+                registerModal.style.display = "none";
+            }
+            isMouseDownOnOverlay = false; // İşlem bitince sıfırla
+        });
+
+        function clearErrors() {
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.innerText = message;
+            el.style.display = 'block';
+        }
+
+        // Dinamik Form Göster/Gizle Mantığı
+        const roleRadios = document.querySelectorAll('input[name="registerRole"]');
+        const examRadios = document.querySelectorAll('input[name="examType"]');
+        const examTypeGroup = document.getElementById('examTypeGroup');
+        const yksFieldGroup = document.getElementById('yksFieldGroup');
+
+        roleRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'ogrenci') {
+                    examTypeGroup.classList.remove('hidden-field');
+                    // Eğer YKS zaten seçiliyse alanı da göster
+                    if(document.querySelector('input[name="examType"]:checked')?.value === 'yks') {
+                        yksFieldGroup.classList.remove('hidden-field');
+                    }
+                } else {
+                    examTypeGroup.classList.add('hidden-field');
+                    yksFieldGroup.classList.add('hidden-field');
+                }
+            });
+        });
+
+        examRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'yks') {
+                    yksFieldGroup.classList.remove('hidden-field');
+                } else {
+                    yksFieldGroup.classList.add('hidden-field');
+                }
+            });
+        });
+
+        // --- ÖZEL AÇILIR MENÜLERİN (CUSTOM SELECT) İŞLEYİŞİ (ÇOKLU DESTEK) ---
+        const customSelectWrappers = document.querySelectorAll('.custom-select-wrapper');
+
+        customSelectWrappers.forEach(wrapper => {
+            const trigger = wrapper.querySelector('.custom-select-trigger');
+            const options = wrapper.querySelectorAll('.custom-option');
+            const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+            const triggerText = trigger.querySelector('span');
+
+            // Kutucuğa tıklanınca
+            trigger.addEventListener('click', function(e) {
+                // Diğer açık olan menüleri kapat (Sayfada 2 tane açılır menü olursa çakışmasın)
+                customSelectWrappers.forEach(w => {
+                    if (w !== wrapper) {
+                        w.classList.remove('open');
+                        w.querySelector('.custom-select-trigger').classList.remove('active');
+                    }
+                });
+                wrapper.classList.toggle('open');
+                this.classList.toggle('active');
+            });
+
+            // Seçeneklerden birine tıklanınca
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Diğerlerindeki seçili durumunu kaldır
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected'); // Tıklananı seçili yap
+                    
+                    // Görünen metni ve gizli değeri güncelle
+                    triggerText.textContent = this.textContent;
+                    triggerText.style.color = '#333'; // Seçim yapılınca yazıyı koyulaştır
+                    hiddenInput.value = this.getAttribute('data-value');
+                    
+                    // Menüyü kapat
+                    wrapper.classList.remove('open');
+                    trigger.classList.remove('active');
+                });
+            });
+        });
+
+        // Kullanıcı menü dışına tıklarsa tüm açılır listeleri kapat
+        window.addEventListener('click', function(e) {
+            customSelectWrappers.forEach(wrapper => {
+                if (!wrapper.contains(e.target)) {
+                    wrapper.classList.remove('open');
+                    wrapper.querySelector('.custom-select-trigger').classList.remove('active');
+                }
+            });
+        });
+
+        // Kullanıcı adı alanına boşluk girilmesini anında engelle
+        document.getElementById('registerUsername').addEventListener('input', function() {
+            this.value = this.value.replace(/\s/g, ''); // Tüm boşlukları bul ve yok et
+        });
+
+        // --- ŞİFRE GÖSTER/GİZLE MANTIĞI ---
+        const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+        
+        togglePasswordIcons.forEach(icon => {
+            icon.addEventListener('click', function() {
+                // Hangi input'u kontrol edeceğini bul
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                
+                // Şifre tipindeyse metne, metin tipindeyse şifreye çevir
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash'); // Çizgili göz simgesi
+                    this.style.color = '#3498db'; // Açıkken mavi olsun
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye'); // Normal göz simgesi
+                    this.style.color = '#95a5a6'; // Kapalıyken gri olsun
+                }
+            });
+        });
+
+        // --- ENTER TUŞU DESTEĞİ ---
+        const loginInputs = document.querySelectorAll('#loginModal input');
+        loginInputs.forEach(input => {
+            input.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') document.getElementById('submitLoginBtn').click();
+            });
+        });
+
+        const registerInputs = document.querySelectorAll('#registerModal input');
+        registerInputs.forEach(input => {
+            input.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') document.getElementById('submitRegisterBtn').click();
+            });
+        });
+
+        // Firebase Auth Durumu Dinleyici (Google Profil Tamamlama Destekli)
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Veritabanına bakıyoruz: Bu adamın profili (kullanıcı adı vs.) bizde var mı?
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                
+                if (userDoc.exists()) {
+                    // Profil var! Demek ki normal üye veya daha önce Google ile profilini tamamlamış
+                    const userData = userDoc.data();
+                    const displayName = userData.username || user.displayName;
+                    
+                    authContainer.innerHTML = `
+                        <span class="user-greeting" id="greetingText">Hoş geldin, ${displayName}</span>
+                        <button class="btn btn-danger" id="logoutBtn">Çıkış Yap</button>
+                    `;
+                    document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+                    
+                    plannerBtn.href = "ders.html";
+                    plannerBtn.onclick = null;
+                    document.getElementById('completeProfileModal').style.display = 'none'; // Açıksa kapat
+                    loginModal.style.display = 'none';
+                    registerModal.style.display = 'none';
+                } else {
+                    // Eyvah! Adam Google ile girmiş ama bizde profili eksik. Tamamlama ekranını aç!
+                    authContainer.innerHTML = `<span class="user-greeting">Profil Tamamlanıyor...</span>`;
+                    loginModal.style.display = 'none';
+                    registerModal.style.display = 'none';
+                    document.getElementById('completeProfileModal').style.display = 'flex';
+                }
+            } else {
+                showUnAuthMenu();
+            }
+
+            function showUnAuthMenu() {
+                authContainer.innerHTML = `
+                    <button class="btn btn-outline" onclick="openLogin()">Giriş Yap</button>
+                    <button class="btn btn-primary" onclick="openRegister()">Kaydol</button>
+                `;
+                plannerBtn.href = "#";
+                plannerBtn.onclick = (e) => { e.preventDefault(); openLogin(); };
+            }
+
+            setTimeout(() => { document.getElementById('indexLoader').classList.add('hidden'); }, 300);
+        });
+
+        // --- YENİ: BAŞKA SAYFADAN GELEN GİZLİ EMRİ OKU VE OTOMATİK MODAL AÇ ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+
+            if (action === 'login') {
+                // Sayfa yüklendikten hemen sonra şık bir şekilde Giriş modalını aç
+                setTimeout(() => { openLogin(); }, 400); 
+            } else if (action === 'register') {
+                // Sayfa yüklendikten hemen sonra şık bir şekilde Kayıt modalını aç
+                setTimeout(() => { openRegister(); }, 400);
+            }
+        });
+
+        // --- GOOGLE BUTONLARINI ÇALIŞTIRMA ---
+        document.querySelectorAll('.google-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                try {
+                    await signInWithPopup(auth, googleProvider);
+                } catch (error) {
+                    console.error("GOOGLE AUTH HATASI:", error); // F12 konsoluna detaylı hatayı basar
+                    showNotif("Hata: " + error.message, 6000);   // Ekrana da Firebase'in kendi hata mesajını basar
+                }
+            });
+        });
+
+        // Profil alanında boşluk silici
+        document.getElementById('profileUsername').addEventListener('input', function() {
+            this.value = this.value.replace(/\s/g, '');
+        });
+
+        // Profil Tamamlama Modalı Dinamik Form Mantığı
+        const pRoleRadios = document.querySelectorAll('input[name="profileRole"]');
+        const pExamRadios = document.querySelectorAll('input[name="pExamType"]');
+        const pExamTypeGroup = document.getElementById('pExamTypeGroup');
+        const pYksFieldGroup = document.getElementById('pYksFieldGroup');
+
+        pRoleRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'ogrenci') {
+                    pExamTypeGroup.classList.remove('hidden-field');
+                    if(document.querySelector('input[name="pExamType"]:checked')?.value === 'yks') {
+                        pYksFieldGroup.classList.remove('hidden-field');
+                    }
+                } else {
+                    pExamTypeGroup.classList.add('hidden-field');
+                    pYksFieldGroup.classList.add('hidden-field');
+                }
+            });
+        });
+
+        pExamRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'yks') pYksFieldGroup.classList.remove('hidden-field');
+                else pYksFieldGroup.classList.add('hidden-field');
+            });
+        });
+
+        // Profil Tamamlama Kayıt İşlemi
+        document.getElementById('submitProfileBtn').addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const username = document.getElementById('profileUsername').value.trim();
+            const role = document.querySelector('input[name="profileRole"]:checked').value;
+            
+            if (!username) return showError('profileError', "Lütfen bir kullanıcı adı belirleyin.");
+            if (username.includes(' ')) return showError('profileError', "Kullanıcı adı boşluk içeremez.");
+
+            let studentExam = null;
+            let studentField = null;
+
+            if (role === 'ogrenci') {
+                const selectedExam = document.querySelector('input[name="pExamType"]:checked');
+                if (!selectedExam) return showError('profileError', "Lütfen hazırlandığınız sınavı seçin.");
+                studentExam = selectedExam.value;
+
+                if (studentExam === 'yks') {
+                    studentField = document.getElementById('pYksFieldSelect').value;
+                    if (!studentField) return showError('profileError', "Lütfen YKS alanınızı seçin.");
+                }
+            }
+
+            try {
+                // Kullanıcı adı daha önce alınmış mı kontrolü
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("username", "==", username));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) return showError('profileError', "Bu kullanıcı adı zaten alınmış.");
+
+                // Eksik verileri Firestore'a yaz!
+                const userData = {
+                    username: username,
+                    email: user.email,
+                    role: role,
+                    createdAt: new Date().toISOString()
+                };
+
+                if (role === 'ogrenci') {
+                    userData.exam = studentExam;
+                    if (studentExam === 'yks') userData.field = studentField;
+                }
+
+                await setDoc(doc(db, "users", user.uid), userData);
+                await updateProfile(user, { displayName: username });
+
+                document.getElementById('completeProfileModal').style.display = 'none';
+                showNotif(`Aramıza hoş geldin, ${username}!`, 4000);
+                
+                // Sistemin adını görüp her şeyi yenilemesi için sayfayı soft-reload atıyoruz
+                setTimeout(() => { window.location.reload(); }, 1500);
+
+            } catch (error) {
+                showError('profileError', "Profil kaydedilirken hata oluştu: " + error.message);
+            }
+        });
+
+        // Kayıt İşlemi (Gelişmiş - Öğrenci Sınav Tipi Destekli)
+        document.getElementById('submitRegisterBtn').addEventListener('click', async () => {
+            const username = document.getElementById('registerUsername').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+            const role = document.querySelector('input[name="registerRole"]:checked').value;
+
+            // 1. Temel Metin Alanlarının Kontrolü
+            if (!username || !email || !password || !passwordConfirm) {
+                return showError('registerError', "Lütfen kullanıcı adı, e-posta ve şifre alanlarını eksiksiz doldurun.");
+            }
+
+            // 1.5 Kullanıcı Adı Boşluk Kontrolü (Her ihtimale karşı)
+            if (username.includes(' ')) {
+                return showError('registerError', "Kullanıcı adı boşluk içeremez. Lütfen bitişik yazın.");
+            }
+
+            // 2. Şifre Eşleşme Kontrolü
+            if (password !== passwordConfirm) {
+                return showError('registerError', "Şifreler birbiriyle eşleşmiyor.");
+            }
+
+            // 3. E-posta Format Kontrolü
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return showError('registerError', "Lütfen geçerli bir e-posta adresi girin.");
+            }
+
+            // 4. Öğrenci Seçilmişse Sınav ve Alan Zorunluluğu Kontrolü
+            let studentExam = null;
+            let studentField = null;
+
+            if (role === 'ogrenci') {
+                const selectedExam = document.querySelector('input[name="examType"]:checked');
+                // Sınav türü (YKS/LGS) seçilmemişse engelle
+                if (!selectedExam) {
+                    return showError('registerError', "Lütfen hazırlandığınız sınavı (YKS/LGS) seçin.");
+                }
+                studentExam = selectedExam.value;
+
+                // YKS seçilmişse ama alan (Sayısal, Sözel vs.) seçilmemişse engelle
+                if (studentExam === 'yks') {
+                    studentField = document.getElementById('yksFieldSelect').value;
+                    if (!studentField || studentField === "") {
+                        return showError('registerError', "Lütfen YKS alanınızı listeden seçin.");
+                    }
+                }
+            }
+
+            try {
+                // 4. Kullanıcı Adı Benzersizlik Kontrolü (Firestore'da sorgulama)
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("username", "==", username));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    return showError('registerError', "Bu kullanıcı adı zaten alınmış. Lütfen başka bir tane seçin.");
+                }
+
+                // 5. Firebase Auth ile Temel Hesap Oluşturma
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Auth Profiline İsmi Yazdırma
+                await updateProfile(user, {
+                    displayName: username
+                });
+
+                // --- YENİ: E-POSTA DOĞRULAMA LİNKİ GÖNDERME ---
+                // await sendEmailVerification(user); // İLERİDE AÇMAK İÇİN PASİFE ALINDI
+                // ----------------------------------------------
+                
+                // (Önceki yazdığımız userData paketi ve setDoc işlemleri aynı kalacak, onlara dokunma)
+                const userData = {
+                    username: username,
+                    email: email,
+                    role: role,
+                    createdAt: new Date().toISOString()
+                };
+
+                if (role === 'ogrenci') {
+                    userData.exam = studentExam;
+                    if (studentExam === 'yks') {
+                        userData.field = studentField;
+                    }
+                }
+
+                await setDoc(doc(db, "users", user.uid), userData);
+                
+                registerModal.style.display = 'none';
+                
+                // --- YENİ: KAYIT SONRASI KONTROL ---
+                // --- YENİ: KAYIT SONRASI KONTROL ---
+                // await signOut(auth); // İLERİDE AÇMAK İÇİN PASİFE ALINDI (Artık otomatik giriş yapacak)
+                
+                // Doğrulama istemediğimiz için direkt hoş geldin diyoruz
+                showNotif(`Aramıza hoş geldin, ${username}! Başarıyla kaydoldun.`, 4000);
+                // -----------------------------------
+                
+                // Başarılı Kayıt Sonrası Ekrana Yazdırma
+                const greetingElement = document.getElementById('greetingText');
+                if(greetingElement) greetingElement.innerText = `Hoş geldin, ${username}`;
+
+            } catch (error) {
+                if(error.code === 'auth/email-already-in-use') showError('registerError', "Bu e-posta zaten kullanılıyor.");
+                else if(error.code === 'auth/weak-password') showError('registerError', "Şifre en az 6 karakter olmalıdır.");
+                else if(error.code === 'auth/invalid-email') showError('registerError', "Geçersiz formatta e-posta adresi.");
+                else showError('registerError', "Kayıt başarısız oldu: " + error.message);
+            }
+        });
+
+        // Giriş İşlemi (E-posta veya Kullanıcı Adı İle Akıllı Giriş)
+        document.getElementById('submitLoginBtn').addEventListener('click', async () => {
+            const identifier = document.getElementById('loginIdentifier').value.trim(); // Artık e-posta da olabilir, kullanıcı adı da
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!identifier || !password) {
+                return showError('loginError', "Lütfen kullanıcı bilginizi ve şifrenizi girin.");
+            }
+
+            try {
+                let loginEmail = identifier; // Başlangıçta girilen değeri e-posta varsayalım
+
+                // Eğer girilen metinde '@' işareti YOKSA, bu bir kullanıcı adıdır!
+                if (!identifier.includes('@')) {
+                    // Firestore'a gidip bu kullanıcı adına sahip kişiyi arıyoruz
+                    const usersRef = collection(db, "users");
+                    const q = query(usersRef, where("username", "==", identifier));
+                    const querySnapshot = await getDocs(q);
+
+                    // Eğer böyle bir kullanıcı adı veritabanında yoksa hatayı bas
+                    if (querySnapshot.empty) {
+                        return showError('loginError', "Bu kullanıcı adına sahip bir hesap bulunamadı.");
+                    }
+
+                    // Kullanıcı bulundu! Gizlice e-posta adresini veritabanından çekelim
+                    loginEmail = querySnapshot.docs[0].data().email;
+                    
+                    // YENİ EKLENEN KONTROL: Veritabanında e-posta kısmı silinmiş veya boşsa Firebase çökmesin!
+                    if (!loginEmail) {
+                        return showError('loginError', "Bu profilin e-posta verisi eksik olduğu için giriş yapılamıyor. Lütfen doğrudan e-posta adresinizi yazarak girmeyi deneyin.");
+                    }
+                }
+
+                // Giriş yapmayı dener (Kullanıcı adı girildiyse bile üstte e-postaya çevirdik)
+                const userCredential = await signInWithEmailAndPassword(auth, loginEmail, password);
+                const user = userCredential.user;
+                
+                // --- E-POSTA ONAY KONTROLÜ (ŞİMDİLİK İPTAL EDİLDİ) ---
+                /* const featureDate = new Date('2026-03-31T00:00:00');
+                const creationDate = new Date(user.metadata.creationTime);
+
+                if (!user.emailVerified && creationDate > featureDate) {
+                    await signOut(auth);
+                    return showError('loginError', "Lütfen e-postanıza gönderilen onay linkine tıklayarak hesabınızı doğrulayın.");
+                }
+                */
+                // -----------------------------
+
+                // Onaylıysa modalı kapat ve içeri al
+                loginModal.style.display = 'none';
+                clearErrors();
+            } catch (error) {
+                // Şifre yanlışsa veya Firebase başka bir hata verirse
+                if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                    showError('loginError', "Girdiğiniz bilgiler veya şifre hatalı.");
+                } else {
+                    showError('loginError', "Giriş başarısız: " + error.message);
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
