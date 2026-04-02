@@ -81,32 +81,45 @@
             --radius-16: 16px;
         }
 
-        /* --- KOYU TEMA --- */
+        /* --- KOYU TEMA (SİNEMATİK PLAYLİST MERKEZİ STİLİ) --- */
         [data-theme="dark"] {
-            --color-primary:          #4da3ff;
-            --color-primary-hover:    #80bdff;
-            --color-primary-light:    #1a2a3a;
-            --color-primary-lighter:  #162030;
-            --color-primary-border:   #2a4a6a;
-            --color-primary-shadow:   rgba(77, 163, 255, 0.2);
-            --color-primary-shadow-md: rgba(77, 163, 255, 0.3);
+            /* Ana Renkler (Sinematik Neon Kırmızı ve Tonları) */
+            --color-primary:          #ff3333;
+            --color-primary-hover:    #cc0000;
+            --color-primary-light:    rgba(255, 51, 51, 0.15);
+            --color-primary-lighter:  rgba(255, 51, 51, 0.05);
+            --color-primary-border:   rgba(255, 51, 51, 0.25);
+            --color-primary-shadow:   rgba(255, 51, 51, 0.3);
+            --color-primary-shadow-md: rgba(255, 51, 51, 0.5);
 
-            --color-bg-page:          #1a1a2e;
-            --color-bg-card:          #16213e;
-            --color-bg-input:         #0f3460;
-            --color-bg-hover:         #1a2a3a;
+            /* Arkaplan Renkleri (Zifiri Siyah ve Mat Füme) */
+            --color-bg-page:          #0f0f11;
+            --color-bg-card:          #141419;
+            --color-bg-input:         #1a1a24;
+            --color-bg-hover:         #1f1f27;
 
-            --color-text-main:        #e0e0e0;
-            --color-text-secondary:   #bbbbbb;
-            --color-text-muted:       #aaaaaa;
-            --color-text-light:       #666666;
+            /* Yazı Renkleri (Okunabilir Kontrastlı Tonlar) */
+            --color-text-main:        #ffffff;
+            --color-text-secondary:   #a0a0b0;
+            --color-text-muted:       #666666;
+            --color-text-light:       #444444;
+            --color-text-placeholder: #555566;
 
-            --color-border:           #2a3a4a;
-            --color-border-medium:    #3a4a5a;
-            --color-border-strong:    #4a5a6a;
+            /* Kenarlık Renkleri (Sırıtmayan, İnce Karanlık Çizgiler) */
+            --color-border:           #1f1f27;
+            --color-border-medium:    #2a2a35;
+            --color-border-strong:    #333344;
 
-            --shadow-card:  0 8px 20px rgba(0,0,0,0.3);
-            --shadow-modal: 0 10px 30px rgba(0,0,0,0.5);
+            /* Gölgeler (Karanlık Modda Derinlik Hissi Veren Siyah Gölgeler) */
+            --shadow-card:  0 8px 25px rgba(0,0,0,0.6);
+            --shadow-modal: 0 20px 50px rgba(0,0,0,0.8);
+            
+            /* Başarı / Tamamlandı Rengi (Playlist Merkezindeki Tok Yeşil) */
+            --color-success:          #1f8a3d;
+            --color-success-hover:    #155724;
+            --color-success-light:    rgba(31, 138, 61, 0.15);
+            --color-success-border:   rgba(31, 138, 61, 0.3);
+            --color-success-shadow:   rgba(31, 138, 61, 0.3);
         }
 
         * {
@@ -539,13 +552,59 @@
 
         /* --- TAKVİM KUTUSU TAŞMA ENGELLEYİCİ --- */
         .calendar-widget {
-            justify-content: flex-start !important; /* YENİ: İçeriği merkeze hizalamak yerine en üste (tavana) sabitler */
-            overflow-y: auto; 
-            min-height: 230px; 
-            padding-top: 15px; /* Üst kısımdan çok hafif, şık bir nefes payı bırakır */
+            justify-content: flex-start !important;
+            overflow-y: hidden;
+            min-height: 0;
+            padding-top: 15px;
         }
-        .calendar-widget::-webkit-scrollbar { width: 4px; }
-        .calendar-widget::-webkit-scrollbar-thumb { background-color: var(--color-primary-border); border-radius: var(--radius-xs); }
+
+        /* --- TAKVİM GÜN ÖZETİ PANELİ --- */
+        #calDaySummary {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+        #calDaySummary::-webkit-scrollbar { width: 4px; }
+        #calDaySummary::-webkit-scrollbar-thumb { background: var(--color-primary-border); border-radius: 4px; }
+        .cal-summary-stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--color-bg-input);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-text-main);
+        }
+        .cal-summary-stat i { font-size: 14px; width: 18px; text-align: center; }
+        .cal-summary-pl {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 10px;
+            background: var(--color-bg-input);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+        }
+        .cal-chart-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+        }
+        .cal-chart-bar-fill {
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
 
         /* --- TAKVİM İÇ DETAYLARI --- */
         .calendar-header {
@@ -555,8 +614,9 @@
             margin-bottom: 4px; /* Başlık altı boşluk iyice azaltıldı */
         }
 
-        .calendar-header h2 {
-            font-size: 14px; /* Başlık küçültüldü */
+        .calendar-header h2,
+        #calMainHeader h2 {
+            font-size: 14px;
             font-weight: 700;
             color: var(--color-text-main);
         }
@@ -2769,6 +2829,28 @@
         .settings-theme-preview--dark .stp-bar  { background: #4da3ff; }
         .settings-theme-preview--dark .stp-card { background: #16213e; }
 
+        /* --- VİDEO İZLEYİCİ MODAL ÖZEL SCROLLBAR TASARIMI --- */
+        #videoWatcherModal ::-webkit-scrollbar {
+            width: 8px; /* Çubuğun inceliği (zarif durması için 8px idealdir) */
+            height: 8px; /* Alt kısımdaki gün sekmeleri için yatay scrollbar inceliği */
+        }
+
+        #videoWatcherModal ::-webkit-scrollbar-track {
+            background: #141419; /* Çubuğun arkasındaki rayın rengi (koyu arka plana tam uyumlu) */
+            border-radius: 10px;
+        }
+
+        #videoWatcherModal ::-webkit-scrollbar-thumb {
+            background: #2a2a35; /* Kaydırdığımız ana çubuğun rengi */
+            border-radius: 10px;
+            /* Ray ile çubuk arasına boşluk bırakarak çok daha premium bir hissiyat verir: */
+            border: 2px solid #141419; 
+        }
+
+        #videoWatcherModal ::-webkit-scrollbar-thumb:hover {
+            background: #ff3333; /* Fareyle üzerine gelince parlayan kırmızı detay */
+        }
+
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -2904,9 +2986,17 @@
                         <button id="nextDashDayBtn" style="background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Sonraki Gün"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
                 </div>
-                <button id="openWeeklyPlannerBtn" data-custom-title="Geniş Ekran Haftalık Planlayıcı" style="background-color: var(--color-bg-hover); color: var(--color-primary); border: none; padding: 6px 12px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; transition: var(--transition-fast); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <i class="fa-solid fa-table-list"></i> Tüm Hafta
-                </button>
+                <div style="display: flex; gap: 8px; align-items: center;">
+    
+                    <button id="openDashPlaylistBtn" data-custom-title="Günün Playlistlerini İzle" style="padding: 6px 12px; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-md); border: 1px solid #ff4444; background: #fff0f0; color: #ff4444; cursor: pointer; font-size: 12px; font-weight: 800; transition: var(--transition-fast); box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.background='#ff4444';this.style.color='white';" onmouseout="this.style.background='#fff0f0';this.style.color='#ff4444';">
+                        <i class="fa-brands fa-youtube" style="font-size: 14px;"></i> Playlistler
+                    </button>
+
+                    <button id="openWeeklyPlannerBtn" data-custom-title="Geniş Ekran Haftalık Planlayıcı" style="background-color: var(--color-bg-hover); color: var(--color-primary); border: none; padding: 6px 12px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; transition: var(--transition-fast); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <i class="fa-solid fa-table-list"></i> Tüm Hafta
+                    </button>
+
+                </div>
             </div>
             
             <div class="today-tabs">
@@ -2949,26 +3039,39 @@
     <main class="main-content">
         
         <div class="widget-box calendar-widget">
-            <div class="calendar-header" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 15px;">
-                
+
+            <!-- HEADER: takvim modunda normal, özet modunda geri butonu -->
+            <div id="calMainHeader" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 15px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <button class="cal-btn" id="calPrevMonthBtn" data-custom-title="Önceki Ay"><i class="fa-solid fa-chevron-left"></i></button>
                     <h2 id="month-year" style="margin: 0; min-width: 85px; text-align: center;">Yükleniyor...</h2>
                     <button class="cal-btn" id="calNextMonthBtn" data-custom-title="Sonraki Ay"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-
                 <button id="calSettingsBtn" style="position: absolute; right: 0; background: none; border: none; color: var(--color-text-light); cursor: pointer; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-light)'" data-custom-title="Takvim Ayarları">
                     <i class="fa-solid fa-gear"></i>
                 </button>
+            </div>
 
+            <!-- ÖZET HEADER: geri butonu + seçili tarih -->
+            <div id="calSummaryHeader" style="display:none; align-items:center; gap:8px; margin-bottom:12px; flex-shrink:0;">
+                <button id="calBackBtn" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; font-weight:800; display:flex; align-items:center; gap:5px; padding:4px 8px; border-radius:var(--radius-sm); transition:background 0.15s;" onmouseover="this.style.background='var(--color-primary-light)'" onmouseout="this.style.background='none'">
+                    <i class="fa-solid fa-arrow-left"></i> Takvim
+                </button>
+                <span id="calSummaryDate" style="font-size:13px; font-weight:800; color:var(--color-text-main);"></span>
             </div>
-            
-            <div class="calendar-weekdays">
-                <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
-            </div>
-            
-            <div class="calendar-days" id="calendar-days">
+
+            <!-- TAKVİM GÖRÜNÜMÜ -->
+            <div id="calCalendarView" style="display:flex; flex-direction:column; gap:0; flex-shrink:0;">
+                <div class="calendar-weekdays">
+                    <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
                 </div>
+                <div class="calendar-days" id="calendar-days"></div>
+                <div style="flex-shrink:0; height:12px;"></div>
+            </div>
+
+            <!-- GÜN ÖZETİ GÖRÜNÜMÜ -->
+            <div id="calDaySummary"></div>
+
         </div>
 
         <div class="widget-box subject-widget">
@@ -3284,59 +3387,67 @@
 
     <!-- VİDEO İZLEYİCİ MODAL -->
     <div id="videoWatcherModal" class="custom-modal" style="z-index:2100;">
-        <div class="custom-modal-content" style="max-width:95%; width:1500px; height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden; background:var(--color-bg-card);">
+        <div class="custom-modal-content" style="max-width:98%; width:1600px; height:94vh; display:flex; flex-direction:column; padding:0; overflow:hidden; background-color:#0f0f11; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid #2a2a35;">
 
-            <!-- HEADER: hafta nav -->
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--color-border); flex-shrink:0;">
-                <div style="display:flex; align-items:center; gap:14px;">
-                    <h3 style="margin:0; font-size:17px; display:flex; align-items:center; gap:8px;">
-                        <i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Playlistleri İzle
-                    </h3>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <button id="vwPrevWeek" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--color-border);background:var(--color-bg-input);cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-chevron-left" style="font-size:11px;"></i></button>
-                        <span id="vwWeekLabel" style="font-size:14px;font-weight:800;color:var(--color-text-main);min-width:150px;text-align:center;"></span>
-                        <button id="vwNextWeek" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--color-border);background:var(--color-bg-input);cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-chevron-right" style="font-size:11px;"></i></button>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:18px 30px; border-bottom:1px solid #1f1f27; flex-shrink:0; background: linear-gradient(180deg, #181820 0%, #0f0f11 100%);">
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; background: rgba(255, 0, 0, 0.1); padding: 8px 16px; border-radius: 12px; border: 1px solid rgba(255, 0, 0, 0.2);">
+                        <i class="fa-brands fa-youtube" style="color:#ff3333; font-size: 22px; filter: drop-shadow(0 0 8px rgba(255,0,0,0.5));"></i> 
+                        <h3 style="margin:0; font-size:18px; color: #ffffff; font-weight: 800; letter-spacing: 0.5px;">Playlist Merkezi</h3>
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; gap:12px; background: #1a1a24; padding: 6px; border-radius: 30px; border: 1px solid #2a2a35;">
+                        <button id="vwPrevWeek" style="width:34px; height:34px; border-radius:50%; border:none; background:#252532; color:#a0a0b0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.2s;" onmouseover="this.style.background='#303040'; this.style.color='#fff';" onmouseout="this.style.background='#252532'; this.style.color='#a0a0b0';"><i class="fa-solid fa-chevron-left" style="font-size:12px;"></i></button>
+                        <span id="vwWeekLabel" style="font-size:14px; font-weight:700; color:#e0e0e0; min-width:160px; text-align:center; letter-spacing: 0.5px;"></span>
+                        <button id="vwNextWeek" style="width:34px; height:34px; border-radius:50%; border:none; background:#252532; color:#a0a0b0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.2s;" onmouseover="this.style.background='#303040'; this.style.color='#fff';" onmouseout="this.style.background='#252532'; this.style.color='#a0a0b0';"><i class="fa-solid fa-chevron-right" style="font-size:12px;"></i></button>
                     </div>
                 </div>
-                <span class="close-modal-btn" id="vwCloseBtn">&times;</span>
+                <span class="close-modal-btn" id="vwCloseBtn" style="color: #666; font-size: 32px; transition: 0.2s;" onmouseover="this.style.color='#ff3333'" onmouseout="this.style.color='#666'">&times;</span>
             </div>
 
-            <!-- GÜNLER: yatay tab bar -->
-            <div id="vwDayTabs" style="display:flex; border-bottom:2px solid var(--color-border); flex-shrink:0; background:var(--color-bg-input); overflow-x:auto;"></div>
+            <div id="vwDayTabs" style="display:flex; border-bottom:1px solid #1f1f27; flex-shrink:0; background:#141419; overflow-x:auto; padding: 0 15px;">
+                </div>
 
-            <!-- BODY -->
             <div style="flex:1; display:flex; overflow:hidden;">
 
-                <!-- SOL: Playlist listesi VEYA Video oynatıcı -->
-                <div id="vwLeftPane" style="flex:1; display:flex; flex-direction:column; min-width:0; background:#000;">
-                    <!-- Playlist listesi (başta göster) -->
-                    <div id="vwPlaylistPane" style="flex:1; overflow-y:auto; background:var(--color-bg-card); padding:20px;">
-                        <div id="vwPlaylistGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:14px;"></div>
+                <div id="vwLeftPane" style="flex:1; display:flex; flex-direction:column; min-width:0; background:#0f0f11; position: relative;">
+                    
+                    <div id="vwPlaylistPane" style="flex:1; overflow-y:auto; padding:30px;">
+                        <div id="vwPlaylistGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:25px;">
+                            </div>
                     </div>
-                    <!-- Video oynatıcı (playlist seçince göster) -->
-                    <div id="vwPlayerPane" style="display:none; flex:1; flex-direction:column;">
-                        <div id="vwPlayerWrapper" style="flex:1; position:relative; background:#000; min-height:0; display:flex;">
-                            <iframe id="vwIframe" src="" style="flex:1; border:none; width:100%; height:100%; display:block;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="no-referrer"></iframe>
+
+                    <div id="vwPlayerPane" style="display:none; flex:1; flex-direction:column; background: #000;">
+                        <div id="vwPlayerWrapper" style="flex:1; position:relative; background:#000; min-height:0; display:flex; justify-content:center; align-items:center;">
+                            <div style="width:100%; height:100%; position: absolute; box-shadow: inset 0 0 150px rgba(0,0,0,0.9); pointer-events: none;"></div>
+                            
+                            <iframe id="vwIframe" src="" style="flex:1; border:none; width:100%; height:100%; display:block; z-index: 1;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
                         </div>
-                        <div id="vwNowPlaying" style="padding:10px 16px; background:#111; color:#ddd; font-size:12px; font-weight:700; display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                            <i class="fa-solid fa-play" style="color:#ff0000;"></i>
-                            <span id="vwNowTitle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></span>
+                        <div id="vwNowPlaying" style="padding:15px 25px; background:linear-gradient(90deg, #111 0%, #1a1a1a 100%); color:#fff; font-size:16px; font-weight:700; display:flex; align-items:center; gap:12px; flex-shrink:0; border-top: 1px solid #222;">
+                            <div style="background: rgba(255,0,0,0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-play" style="color:#ff3333; font-size: 14px; margin-left: 3px;"></i>
+                            </div>
+                            <span id="vwNowTitle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- SAĞ: Video listesi (playlist seçilince görünür) -->
-                <div id="vwRightPane" style="display:none; width:310px; flex-shrink:0; border-left:1px solid var(--color-border); flex-direction:column; background:var(--color-bg-card);">
-                    <div style="padding:10px 14px; border-bottom:1px solid var(--color-border); display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                        <button id="vwBackBtn" style="border:none; background:none; cursor:pointer; color:var(--color-primary); font-size:13px; font-weight:800; display:flex; align-items:center; gap:6px; padding:4px 0;">
-                            <i class="fa-solid fa-arrow-left"></i> Playlistlere Dön
+                <div id="vwRightPane" style="display:none; width:360px; flex-shrink:0; border-left:1px solid #1f1f27; flex-direction:column; background:#141419;">
+                    
+                    <div style="padding:15px 20px; border-bottom:1px solid #1f1f27; display:flex; align-items:center; gap:8px; flex-shrink:0; background: #181820;">
+                        <button id="vwBackBtn" style="border:1px solid #333; background:#222; border-radius: 10px; cursor:pointer; color:#ccc; font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; padding:8px 14px; transition: 0.2s;" onmouseover="this.style.background='#333'; this.style.color='#fff';" onmouseout="this.style.background='#222'; this.style.color='#ccc';">
+                            <i class="fa-solid fa-arrow-left"></i> Listelere Dön
                         </button>
                     </div>
-                    <div id="vwVideoListTitle" style="padding:8px 14px; font-size:12px; font-weight:800; color:var(--color-text-secondary); border-bottom:1px solid var(--color-border); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:0;"></div>
-                    <div id="vwVideoList" style="flex:1; overflow-y:auto;"></div>
-                    <div style="padding:12px 14px; border-top:1px solid var(--color-border); flex-shrink:0;">
-                        <button id="vwCompleteTaskBtn" disabled style="width:100%; padding:10px; border:none; background:var(--color-success); color:white; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:not-allowed; opacity:0.4; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s;">
-                            <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
+                    
+                    <div id="vwVideoListTitle" style="padding:16px 20px; font-size:14px; font-weight:800; color:#fff; border-bottom:1px solid #1f1f27; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; background: #1a1a24; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"></div>
+                    
+                    <div id="vwVideoList" style="flex:1; overflow-y:auto; padding: 10px 0;">
+                        </div>
+                    
+                    <div style="padding:20px; border-top:1px solid #1f1f27; flex-shrink:0; background: #181820; box-shadow: 0 -4px 15px rgba(0,0,0,0.3);">
+                        <button id="vwCompleteTaskBtn" disabled style="width:100%; padding:14px; border:none; background: linear-gradient(135deg, #1f8a3d 0%, #155724 100%); color:white; border-radius: 12px; font-size:14px; font-weight:800; cursor:not-allowed; opacity:0.3; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.3s; box-shadow: 0 4px 15px rgba(31, 138, 61, 0.2);">
+                            <i class="fa-solid fa-circle-check" style="font-size: 18px;"></i> Görevi Tamamla
                         </button>
                     </div>
                 </div>
@@ -3344,6 +3455,9 @@
             </div>
         </div>
     </div>
+    ```
+
+
     <!-- / VİDEO İZLEYİCİ MODAL -->
 
     <div id="weeklyPlannerModal" class="custom-modal" style="z-index: 2000;">
@@ -4731,7 +4845,6 @@
             yesTaskMultiCompleteBtn: document.getElementById('yesTaskMultiCompleteBtn'),
             selectFromPlaylistBtn:   document.getElementById('selectFromPlaylistBtn'),
             duplicateZoneText:       document.getElementById('duplicateZoneText'),
-            tcsExportProfile:        document.getElementById('tcs-exportProfile'),
             customAlertMessage:      document.getElementById('customAlertMessage'),
             customSpeedInput:        document.getElementById('customSpeedInput'),
         };
@@ -4922,7 +5035,9 @@
                     allItems.forEach((item, index) => {
                         const baslik = item.snippet.title;
                         const videoId = item.snippet.resourceId.videoId;
-                        const kapakGorseli = item.snippet.thumbnails?.default?.url || '';
+                        // YouTube'dan en yüksek kaliteyi çekmeye çalışır, bulamazsa bir alt kaliteye geçer
+                        const thumbs = item.snippet.thumbnails;
+                        const kapakGorseli = thumbs?.high?.url || thumbs?.medium?.url || thumbs?.default?.url || '';
                         
                         if (baslik === 'Private video' || baslik === 'Deleted video') return;
 
@@ -5040,35 +5155,216 @@
         const calendarDays = document.getElementById("calendar-days");
         let currentDate = new Date(); 
 
+        const CAL_MONTH_NAMES = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+        const CAL_DAY_NAMES   = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+
+        function calDateKey(d) {
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+
         function renderCalendar() {
             if(!monthYearText || !calendarDays) return;
-            const year = currentDate.getFullYear();
+            const year  = currentDate.getFullYear();
             const month = currentDate.getMonth();
-
-            const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-            monthYearText.innerText = `${monthNames[month]} ${year}`;
+            monthYearText.innerText = `${CAL_MONTH_NAMES[month]} ${year}`;
 
             let firstDay = new Date(year, month, 1).getDay();
-            firstDay = firstDay === 0 ? 6 : firstDay - 1; 
+            firstDay = firstDay === 0 ? 6 : firstDay - 1;
 
             const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
             let daysHtml = "";
 
-            for (let i = 0; i < firstDay; i++) {
-                daysHtml += `<div class="day-box empty"></div>`;
-            }
+            for (let i = 0; i < firstDay; i++) daysHtml += `<div class="day-box empty"></div>`;
 
-            const today = new Date();
             for (let i = 1; i <= daysInMonth; i++) {
-                // Sadece gerçek "Bugün" olan güne mavi yuvarlak (today) sınıfı ekle
-                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                    daysHtml += `<div class="day-box today">${i}</div>`;
-                } else {
-                    daysHtml += `<div class="day-box">${i}</div>`;
-                }
+                const d   = new Date(year, month, i);
+                const dk  = calDateKey(d);
+                const tasks = (typeof userTasks !== 'undefined' && userTasks[dk]) ? userTasks[dk] : [];
+                const hasTasks = tasks.length > 0;
+                const isToday  = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+
+                let cls = 'day-box';
+                if (isToday) cls += ' today';
+
+                // Görev olan günlere küçük nokta göster
+                const dot = hasTasks ? `<span style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:${isToday?'rgba(255,255,255,0.8)':'var(--color-primary)'};"></span>` : '';
+
+                daysHtml += `<div class="${cls}" style="position:relative;" data-datekey="${dk}" data-day="${i}">${i}${dot}</div>`;
             }
             calendarDays.innerHTML = daysHtml;
+
+            // Tıklama dinleyicisi
+            calendarDays.querySelectorAll('.day-box:not(.empty)').forEach(box => {
+                box.addEventListener('click', () => {
+                    const dk = box.getAttribute('data-datekey');
+                    showCalDaySummary(dk);
+                });
+            });
         }
+
+        function showCalDaySummary(dk) {
+            const [y, m, d] = dk.split('-').map(Number);
+            const dateObj  = new Date(y, m-1, d);
+            const dayName  = CAL_DAY_NAMES[(dateObj.getDay()+6)%7];
+            const dateText = `${dayName}, ${d} ${CAL_MONTH_NAMES[m-1]} ${y}`;
+
+            // Görevleri al
+            const tasks = (typeof userTasks !== 'undefined' && userTasks[dk]) ? userTasks[dk] : [];
+
+            // --- HESAPLAMALAR ---
+            let totalMins    = 0;
+            let totalQ       = 0;
+            let subjectMins  = {}; // {ders: dakika}
+            let totalVideos  = 0;
+            let watchedVideos = 0;
+            let playlistMap  = {}; // {plId: {name, total, watched}}
+
+            tasks.forEach(task => {
+                const dur = parseInt(task.duration) || 0;
+                totalMins += dur;
+                totalQ    += parseInt(task.questionCount) || 0;
+
+                const subj = task.subject || 'Diğer';
+                subjectMins[subj] = (subjectMins[subj] || 0) + dur;
+
+                if (task.taskVideos && task.taskVideos.length > 0) {
+                    task.taskVideos.forEach(v => {
+                        totalVideos++;
+                        if (v.isWatched) watchedVideos++;
+
+                        // Playlist bilgisi — sadece plId'yi topla
+                        if (v.plId !== undefined) {
+                            playlistMap[v.plId.toString()] = true;
+                        }
+                    });
+                }
+            });
+
+            const hours = Math.floor(totalMins / 60);
+            const mins  = totalMins % 60;
+            const timeStr = totalMins > 0
+                ? (hours > 0 ? `${hours} sa ${mins} dk` : `${mins} dk`)
+                : '—';
+
+            // Renk paleti (subjectColors varsa kullan)
+            const getColor = (subj) => {
+                if (window.subjectColors && window.subjectColors[subj]) return window.subjectColors[subj];
+                const palette = ['#007bff','#28a745','#fd7e14','#dc3545','#6f42c1','#20c997','#e83e8c','#ffc107'];
+                const keys = Object.keys(subjectMins);
+                return palette[keys.indexOf(subj) % palette.length];
+            };
+
+            // --- HTML OLUŞTUR ---
+            const summaryEl = document.getElementById('calDaySummary');
+
+            if (tasks.length === 0) {
+                summaryEl.innerHTML = `
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--color-text-light); text-align:center; padding:20px;">
+                        <i class="fa-regular fa-calendar-xmark" style="font-size:32px;"></i>
+                        <span style="font-size:13px; font-weight:700;">Bu gün için kayıtlı görev yok.</span>
+                    </div>`;
+            } else {
+                // Ders dağılım çubukları
+                const maxMins = Math.max(...Object.values(subjectMins), 1);
+                const subjectBars = Object.entries(subjectMins)
+                    .sort((a,b) => b[1]-a[1])
+                    .map(([subj, m]) => {
+                        const pct = Math.round((m / maxMins) * 100);
+                        const color = getColor(subj);
+                        const h = Math.floor(m/60), min = m%60;
+                        const t = h > 0 ? `${h}sa ${min}dk` : `${min}dk`;
+                        return `
+                        <div class="cal-chart-bar">
+                            <span style="min-width:70px;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--color-text-main);">${subj}</span>
+                            <div style="flex:1;background:var(--color-border);border-radius:4px;height:8px;overflow:hidden;">
+                                <div class="cal-chart-bar-fill" style="width:${pct}%;background:${color};height:8px;"></div>
+                            </div>
+                            <span style="min-width:36px;text-align:right;">${t}</span>
+                        </div>`;
+                    }).join('');
+
+                // Playlist listesi
+                // Playlist kartlarını savedPlaylists'ten al
+                const plIds = Object.keys(playlistMap);
+                const plData = plIds.map(pid =>
+                    (typeof savedPlaylists !== 'undefined')
+                        ? savedPlaylists.find(p => p.id.toString() === pid)
+                        : null
+                ).filter(Boolean);
+
+                const plHtml = plData.length > 0 ? `
+                    <div style="margin-top:4px;">
+                        <div style="font-size:11px;font-weight:800;color:var(--color-text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">
+                            <i class="fa-brands fa-youtube" style="color:#dc3545;"></i> Playlistler
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                            ${plData.map(pl => {
+                                const thumb = pl.firstVideoThumb || '';
+                                const title = pl.customTitle || pl.subject || 'Playlist';
+                                const count = pl.videoCount || (pl.videos ? pl.videos.length : 0);
+                                const dur   = pl.totalDuration || '';
+                                const badge = (pl.examType || '').toUpperCase();
+                                const badgeColor = pl.examType === 'tyt' ? '#007bff' : '#6f42c1';
+                                return `<div style="display:flex;align-items:center;gap:8px;background:var(--color-bg-input);border-radius:var(--radius-md);overflow:hidden;">
+                                    <img src="${thumb}" style="width:52px;height:36px;object-fit:cover;flex-shrink:0;background:#111;">
+                                    <div style="flex:1;min-width:0;padding:4px 2px;">
+                                        <div style="font-size:11px;font-weight:800;color:var(--color-text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${title}</div>
+                                        <div style="font-size:10px;color:var(--color-text-muted);margin-top:1px;display:flex;align-items:center;gap:6px;">
+                                            <span><i class="fa-solid fa-list-ul"></i> ${count} video</span>
+                                            ${dur ? `<span><i class="fa-regular fa-clock"></i> ${dur}</span>` : ''}
+                                            ${badge ? `<span style="color:${badgeColor};font-weight:800;">${badge}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>` : '';
+
+                summaryEl.innerHTML = `
+                    <div class="cal-summary-stat">
+                        <i class="fa-solid fa-stopwatch" style="color:var(--color-primary);"></i>
+                        <span>Toplam Çalışma</span>
+                        <span style="margin-left:auto;color:var(--color-primary);">${timeStr}</span>
+                    </div>
+                    ${totalQ > 0 ? `
+                    <div class="cal-summary-stat">
+                        <i class="fa-solid fa-clipboard-question" style="color:#fd7e14;"></i>
+                        <span>Çözülen Soru</span>
+                        <span style="margin-left:auto;color:#fd7e14;">${totalQ} soru</span>
+                    </div>` : ''}
+                    ${totalVideos > 0 ? `
+                    <div class="cal-summary-stat">
+                        <i class="fa-brands fa-youtube" style="color:#dc3545;"></i>
+                        <span>İzlenen Video</span>
+                        <span style="margin-left:auto;color:#dc3545;">${watchedVideos} / ${totalVideos}</span>
+                    </div>` : ''}
+                    <div style="margin-top:2px;">
+                        <div style="font-size:11px;font-weight:800;color:var(--color-text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">
+                            <i class="fa-solid fa-chart-bar"></i> Ders Dağılımı
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">${subjectBars}</div>
+                    </div>
+                    ${plHtml}
+                `;
+            }
+
+            // Görünümü değiştir
+            document.getElementById('calCalendarView').style.display  = 'none';
+            document.getElementById('calMainHeader').style.display    = 'none';
+            document.getElementById('calSummaryHeader').style.display = 'flex';
+            document.getElementById('calSummaryDate').textContent     = dateText;
+            summaryEl.style.display = 'flex';
+        }
+
+        function showCalCalendarView() {
+            document.getElementById('calCalendarView').style.display  = 'flex';
+            document.getElementById('calMainHeader').style.display    = 'flex';
+            document.getElementById('calSummaryHeader').style.display = 'none';
+            document.getElementById('calDaySummary').style.display    = 'none';
+        }
+
+        document.getElementById('calBackBtn')?.addEventListener('click', showCalCalendarView);
 
         // İleri - Geri Buton Dinleyicileri
         document.getElementById('calPrevMonthBtn')?.addEventListener('click', () => {
@@ -5083,6 +5379,8 @@
 
         // Sayfa ilk yüklendiğinde takvimi çiz
         renderCalendar();
+        // Görevler yüklendikten sonra takvimi yenile (görev noktaları için)
+        window.refreshCalendar = renderCalendar;
 
         // 4. DİNAMİK DERS VE MENÜ MOTORU
         let currentExam = "tyt"; 
@@ -5389,6 +5687,7 @@
                     // Görevler yüklendiğinde takvimi ve ekranı güncelle
                     window.updateWeeklyPlannerView?.();
                     window.renderTodayTasks?.();
+                    window.refreshCalendar?.();
                     // 5. AYARLARI ÇEK (Hedefler, Renkler, Görünüm)
                     await window.loadGlobalSettings();
 
@@ -6746,54 +7045,33 @@
         const resetLeftBtn = document.getElementById('resetLeftBtn');
         const resetRightBtn = document.getElementById('resetRightBtn');
 
+        // --- DÜZENİ KISMİ SIFIRLAMA BUTONLARI ---
+        // Sorun: px bazlı animasyon 3 sütunu da aynı anda piksel cinsinden kilitleyip
+        //        dokunulmayan paneli de kaydırıyordu ve animasyon sırasında ekstradan
+        //        küçülüp-büyüme titremesi oluşuyordu.
+        // Çözüm: Animasyonu tamamen kaldır; doğrudan fr değerlerine geç.
+        //        fr biriminde CSS kendi içinde oransal hesap yapar, hiçbir panel
+        //        istemeden etkilenmez.
+
         if (resetLeftBtn) {
             resetLeftBtn.addEventListener('mousedown', (e) => e.stopPropagation());
             resetLeftBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                
-                const w1_current = middleSection.children[0].getBoundingClientRect().width;
-                const w2_current = middleSection.children[2].getBoundingClientRect().width;
-                const w3_current = middleSection.children[4].getBoundingClientRect().width;
-                
-                const totalWidth = w1_current + w2_current + w3_current;
-                
-                // 1. Sağ tarafı (Notlarım) HİÇ ellemeyeceğiz, piksellerini sabitliyoruz.
-                const targetW3 = w3_current;
-                
-                // 2. Kalan boşluğu buluyoruz. Bu boşluk Denemelerim ve Program arasında paylaştırılacak.
-                const leftAvailable = totalWidth - targetW3;
-                
-                // 3. Orijinal oran Sol=1fr, Orta=2fr.
-                let targetW1 = leftAvailable * (1 / 3);
-                let targetW2 = leftAvailable * (2 / 3);
-                
-                // 4. İŞTE SENİN TESPİT ETTİĞİN NOKTA: Denemelerim kutusu içeriklerinden dolayı ~373px istiyor!
-                // Biz onu 1/3 matematiğiyle daha küçüğe zorlarsak, animasyon bitince sağdaki kutudan yer çalıyor. 
-                // Bu yüzden ona rahat edeceği minimum boyutu (375px) garanti ediyoruz:
-                const minW1 = 375; 
-                if (targetW1 < minW1) {
-                    targetW1 = minW1;
-                    targetW2 = leftAvailable - minW1;
-                }
-                
-                // Orta kutunun ezilmemesi için standart koruma
-                if (targetW2 < 250) {
-                    targetW2 = 250;
-                    targetW1 = leftAvailable - 250;
-                }
-
-                // Milimetrik piksel animasyonu (Sağ kutu milim kıpırdamaz)
+                e.stopPropagation();
+                const w3 = middleSection.children[4].getBoundingClientRect().width;
+                const pool = middleSection.children[0].getBoundingClientRect().width
+                           + middleSection.children[2].getBoundingClientRect().width;
+                const t1 = pool * (1 / 3);
+                const t2 = pool * (2 / 3);
                 middleSection.style.transition = 'grid-template-columns 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
-                middleSection.style.setProperty('--col1', targetW1 + 'px');
-                middleSection.style.setProperty('--col2', targetW2 + 'px');
-                middleSection.style.setProperty('--col3', targetW3 + 'px');
-                
+                middleSection.style.setProperty('--col1', t1 + 'px');
+                middleSection.style.setProperty('--col2', t2 + 'px');
+                middleSection.style.setProperty('--col3', w3 + 'px');
                 setTimeout(() => {
                     middleSection.style.transition = '';
-                    middleSection.style.setProperty('--col1', targetW1 + 'fr');
-                    middleSection.style.setProperty('--col2', targetW2 + 'fr');
-                    middleSection.style.setProperty('--col3', targetW3 + 'fr');
-                    updateChart?.(); 
+                    middleSection.style.setProperty('--col1', t1 + 'fr');
+                    middleSection.style.setProperty('--col2', t2 + 'fr');
+                    middleSection.style.setProperty('--col3', w3 + 'fr');
+                    updateChart?.();
                 }, 400);
             });
         }
@@ -6802,44 +7080,21 @@
             resetRightBtn.addEventListener('mousedown', (e) => e.stopPropagation());
             resetRightBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
-                const w1_current = middleSection.children[0].getBoundingClientRect().width;
-                const w2_current = middleSection.children[2].getBoundingClientRect().width;
-                const w3_current = middleSection.children[4].getBoundingClientRect().width;
-                
-                const totalWidth = w1_current + w2_current + w3_current;
-                
-                // Sol tarafı (Denemelerim) HİÇ ellemeyeceğiz, piksellerini sabitliyoruz.
-                const targetW1 = w1_current;
-                
-                const rightAvailable = totalWidth - targetW1;
-                
-                let targetW3 = rightAvailable * (1 / 3);
-                let targetW2 = rightAvailable * (2 / 3);
-
-                // Notlarım kısmı için senin hesapladığın rahat etme sınırı (~334px)
-                const minW3 = 335;
-                if (targetW3 < minW3) {
-                    targetW3 = minW3;
-                    targetW2 = rightAvailable - minW3;
-                }
-
-                if (targetW2 < 250) {
-                    targetW2 = 250;
-                    targetW3 = rightAvailable - 250;
-                }
-
+                const w1 = middleSection.children[0].getBoundingClientRect().width;
+                const pool = middleSection.children[2].getBoundingClientRect().width
+                           + middleSection.children[4].getBoundingClientRect().width;
+                const t2 = pool * (2 / 3);
+                const t3 = pool * (1 / 3);
                 middleSection.style.transition = 'grid-template-columns 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
-                middleSection.style.setProperty('--col1', targetW1 + 'px');
-                middleSection.style.setProperty('--col2', targetW2 + 'px');
-                middleSection.style.setProperty('--col3', targetW3 + 'px');
-                
+                middleSection.style.setProperty('--col1', w1 + 'px');
+                middleSection.style.setProperty('--col2', t2 + 'px');
+                middleSection.style.setProperty('--col3', t3 + 'px');
                 setTimeout(() => {
                     middleSection.style.transition = '';
-                    middleSection.style.setProperty('--col1', targetW1 + 'fr');
-                    middleSection.style.setProperty('--col2', targetW2 + 'fr');
-                    middleSection.style.setProperty('--col3', targetW3 + 'fr');
-                    updateChart?.(); 
+                    middleSection.style.setProperty('--col1', w1 + 'fr');
+                    middleSection.style.setProperty('--col2', t2 + 'fr');
+                    middleSection.style.setProperty('--col3', t3 + 'fr');
+                    updateChart?.();
                 }, 400);
             });
         }
@@ -6864,7 +7119,7 @@
         const weeklyGrid = document.getElementById('weeklyGrid');
 
         let currentWeekStart = new Date(); 
-        let userTasks = {}; 
+        var userTasks = {}; 
 
         // --- YENİ: ÇOĞALTMA VE SİLME MODU DEĞİŞKENLERİ ---
         let appMode = 'NORMAL'; // NORMAL, DUP_SELECT_TASK, DUP_SELECT_DAYS, DELETE_SELECT_TASKS
@@ -11355,25 +11610,60 @@
                 const bar = document.getElementById('vwDayTabs');
                 bar.innerHTML = '';
                 for (let i = 0; i < 7; i++) {
-                    const d = new Date(vwWeek); d.setDate(d.getDate()+i);
+                    const d = new Date(vwWeek);
+                    d.setDate(d.getDate()+i);
                     const dk = dateKey(d);
                     const count = tasksWithVideos(dk).length;
                     const isSelected = dk === vwDay;
                     const tab = document.createElement('button');
-                    tab.style.cssText = `flex:1; min-width:100px; padding:10px 6px; border:none; border-bottom:3px solid ${isSelected?'var(--color-primary)':'transparent'}; background:${isSelected?'white':'transparent'}; cursor:${count>0?'pointer':'default'}; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all 0.15s;`;
+                    
+                    tab.style.cssText = `flex:1; min-width:100px; padding:12px 6px; border:none; border-bottom:3px solid ${isSelected?'#ff3333':'transparent'}; background:${isSelected?'#1a1a24':'transparent'}; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.2s;`;
+                    
+                    tab.onmouseover = () => { if(!isSelected) tab.style.background = '#1a1a24'; };
+                    tab.onmouseout = () => { if(!isSelected) tab.style.background = 'transparent'; };
+
+                    let badgeBg = isSelected ? (count > 0 ? '#ff3333' : '#2a2a35') : (count > 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.03)');
+                    let badgeColor = isSelected ? (count > 0 ? '#fff' : '#888') : (count > 0 ? '#aaa' : '#555');
+                    let badgeShadow = (isSelected && count > 0) ? '0 0 8px rgba(255,51,51,0.4)' : 'none';
+
                     tab.innerHTML = `
-                        <span style="font-size:12px;font-weight:800;color:${isSelected?'var(--color-primary)':(count>0?'var(--color-text-main)':'#bbb')};">${TR_DAYS[i]}</span>
-                        <span style="font-size:10px;color:${isSelected?'var(--color-primary)':'#aaa'};">${d.getDate()} ${TR_MONTHS[d.getMonth()]}</span>
-                        ${count>0?`<span style="font-size:9px;font-weight:800;background:${isSelected?'var(--color-primary)':'var(--color-primary-lighter)'};color:${isSelected?'white':'var(--color-primary)'};border-radius:10px;padding:1px 6px;">${count} pl</span>`:''}
+                        <span style="font-size:13px;font-weight:800;color:${isSelected?'#fff':'#888'}; letter-spacing:0.5px;">${TR_DAYS[i]}</span>
+                        <span style="font-size:11px;color:${isSelected?'#aaa':'#666'}; font-weight:600;">${d.getDate()} ${TR_MONTHS[d.getMonth()]}</span>
+                        <span style="font-size:10px;font-weight:800;background:${badgeBg};color:${badgeColor};border-radius:12px;padding:2px 8px; box-shadow: ${badgeShadow}; transition: 0.2s;">${count} Playlist</span>
                     `;
-                    if (count>0) tab.onclick = () => selectDay(dk);
+                    
+                    tab.onclick = () => {
+                        // YENİ UX: Eğer tıklanan gün zaten seçiliyse, seçimi iptal et ve haftalık görünüme dön
+                        if (vwDay === dk) {
+                            vwDay = null; // Günü boşa düşür
+                            
+                            // Arkada video açıksa kapat (önceki düzeltmemizi koruyoruz)
+                            const iframe = document.getElementById('vwIframe');
+                            if (iframe) iframe.src = '';
+                            
+                            showPlaylistPane();
+                            renderDayTabs();
+                            renderPlaylistGrid();
+                        } else {
+                            selectDay(dk); // Normal gün seçme işlemi
+                        }
+                    };
                     bar.appendChild(tab);
                 }
             }
 
             // --- Gün seç → playlistler ---
             function selectDay(dk) {
-                vwDay = dk; vwTask = null; vwVideos = null;
+                vwDay = dk;
+                vwTask = null;
+                vwVideos = null;
+                
+                // YENİ EKLENEN: Başka bir güne geçildiğinde arkada çalan videoyu tamamen kapatır (sesi keser)
+                const iframe = document.getElementById('vwIframe');
+                if (iframe) {
+                    iframe.src = '';
+                }
+                
                 showPlaylistPane();
                 renderDayTabs();
                 renderPlaylistGrid();
@@ -11391,40 +11681,117 @@
                 document.getElementById('vwRightPane').style.display = 'flex';
             }
 
+            // --- Gün seç → playlistler ---
             function renderPlaylistGrid() {
                 const grid = document.getElementById('vwPlaylistGrid');
                 grid.innerHTML = '';
-                if (!vwDay) return;
+                
+                // GÜN SEÇİLMEMİŞSE "HAFTALIK GENEL BAKIŞ" (7 KOLON) GÖRÜNÜMÜ
+                if (!vwDay) {
+                    grid.style.display = 'grid';
+                    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+                    grid.style.gap = '15px';
+                    grid.style.alignItems = 'start'; 
+                    grid.style.minWidth = '900px'; 
+                    
+                    for (let i = 0; i < 7; i++) {
+                        const d = new Date(vwWeek);
+                        d.setDate(d.getDate() + i);
+                        const dk = dateKey(d);
+                        const tasks = tasksWithVideos(dk);
+                        
+                        const col = document.createElement('div');
+                        col.style.display = 'flex';
+                        col.style.flexDirection = 'column';
+                        col.style.gap = '12px';
+                        col.style.background = 'rgba(255,255,255,0.02)';
+                        col.style.padding = '12px';
+                        col.style.borderRadius = '16px';
+                        col.style.border = '1px solid #1f1f27';
+
+                        // KOLON BAŞLIKLARI KALDIRILDI (Üstteki sekmelerle aynı hizada olduğu için gerek yok)
+
+                        if (tasks.length === 0) {
+                            // O gün boşsa şık bir ikon göster
+                            col.innerHTML = `<div style="text-align:center; color:#444; font-size:12px; font-weight:600; padding: 20px 0;"><i class="fa-solid fa-mug-hot" style="font-size:24px; display:block; margin-bottom:8px; opacity:0.3;"></i>Boş</div>`;
+                        } else {
+                            // O günün playlistlerini küçük bloklar halinde sırala
+                            tasks.forEach(task => {
+                                const isCompleted = task.isCompleted === true;
+                                const block = document.createElement('div');
+                                
+                                block.style.cssText = `background: ${isCompleted ? '#101512' : '#1a1a24'}; border: 1px solid ${isCompleted ? '#1f8a3d' : '#2a2a35'}; padding: 8px; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display:flex; flex-direction:column;`;
+                                
+                                block.onmouseover = () => { block.style.borderColor = isCompleted ? '#28a745' : '#ff3333'; block.style.transform = 'translateY(-3px)'; block.style.boxShadow = '0 6px 15px rgba(0,0,0,0.4)'; };
+                                block.onmouseout = () => { block.style.borderColor = isCompleted ? '#1f8a3d' : '#2a2a35'; block.style.transform = 'translateY(0)'; block.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)'; };
+                                
+                                // Bloğa tıklanınca o günü seç ve kartlı görünüme geç
+                                block.onclick = () => selectDay(dk);
+
+                                const thumb = (task.taskVideos[0]?.thumb || '').replace('default.jpg', 'hqdefault.jpg');
+
+                                block.innerHTML = `
+                                    <div style="position:relative; margin-bottom:8px; border-radius:6px; overflow:hidden;">
+                                        <img src="${thumb}" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block; ${isCompleted?'filter:brightness(0.4) grayscale(0.5)':'filter:brightness(0.85)'}; transition:0.3s;">
+                                        ${isCompleted ? `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-circle-check" style="color:#28a745; font-size:24px; filter:drop-shadow(0 0 5px rgba(0,0,0,0.8));"></i></div>` : ''}
+                                    </div>
+                                    <div style="font-size:12px; font-weight:800; color:${isCompleted?'#888':'#ccc'}; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${task.desc || task.subject || 'Görev'}</div>
+                                    <div style="font-size:10px; color:${isCompleted?'#1f8a3d':'#a0a0b0'}; margin-top:6px; font-weight:700; display:flex; align-items:center; gap:4px;">
+                                        <i class="fa-solid fa-film" style="color:${isCompleted?'#1f8a3d':'#ff3333'};"></i> ${task.taskVideos.length} video
+                                    </div>
+                                `;
+                                col.appendChild(block);
+                            });
+                        }
+                        grid.appendChild(col);
+                    }
+                    return; // İşlemi bitir, aşağıya inme
+                }
+
+                // GÜN SEÇİLMİŞSE (Mevcut Standart Kart Görünümü)
+                grid.style.display = 'grid';
+                grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(260px,1fr))';
+                grid.style.gap = '25px';
+                grid.style.alignItems = 'stretch';
+                grid.style.minWidth = 'auto'; // Genişlik limitini kaldır
+                
                 const tasks = tasksWithVideos(vwDay);
                 if (!tasks.length) {
-                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:50px;color:#bbb;font-size:14px;">Bu günde video içeren görev yok.</div>';
+                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:#555;font-size:15px; font-weight:600;"><i class="fa-solid fa-film" style="font-size:40px; margin-bottom:15px; display:block; opacity:0.5;"></i>Bu günde video içeren görev yok.</div>';
                     return;
                 }
+                
                 tasks.forEach(task => {
-                    const thumb = task.taskVideos[0]?.thumb||'';
+                    const thumb = (task.taskVideos[0]?.thumb||'').replace('default.jpg', 'hqdefault.jpg');
                     const card = document.createElement('div');
-                    card.style.cssText = 'border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all 0.15s;background:white;';
                     const isCompleted = task.isCompleted === true;
+                    
+                    card.style.cssText = `border:1px solid ${isCompleted ? '#1f8a3d' : '#2a2a35'}; border-radius:16px; overflow:hidden; cursor:pointer; transition:all 0.3s; background:#141419; display:flex; flex-direction:column; box-shadow: 0 4px 15px rgba(0,0,0,0.3);`;
+                    
                     card.innerHTML = `
                         <div style="position:relative;">
-                            <img src="${thumb}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;${isCompleted?'filter:brightness(0.6)':''}">
-                            ${isCompleted ? `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;">
-                                <i class="fa-solid fa-circle-check" style="font-size:36px;color:#28a745;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
-                                <span style="font-size:11px;font-weight:800;color:white;background:rgba(40,167,69,0.85);padding:3px 10px;border-radius:20px;">Tamamlandı</span>
+                            <img src="${thumb}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;${isCompleted?'filter:brightness(0.4) grayscale(0.5)':'filter:brightness(0.85)'}; transition: 0.3s;">
+                            <div style="position:absolute; inset:0; background: linear-gradient(0deg, #141419 0%, transparent 50%); pointer-events:none;"></div>
+                            ${isCompleted ? `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px; z-index:2;">
+                                <i class="fa-solid fa-circle-check" style="font-size:42px;color:#28a745;filter:drop-shadow(0 0 10px rgba(40,167,69,0.6));"></i>
+                                <span style="font-size:12px;font-weight:800;color:white;background:rgba(40,167,69,0.9);padding:4px 12px;border-radius:20px; letter-spacing:0.5px;">Tamamlandı</span>
                             </div>` : ''}
                         </div>
-                        <div style="padding:10px 12px;${isCompleted?'background:#f0fff4;':''}">
-                            <div style="font-size:13px;font-weight:800;color:${isCompleted?'#28a745':'var(--color-text-main)'};margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${task.desc||task.subject||'Görev'}</div>
-                            <div style="font-size:11px;color:${isCompleted?'#28a745':'var(--color-primary)'};font-weight:700;"><i class="fa-solid fa-film"></i> ${task.taskVideos.length} video &nbsp;·&nbsp; <i class="fa-solid fa-book"></i> ${task.subject||''}</div>
+                        <div style="padding:15px 18px; flex:1; display:flex; flex-direction:column; justify-content:space-between; ${isCompleted?'background:#101512;':''}">
+                            <div style="font-size:14px;font-weight:800;color:${isCompleted?'#888':'#fff'};margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; line-height:1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${task.desc||task.subject||'Görev'}</div>
+                            <div style="font-size:12px;color:${isCompleted?'#1f8a3d':'#a0a0b0'};font-weight:700; display:flex; align-items:center; gap:8px;">
+                                <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;"><i class="fa-solid fa-film" style="color:#ff3333;"></i> ${task.taskVideos.length} video</span> 
+                                <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;"><i class="fa-solid fa-book" style="color:#4da3ff;"></i> ${task.subject||''}</span>
+                            </div>
                         </div>
                     `;
+                    
                     if (isCompleted) {
-                        card.style.borderColor = '#28a745';
-                        card.onmouseover = () => { card.style.boxShadow='0 4px 12px rgba(40,167,69,0.15)'; };
-                        card.onmouseout  = () => { card.style.boxShadow=''; };
+                        card.onmouseover = () => { card.style.boxShadow='0 8px 25px rgba(40,167,69,0.2)'; card.style.transform='translateY(-4px)'; };
+                        card.onmouseout = () => { card.style.boxShadow='0 4px 15px rgba(0,0,0,0.3)'; card.style.transform='translateY(0)'; };
                     } else {
-                        card.onmouseover = () => { card.style.borderColor='var(--color-primary)'; card.style.boxShadow='0 4px 12px rgba(0,123,255,0.12)'; };
-                        card.onmouseout  = () => { card.style.borderColor='var(--color-border)'; card.style.boxShadow=''; };
+                        card.onmouseover = () => { card.style.borderColor='#444'; card.style.boxShadow='0 8px 25px rgba(0,0,0,0.5)'; card.style.transform='translateY(-4px)'; card.querySelector('img').style.filter='brightness(1)'; };
+                        card.onmouseout = () => { card.style.borderColor='#2a2a35'; card.style.boxShadow='0 4px 15px rgba(0,0,0,0.3)'; card.style.transform='translateY(0)'; card.querySelector('img').style.filter='brightness(0.85)'; };
                     }
                     card.onclick = () => openPlaylist(task);
                     grid.appendChild(card);
@@ -11437,10 +11804,21 @@
                 vwVideos = task.taskVideos;
                 vwTitle  = task.desc || task.subject || 'Görev';
                 vwIdx    = 0;
-                // isWatched durumlarını yükle
-                vwWatched = new Set(
-                    vwVideos.map((v,i) => v.isWatched ? i : -1).filter(i => i >= 0)
-                );
+                
+                // YENİ MANTIK: Eğer görev tamamlandıysa tüm videoları izlendi yap
+                if (task.isCompleted) {
+                    // Tüm videoların indekslerini (0, 1, 2...) Set içine ekle
+                    vwWatched = new Set(vwVideos.map((_, i) => i));
+                    
+                    // (Opsiyonel ama garanti olsun diye) objelerin içindeki değerleri de true yapalım
+                    vwVideos.forEach(v => v.isWatched = true);
+                } else {
+                    // Tamamlanmadıysa veritabanındaki mevcut durumları yükle (SENİN ORİJİNAL KODUN)
+                    vwWatched = new Set(
+                        vwVideos.map((v,i) => v.isWatched ? i : -1).filter(i => i >= 0)
+                    );
+                }
+
                 document.getElementById('vwVideoListTitle').textContent = vwTitle;
                 showPlayerPane();
                 renderVideoList();
@@ -11462,40 +11840,104 @@
                 const el = document.getElementById('vwVideoList');
                 el.innerHTML = '';
                 if (!vwVideos) return;
-
                 vwVideos.forEach((v, i) => {
-                    const active   = i === vwIdx;
-                    const watched  = vwWatched.has(i);
+                    const active = i === vwIdx;
+                    const watched = vwWatched.has(i);
                     const row = document.createElement('div');
-                    row.style.cssText = `display:flex;gap:8px;align-items:center;padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--color-border);border-left:3px solid ${active?'var(--color-primary)':'transparent'};background:${active?'var(--color-primary-lighter)':'transparent'};transition:all 0.1s;`;
+                    
+                    // Yeni Koyu Tema Liste Satırı
+                    row.style.cssText = `display:flex;gap:12px;align-items:center;padding:12px 15px;cursor:pointer;border-bottom:1px solid #1f1f27;border-left:3px solid ${active?'#ff3333':'transparent'};background:${active?'#1a1a24':'transparent'};transition:all 0.2s;`;
+                    
+                    row.onmouseover = () => { if(!active) row.style.background = '#181820'; };
+                    row.onmouseout = () => { if(!active) row.style.background = 'transparent'; };
+
                     row.innerHTML = `
-                        <div style="width:20px;text-align:center;flex-shrink:0;font-size:12px;font-weight:900;color:${active?'var(--color-primary)':'#bbb'};">
-                            ${active?'<i class="fa-solid fa-play"></i>':i+1}
+                        <div style="width:20px;text-align:center;flex-shrink:0;font-size:13px;font-weight:900;color:${active?'#ff3333':'#666'};">
+                            ${active?'<i class="fa-solid fa-play" style="filter: drop-shadow(0 0 5px rgba(255,51,51,0.5));"></i>':i+1}
                         </div>
-                        <img src="${v.thumb}" style="width:48px;height:27px;object-fit:cover;border-radius:3px;flex-shrink:0;${watched?'opacity:0.5':''}">
+                        <div style="position:relative; flex-shrink:0;">
+                            <img src="${(v.thumb || '').replace('default.jpg', 'hqdefault.jpg')}" style="width:64px;height:36px;object-fit:cover;border-radius:4px;${watched?'opacity:0.4':'opacity:0.9'}; transition: 0.2s;">
+                            ${watched ? '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-check" style="color:white; font-size:16px; filter: drop-shadow(0 0 3px black);"></i></div>' : ''}
+                        </div>
                         <div style="min-width:0;flex:1;">
-                            <div style="font-size:11px;font-weight:700;color:${active?'var(--color-primary)':'var(--color-text-main)'};overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;${watched?'text-decoration:line-through;opacity:0.6':''}">${v.title}</div>
-                            <div style="font-size:10px;color:#aaa;margin-top:2px;"><i class="fa-solid fa-clock"></i> ${v.duration}</div>
+                            <div style="font-size:12px;font-weight:${active?'800':'600'};color:${active?'#fff':'#ccc'};overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;${watched?'text-decoration:line-through;color:#777':''} line-height: 1.4;">${v.title}</div>
+                            <div style="font-size:11px;color:#666;margin-top:4px; font-weight: 700;"><i class="fa-solid fa-clock"></i> ${v.duration}</div>
                         </div>
-                        <button onclick="event.stopPropagation(); window.vwToggleWatched(${i});" title="${watched?'İzlendi işaretini kaldır':'İzlendi olarak işaretle'}"
-                            style="flex-shrink:0;width:24px;height:24px;border-radius:50%;border:2px solid ${watched?'var(--color-success)':'#ddd'};background:${watched?'var(--color-success)':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">
-                            ${watched?'<i class="fa-solid fa-check" style="font-size:10px;color:white;"></i>':''}
+                        <button onclick="event.stopPropagation(); window.vwToggleWatched(${i});" title="${watched?'İzlendi işaretini kaldır':'İzlendi olarak işaretle'}" style="flex-shrink:0;width:28px;height:28px;border-radius:50%;border:2px solid ${watched?'#1f8a3d':'#333'};background:${watched?'#1f8a3d':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
+                            ${watched?'<i class="fa-solid fa-check" style="font-size:12px;color:white;"></i>':''}
                         </button>
                     `;
-                    row.onclick = () => { vwIdx = i; renderVideoList(); playVideo(i); };
+                    row.onclick = () => {
+                        vwIdx = i;
+                        renderVideoList();
+                        playVideo(i);
+                    };
                     el.appendChild(row);
                 });
-
                 updateCompleteBtn();
             }
 
-            // --- İzlendi toggle ---
+            // --- ÖZEL ONAY PENCERESİ MOTORU ---
+            function showCustomConfirm(message) {
+                return new Promise((resolve) => {
+                    const overlay = document.getElementById('customConfirmOverlay');
+                    const box = document.getElementById('customConfirmBox');
+                    const msgEl = document.getElementById('customConfirmMessage');
+                    const okBtn = document.getElementById('customConfirmOkBtn');
+                    const cancelBtn = document.getElementById('customConfirmCancelBtn');
+
+                    msgEl.textContent = message;
+                    overlay.style.display = 'flex';
+                    
+                    // Ekrana yumuşak giriş animasyonu
+                    setTimeout(() => {
+                        box.style.transform = 'scale(1)';
+                        box.style.opacity = '1';
+                    }, 10);
+
+                    // Pencereyi kapatma ve sonucu gönderme
+                    const closeAndResolve = (result) => {
+                        box.style.transform = 'scale(0.9)';
+                        box.style.opacity = '0';
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                            resolve(result);
+                        }, 200); // 0.2s bekle (animasyon bitsin)
+                        
+                        okBtn.onclick = null;
+                        cancelBtn.onclick = null;
+                    };
+
+                    // Buton tıklamalarını dinle
+                    okBtn.onclick = () => closeAndResolve(true);
+                    cancelBtn.onclick = () => closeAndResolve(false);
+                });
+            }
+
+            // --- İZLENDİ TOGGLE (Güncellenmiş) ---
             window.vwToggleWatched = async function(idx) {
                 if (!vwTask || !vwVideos) return;
-                if (vwWatched.has(idx)) vwWatched.delete(idx);
+                
+                const isWatched = vwWatched.has(idx);
+
+                // GÖREV TAMAMLANMIŞSA VE TİK KALDIRILIYORSA ÖZEL UYARIYI ÇAĞIR
+                if (isWatched && vwTask.isCompleted) {
+                    // Tarayıcı confirm'i yerine bizim özel fonksiyonumuzu await ile bekletiyoruz
+                    const onay = await showCustomConfirm("Bu videonun 'İzlendi' işaretini kaldırırsanız, ana programdaki bu görev de 'Tamamlanmadı' durumuna geri dönecektir. Onaylıyor musunuz?");
+                    
+                    if (!onay) return; // Kullanıcı iptal derse işlemi durdur
+
+                    // Onaylarsa görevi "tamamlanmadı" yap
+                    vwTask.isCompleted = false;
+                    
+                    if (typeof renderWeeklyPlanner === 'function') renderWeeklyPlanner();
+                    if (typeof renderDashboard === 'function') renderDashboard();
+                }
+
+                // Geri kalan orijinal Firebase ve durum güncelleme işlemleri aynen devam ediyor
+                if (isWatched) vwWatched.delete(idx);
                 else vwWatched.add(idx);
 
-                // savedPlaylists'teki isWatched'ı güncelle
                 const v = vwVideos[idx];
                 const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
                 if (pl && pl.videos && pl.videos[v.index] !== undefined) {
@@ -11505,17 +11947,19 @@
                     } catch(e){}
                 }
 
-                // taskVideos'taki isWatched'ı güncelle
                 if (vwTask.taskVideos && vwTask.taskVideos[idx] !== undefined) {
                     vwTask.taskVideos[idx] = {...vwTask.taskVideos[idx], isWatched: vwWatched.has(idx)};
                 }
-                // userTasks'ı güncelle
+                
                 const dk = vwDay;
                 if (userTasks[dk]) {
                     const ti = userTasks[dk].findIndex(t => t.id === vwTask.id);
                     if (ti !== -1) {
-                        userTasks[dk][ti] = {...userTasks[dk][ti], taskVideos: vwTask.taskVideos};
-                        // Firebase'e kaydet
+                        userTasks[dk][ti] = {
+                            ...userTasks[dk][ti], 
+                            taskVideos: vwTask.taskVideos,
+                            isCompleted: vwTask.isCompleted 
+                        };
                         try {
                             if (currentUserUid) await setDoc(doc(db,"users",currentUserUid,"userTasks",vwTask.id.toString()), userTasks[dk][ti], {merge:true});
                         } catch(e){}
@@ -11524,6 +11968,7 @@
 
                 vwVideos = vwTask.taskVideos;
                 renderVideoList();
+                renderPlaylistGrid(); 
             };
 
             // --- Video oynat ---
@@ -11541,7 +11986,7 @@
                     iframe.style.cssText = 'flex:1; border:none; width:100%; height:100%; display:block;';
                     iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
                     iframe.setAttribute('allowfullscreen', '');
-                    iframe.setAttribute('referrerpolicy', 'no-referrer');
+                    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
                     iframe.src = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`;
                     wrapper.appendChild(iframe);
                 } else {
@@ -11556,29 +12001,52 @@
                 const btn = document.getElementById('vwCompleteTaskBtn');
                 if (btn.disabled) return;
 
-                // Onay modalı
+                // YENİ TASARIM: Özel Koyu Temalı Onay Modalı
                 const confirmed = await new Promise(res => {
                     const overlay = document.createElement('div');
-                    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
+                    overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(5px); opacity:0; transition: opacity 0.2s ease-out;';
+                    
                     overlay.innerHTML = `
-                        <div style="background:white;border-radius:16px;padding:32px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.2);">
-                            <i class="fa-solid fa-circle-check" style="font-size:52px;color:var(--color-success);margin-bottom:14px;display:block;"></i>
-                            <h3 style="margin:0 0 10px;color:var(--color-text-main);font-size:18px;font-weight:800;">Görevi Tamamla</h3>
-                            <p style="color:#666;font-size:14px;margin-bottom:24px;line-height:1.5;">Tüm videolar izlendi. "<b>${vwTitle}</b>" görevini tamamlandı olarak işaretlemek istiyor musun?</p>
-                            <div style="display:flex;gap:10px;">
-                                <button id="vwConfirmNo" style="flex:1;padding:12px;border:1px solid #ddd;background:#f8f9fa;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;">İptal</button>
-                                <button id="vwConfirmYes" style="flex:1;padding:12px;border:none;background:var(--color-success);color:white;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;">Tamamlandı İşaretle</button>
+                        <div id="vwSuccessBox" style="background:#141419; width:400px; max-width:90%; border-radius:16px; border:1px solid #2a2a35; box-shadow:0 20px 40px rgba(0,0,0,0.6); padding:30px; text-align:center; transform: scale(0.9); transition: all 0.2s ease-out;">
+                            
+                            <div style="width: 70px; height: 70px; background: rgba(40, 167, 69, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+                                <i class="fa-solid fa-circle-check" style="color:#28a745; font-size:32px; filter:drop-shadow(0 0 10px rgba(40,167,69,0.4));"></i>
+                            </div>
+                            
+                            <h3 style="color:#fff; font-size:20px; margin:0 0 12px 0; font-weight:800; letter-spacing: 0.5px;">Görevi Tamamla</h3>
+                            <p style="color:#a0a0b0; font-size:14px; line-height:1.6; margin:0 0 25px 0; font-weight:600;">Tüm videolar izlendi. "<b style="color:#fff;">${vwTitle}</b>" görevini tamamlandı olarak işaretlemek istiyor musun?</p>
+                            
+                            <div style="display:flex; gap:12px; justify-content:center;">
+                                <button id="vwConfirmNo" style="flex:1; padding:12px; border-radius:10px; border:1px solid #333; background:#222; color:#ccc; font-weight:700; cursor:pointer; transition:0.2s; font-size: 14px;" onmouseover="this.style.background='#333'; this.style.color='#fff';" onmouseout="this.style.background='#222'; this.style.color='#ccc';">İptal</button>
+                                <button id="vwConfirmYes" style="flex:1; padding:12px; border-radius:10px; border:none; background:linear-gradient(135deg, #1f8a3d 0%, #155724 100%); color:white; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 15px rgba(31, 138, 61, 0.3); font-size: 14px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(31, 138, 61, 0.5)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(31, 138, 61, 0.3)';">Evet, Tamamla</button>
                             </div>
                         </div>
                     `;
                     document.body.appendChild(overlay);
-                    overlay.querySelector('#vwConfirmYes').onclick = () => { document.body.removeChild(overlay); res(true); };
-                    overlay.querySelector('#vwConfirmNo').onclick  = () => { document.body.removeChild(overlay); res(false); };
+                    
+                    // Ekrandan yumuşak giriş animasyonunu tetikleme
+                    setTimeout(() => {
+                        overlay.style.opacity = '1';
+                        overlay.querySelector('#vwSuccessBox').style.transform = 'scale(1)';
+                    }, 10);
+
+                    // Kapatma ve cevap gönderme fonksiyonu
+                    const closeAndRes = (val) => {
+                        overlay.style.opacity = '0';
+                        overlay.querySelector('#vwSuccessBox').style.transform = 'scale(0.9)';
+                        setTimeout(() => {
+                            document.body.removeChild(overlay);
+                            res(val);
+                        }, 200); // Animasyonun bitmesini bekle
+                    };
+
+                    overlay.querySelector('#vwConfirmYes').onclick = () => closeAndRes(true);
+                    overlay.querySelector('#vwConfirmNo').onclick = () => closeAndRes(false);
                 });
 
                 if (!confirmed) return;
 
-                // Görevi tamamlandı işaretle
+                // Görevi tamamlandı işaretle (Orijinal Kod)
                 const dk = vwDay;
                 if (userTasks[dk]) {
                     const ti = userTasks[dk].findIndex(t => t.id === vwTask.id);
@@ -11589,19 +12057,30 @@
                         } catch(e){}
                     }
                 }
-                window.updateWeeklyPlannerView?.();
-                window.renderTodayTasks?.();
+                
+                if (typeof renderWeeklyPlanner === 'function') renderWeeklyPlanner();
+                if (typeof renderDashboard === 'function') renderDashboard();
 
-                // Başarı bildirimi
+                // YENİ TASARIM: Başarı bildirimi (Toast)
                 const toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--color-success);color:white;padding:12px 24px;border-radius:30px;font-size:14px;font-weight:800;z-index:9999;box-shadow:0 4px 20px rgba(40,167,69,0.4);display:flex;align-items:center;gap:8px;';
-                toast.innerHTML = '<i class="fa-solid fa-circle-check"></i> Görev tamamlandı olarak işaretlendi!';
+                toast.style.cssText = 'position:fixed; bottom:-50px; left:50%; transform:translateX(-50%); background:#141419; color:#fff; border:1px solid #1f8a3d; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:800; z-index:9999; box-shadow:0 10px 30px rgba(0,0,0,0.5); display:flex; align-items:center; gap:10px; opacity:0; transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);';
+                toast.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#28a745; font-size:18px; filter:drop-shadow(0 0 5px rgba(40,167,69,0.5));"></i> Görev tamamlandı olarak işaretlendi!';
                 document.body.appendChild(toast);
-                setTimeout(() => toast.style.opacity='0', 2500);
+                
+                // Toast zıplama animasyonu
+                setTimeout(() => {
+                    toast.style.bottom = '40px';
+                    toast.style.opacity = '1';
+                }, 10);
+                setTimeout(() => {
+                    toast.style.bottom = '-50px';
+                    toast.style.opacity = '0';
+                }, 2500);
                 setTimeout(() => document.body.removeChild(toast), 3000);
 
-                // Playlistlere geri dön
-                showPlaylistPane(); renderPlaylistGrid();
+                // Playlistlere geri dön (Orijinal Kod)
+                showPlaylistPane();
+                renderPlaylistGrid();
             });
 
             // --- Geri butonu ---
@@ -11614,9 +12093,13 @@
             function changeWeek(d) {
                 vwWeek.setDate(vwWeek.getDate()+d*7);
                 vwDay=null; vwVideos=null; vwTask=null;
-                document.getElementById('vwPlaylistGrid').innerHTML='';
                 document.getElementById('vwIframe').src='';
-                showPlaylistPane(); updateWeekLabel(); renderDayTabs();
+                showPlaylistPane();
+                updateWeekLabel();
+                renderDayTabs();
+                
+                // YENİ: Ekranı zorla silmek yerine 7 kolonlu haftalık panoyu çizdiriyoruz
+                renderPlaylistGrid(); 
             }
             document.getElementById('vwPrevWeek').addEventListener('click', ()=>changeWeek(-1));
             document.getElementById('vwNextWeek').addEventListener('click', ()=>changeWeek(1));
@@ -11626,15 +12109,44 @@
                 vwWeek = getMonday(typeof currentWeekStart!=='undefined' ? new Date(currentWeekStart) : new Date());
                 vwDay=null; vwVideos=null; vwTask=null;
                 document.getElementById('vwIframe').src='';
-                document.getElementById('vwPlaylistGrid').innerHTML='';
-                showPlaylistPane(); updateWeekLabel(); renderDayTabs();
+                showPlaylistPane(); 
+                updateWeekLabel(); 
+                renderDayTabs();
+                
+                // YENİ: Modal ilk açıldığında boş siyah ekran yerine haftalık panoyu çizdiriyoruz
+                renderPlaylistGrid(); 
+                
                 document.getElementById('videoWatcherModal').style.display='flex';
+            });
+
+            // Günlük Planlayıcıdaki "Playlistler" Butonu (Aynı kalıyor ama bütünlük için tam veriyorum)
+            document.getElementById('openDashPlaylistBtn')?.addEventListener('click', () => {
+                const targetDate = new Date(currentDashboardDate);
+                vwWeek = getMonday(targetDate);
+                vwDay = dateKey(targetDate);
+                vwVideos = null; 
+                vwTask = null;
+                document.getElementById('vwIframe').src='';
+                showPlaylistPane(); 
+                updateWeekLabel(); 
+                renderDayTabs();
+                
+                if (typeof selectDay === 'function') {
+                    selectDay(vwDay);
+                }
+                document.getElementById('videoWatcherModal').style.display='flex';
+            });
+
+            document.getElementById('vwCloseBtn').addEventListener('click', () => {
+                document.getElementById('vwIframe').src='';
+                document.getElementById('videoWatcherModal').style.display='none';
             });
             document.getElementById('vwCloseBtn').addEventListener('click', () => {
                 document.getElementById('vwIframe').src='';
                 document.getElementById('videoWatcherModal').style.display='none';
             });
         })();
+        
         // ==============================================
 
         // --- YENİ: AYARLAR MENÜSÜ SEKME GEÇİŞİ ---
@@ -12058,8 +12570,11 @@
                         scale: qualityScale, 
                         backgroundColor: '#f4f7f6',
                         windowWidth: 1200, 
-                        windowHeight: exportWrapper.scrollHeight + 50, 
-                        useCORS: true
+                        windowHeight: exportWrapper.scrollHeight + 50,
+                        useCORS: true,
+                        logging: false,
+                        scrollX: 0,
+                        scrollY: 0
                     }).then(canvas => {
                         if(document.body.contains(exportWrapper)) document.body.removeChild(exportWrapper);
                         callback(canvas);
@@ -12610,7 +13125,7 @@
                     opt.addEventListener('click', function(e) {
                         e.stopPropagation();
                         exportInput.value = this.getAttribute('data-value');
-                        const tcsExp = DOM.tcsExportProfile;
+                        const tcsExp = document.getElementById('tcs-exportProfile');
                         if(tcsExp) {
                             tcsExp.classList.remove('open');
                             const trg = tcsExp.querySelector('.tcs-trigger');
@@ -12639,7 +13154,7 @@
             }
             
             // İndirme Menüsü için tıklama kontrolü
-            const tcsExportSelect = DOM.tcsExportProfile;
+            const tcsExportSelect = document.getElementById('tcs-exportProfile');
             if (tcsExportSelect && !tcsExportSelect.contains(e.target)) {
                 tcsExportSelect.classList.remove('open');
                 const expTrigger = tcsExportSelect.querySelector('.tcs-trigger');
@@ -12652,7 +13167,7 @@
             const trigger = e.target.closest('#tcs-exportProfile .tcs-trigger');
             if (trigger) {
                 e.stopPropagation();
-                const wrapper = DOM.tcsExportProfile;
+                const wrapper = document.getElementById('tcs-exportProfile');
                 wrapper.classList.toggle('open');
                 trigger.classList.toggle('active');
             }
@@ -12753,7 +13268,7 @@
 
         window.toggleExportMenu = function(e) {
             e.stopPropagation(); // Diğer tıklamalarla çakışmayı engeller
-            const wrapper = DOM.tcsExportProfile;
+            const wrapper = document.getElementById('tcs-exportProfile');
             const trigger = document.getElementById('exportProfileTrigger');
             if(wrapper && trigger) {
                 wrapper.classList.toggle('open');
@@ -12762,7 +13277,7 @@
         };
 
         window.addEventListener('click', function(e) {
-            const wrapper = DOM.tcsExportProfile;
+            const wrapper = document.getElementById('tcs-exportProfile');
             const trigger = document.getElementById('exportProfileTrigger');
             if (wrapper && trigger && !wrapper.contains(e.target)) {
                 wrapper.classList.remove('open');
@@ -13413,6 +13928,23 @@
             </div>
 
             <button id="saveProfileBtn" style="width: 100%; padding: 12px; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); font-size: 15px; font-weight: bold; margin-top: 25px; cursor: pointer; transition: 0.2s;">Değişiklikleri Kaydet</button>
+        </div>
+    </div>
+
+    <div id="customConfirmOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:3000; align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+        <div id="customConfirmBox" style="background:#141419; width:400px; max-width:90%; border-radius:16px; border:1px solid #2a2a35; box-shadow:0 20px 40px rgba(0,0,0,0.6); padding:30px; text-align:center; transform: scale(0.9); transition: all 0.2s ease-out; opacity: 0;">
+            
+            <div style="width: 70px; height: 70px; background: rgba(255, 204, 0, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+                <i class="fa-solid fa-triangle-exclamation" style="color:#ffcc00; font-size:32px; filter:drop-shadow(0 0 10px rgba(255,204,0,0.3));"></i>
+            </div>
+            
+            <h3 style="color:#fff; font-size:20px; margin:0 0 12px 0; font-weight:800; letter-spacing: 0.5px;">Emin misin?</h3>
+            <p id="customConfirmMessage" style="color:#a0a0b0; font-size:14px; line-height:1.6; margin:0 0 25px 0; font-weight:600;"></p>
+            
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button id="customConfirmCancelBtn" style="flex:1; padding:12px; border-radius:10px; border:1px solid #333; background:#222; color:#ccc; font-weight:700; cursor:pointer; transition:0.2s; font-size: 14px;" onmouseover="this.style.background='#333'; this.style.color='#fff';" onmouseout="this.style.background='#222'; this.style.color='#ccc';">İptal</button>
+                <button id="customConfirmOkBtn" style="flex:1; padding:12px; border-radius:10px; border:none; background:linear-gradient(135deg, #ff4444 0%, #cc0000 100%); color:white; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 15px rgba(255,51,51,0.3); font-size: 14px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255,51,51,0.5)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255,51,51,0.3)';">Onaylıyorum</button>
+            </div>
         </div>
     </div>
 
