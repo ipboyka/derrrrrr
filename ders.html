@@ -5187,9 +5187,8 @@
                 let cls = 'day-box';
                 if (isToday) cls += ' today';
 
-                // Görev olan günlere küçük nokta göster
-                const dot = hasTasks ? `<span style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:${isToday?'rgba(255,255,255,0.8)':'var(--color-primary)'};"></span>` : '';
-
+                // Görev olan günlerdeki noktayı kaldırdık (Senin isteğin üzerine)
+                const dot = ''; 
                 daysHtml += `<div class="${cls}" style="position:relative;" data-datekey="${dk}" data-day="${i}">${i}${dot}</div>`;
             }
             calendarDays.innerHTML = daysHtml;
@@ -5203,158 +5202,316 @@
             });
         }
 
+        // Global Tab Değiştirme Fonksiyonu (Modal içindeki TYT/AYT geçişleri için)
+        window.switchCalModalTab = function(prefix, targetTab) {
+            const tabs = ['all', 'tyt', 'ayt'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(prefix + '_btn_' + t);
+                const content = document.getElementById(prefix + '_content_' + t);
+                if (btn && content) {
+                    if (t === targetTab) {
+                        btn.style.background = 'var(--color-primary)';
+                        btn.style.color = '#fff';
+                        content.style.display = 'flex';
+                    } else {
+                        btn.style.background = 'transparent';
+                        btn.style.color = 'var(--color-text-muted)';
+                        content.style.display = 'none';
+                    }
+                }
+            });
+        };
+
         function showCalDaySummary(dk) {
             const [y, m, d] = dk.split('-').map(Number);
-            const dateObj  = new Date(y, m-1, d);
-            const dayName  = CAL_DAY_NAMES[(dateObj.getDay()+6)%7];
-            const dateText = `${dayName}, ${d} ${CAL_MONTH_NAMES[m-1]} ${y}`;
+            const dateObj = new Date(y, m-1, d);
+            const dayName = CAL_DAY_NAMES[(dateObj.getDay()+6)%7];
+            const dateText = d + ' ' + CAL_MONTH_NAMES[m-1] + ' ' + y + ', ' + dayName;
 
-            // Görevleri al
             const tasks = (typeof userTasks !== 'undefined' && userTasks[dk]) ? userTasks[dk] : [];
 
-            // --- HESAPLAMALAR ---
-            let totalMins    = 0;
-            let totalQ       = 0;
-            let subjectMins  = {}; // {ders: dakika}
-            let totalVideos  = 0;
-            let watchedVideos = 0;
-            let playlistMap  = {}; // {plId: {name, total, watched}}
+            document.getElementById('calCalendarView').style.display = 'none';
+            document.getElementById('calMainHeader').style.display = 'none';
+            document.getElementById('calSummaryHeader').style.display = 'flex';
+            
+            document.getElementById('calSummaryDate').innerHTML = 
+                '<div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:10px;">' +
+                    '<span>' + dateText + '</span>' +
+                    '<button onclick="window.openCalDetailModal()" id="calDetailedViewBtn" style="background:var(--color-primary-light); color:var(--color-primary); border:1px solid var(--color-primary-border); padding:6px 14px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s; box-shadow:0 2px 4px rgba(0,123,255,0.1);">' +
+                        'Detaylı <i class="fa-solid fa-arrow-right"></i>' +
+                    '</button>' +
+                '</div>';
+            
+            const summaryContainer = document.getElementById('calDaySummary');
+            summaryContainer.style.display = 'flex';
+            summaryContainer.style.flexDirection = 'column';
+            summaryContainer.style.flex = '1';
+            summaryContainer.style.height = '100%'; 
+            summaryContainer.style.overflow = 'hidden'; 
+
+            if (tasks.length === 0) {
+                summaryContainer.innerHTML = '<div class="placeholder-text" style="font-size:14px; padding:30px 10px; background:var(--color-bg-card, #fff); border-radius:12px; border:1px dashed var(--color-border-strong); height:100%; display:flex; align-items:center; justify-content:center; flex:1;">Bu güne ait görev bulunmuyor.</div>';
+                return;
+            }
+
+            // --- VERİ HESAPLAMALARI ---
+            let totalMins = 0, completedMins = 0;
+            let totalQ = 0, completedQ = 0;
+            let totalTasksCount = tasks.length, completedTasksCount = 0;
+            let totalVideos = 0, watchedVideos = 0;
+            
+            let stats = {
+                time: { all: {}, tyt: {}, ayt: {} },
+                q: { all: {}, tyt: {}, ayt: {} }
+            };
+            let playlistMap = {};
 
             tasks.forEach(task => {
                 const dur = parseInt(task.duration) || 0;
-                totalMins += dur;
-                totalQ    += parseInt(task.questionCount) || 0;
-
+                const q = parseInt(task.questionCount) || 0;
                 const subj = task.subject || 'Diğer';
-                subjectMins[subj] = (subjectMins[subj] || 0) + dur;
+                const exType = (task.examType || task.exam || 'tyt').toLowerCase();
+                const tKey = exType === 'ayt' ? 'ayt' : 'tyt';
+                
+                totalMins += dur;
+                totalQ += q;
+                
+                stats.time.all[subj] = (stats.time.all[subj] || 0) + dur;
+                stats.time[tKey][subj] = (stats.time[tKey][subj] || 0) + dur;
+                
+                if (q > 0) {
+                    stats.q.all[subj] = (stats.q.all[subj] || 0) + q;
+                    stats.q[tKey][subj] = (stats.q[tKey][subj] || 0) + q;
+                }
+                
+                if (task.isCompleted) {
+                    completedTasksCount++;
+                    completedMins += dur;
+                    completedQ += q;
+                }
 
                 if (task.taskVideos && task.taskVideos.length > 0) {
                     task.taskVideos.forEach(v => {
-                        totalVideos++;
-                        if (v.isWatched) watchedVideos++;
+                        // Video izlenme durumunu sağlam bir şekilde hesapla
+                        let isW = v.isWatched === true || v.isWatched === 'true' || task.isCompleted === true;
+                        
+                        // Eğer görevden değil de Playlist Merkezinden izlenmişse, ana veritabanından(savedPlaylists) durumu çek
+                        if (!isW && v.plId !== undefined && typeof savedPlaylists !== 'undefined') {
+                            const globalPl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
+                            if (globalPl && globalPl.videos) {
+                                const globalVid = globalPl.videos.find(pv => pv.videoId === v.videoId);
+                                if (globalVid && (globalVid.isWatched === true || globalVid.isWatched === 'true')) {
+                                    isW = true;
+                                }
+                            }
+                        }
 
-                        // Playlist bilgisi — sadece plId'yi topla
+                        totalVideos++;
+                        if (isW) watchedVideos++;
+                        
                         if (v.plId !== undefined) {
-                            playlistMap[v.plId.toString()] = true;
+                            const pid = v.plId.toString();
+                            if (!playlistMap[pid]) playlistMap[pid] = { videos: [] };
+                            // Sadece bu göreve özel hesaplanmış izlenme durumunu videonun içine yazıyoruz
+                            playlistMap[pid].videos.push({ ...v, _calcWatched: isW });
                         }
                     });
                 }
             });
 
-            const hours = Math.floor(totalMins / 60);
-            const mins  = totalMins % 60;
-            const timeStr = totalMins > 0
-                ? (hours > 0 ? `${hours} sa ${mins} dk` : `${mins} dk`)
-                : '—';
-
-            // Renk paleti (subjectColors varsa kullan)
-            const getColor = (subj) => {
-                if (window.subjectColors && window.subjectColors[subj]) return window.subjectColors[subj];
-                const palette = ['#007bff','#28a745','#fd7e14','#dc3545','#6f42c1','#20c997','#e83e8c','#ffc107'];
-                const keys = Object.keys(subjectMins);
-                return palette[keys.indexOf(subj) % palette.length];
+            const formatTime = (m) => {
+                if (m === 0) return '0d';
+                const h = Math.floor(m / 60);
+                const mn = m % 60;
+                return h > 0 ? (mn > 0 ? h + 's ' + mn + 'd' : h + 's') : mn + 'd';
             };
 
-            // --- HTML OLUŞTUR ---
-            const summaryEl = document.getElementById('calDaySummary');
+            const totalTimeStr = formatTime(totalMins);
+            const completedTimeStr = formatTime(completedMins);
 
-            if (tasks.length === 0) {
-                summaryEl.innerHTML = `
-                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--color-text-light); text-align:center; padding:20px;">
-                        <i class="fa-regular fa-calendar-xmark" style="font-size:32px;"></i>
-                        <span style="font-size:13px; font-weight:700;">Bu gün için kayıtlı görev yok.</span>
-                    </div>`;
-            } else {
-                // Ders dağılım çubukları
-                const maxMins = Math.max(...Object.values(subjectMins), 1);
-                const subjectBars = Object.entries(subjectMins)
-                    .sort((a,b) => b[1]-a[1])
-                    .map(([subj, m]) => {
-                        const pct = Math.round((m / maxMins) * 100);
-                        const color = getColor(subj);
-                        const h = Math.floor(m/60), min = m%60;
-                        const t = h > 0 ? `${h}sa ${min}dk` : `${min}dk`;
-                        return `
-                        <div class="cal-chart-bar">
-                            <span style="min-width:70px;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--color-text-main);">${subj}</span>
-                            <div style="flex:1;background:var(--color-border);border-radius:4px;height:8px;overflow:hidden;">
-                                <div class="cal-chart-bar-fill" style="width:${pct}%;background:${color};height:8px;"></div>
-                            </div>
-                            <span style="min-width:36px;text-align:right;">${t}</span>
-                        </div>`;
+            const getColor = (subj) => {
+                if (window.subjectColors && window.subjectColors[subj]) return window.subjectColors[subj];
+                const palette = ['#007bff','#28a745','#fd7e14','#dc3545','#6f42c1','#20c997','#d63384','#17a2b8'];
+                const idx = Array.from(subj).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                return palette[idx % palette.length];
+            };
+
+            const makeCard = (icon, title, val1, val2, color, isSmall) => {
+                const pad = isSmall ? '10px 4px' : '5px';
+                const iSize = isSmall ? '18px' : '26px';
+                const valSize = isSmall ? '14px' : '18px';
+                const titleSize = isSmall ? '9px' : '10px';
+                return '<div style="flex:1; min-width:0; min-height:0; background:' + color + '10; border:2px solid ' + color + '30; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:' + pad + '; box-sizing:border-box; overflow:hidden;">' +
+                    '<i class="' + icon + '" style="color:' + color + '; font-size:' + iSize + '; margin-bottom:8px; filter:drop-shadow(0 2px 4px ' + color + '40);"></i>' +
+                    '<div style="font-size:' + valSize + '; font-weight:900; color:' + color + '; display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:3px;">' + val1 + '<span style="font-size:10px; opacity:0.6;">/' + val2 + '</span></div>' +
+                    '<div style="font-size:' + titleSize + '; font-weight:800; color:' + color + '; margin-top:6px; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">' + title + '</div>' +
+                    '</div>';
+            };
+
+            const cardTasksMain = makeCard('fa-solid fa-list-check', 'Görev', completedTasksCount, totalTasksCount, '#007bff', false);
+            const cardTimeMain = makeCard('fa-solid fa-stopwatch', 'Süre', completedTimeStr, totalTimeStr, '#28a745', false);
+            const cardQMain = makeCard('fa-solid fa-clipboard-question', 'Soru', completedQ, totalQ, '#fd7e14', false);
+            const cardVidMain = makeCard('fa-brands fa-youtube', 'Video', watchedVideos, totalVideos, '#dc3545', false);
+
+            const cardTasksModal = makeCard('fa-solid fa-list-check', 'Görev', completedTasksCount, totalTasksCount, '#007bff', true);
+            const cardTimeModal = makeCard('fa-solid fa-stopwatch', 'Süre', completedTimeStr, totalTimeStr, '#28a745', true);
+            const cardQModal = makeCard('fa-solid fa-clipboard-question', 'Soru', completedQ, totalQ, '#fd7e14', true);
+            const cardVidModal = makeCard('fa-brands fa-youtube', 'Video', watchedVideos, totalVideos, '#dc3545', true);
+
+            summaryContainer.innerHTML = '' +
+                '<div style="display:flex; gap:10px; width:100%; justify-content:space-between; align-items:stretch; margin-top:12px; margin-bottom:0; flex:1; min-height:0; overflow:hidden;">' +
+                    cardTasksMain + cardTimeMain + cardQMain + cardVidMain +
+                '</div>';
+
+            // --- YENİ DÜZEN DAĞILIM OLUŞTURUCU (Butonlar Başlığın Sağında) ---
+            const buildDistHtml = (prefix, statsData, isTime, iconClass, titleText, iconColor) => {
+                let html = '<div style="background:var(--color-bg-card, #ffffff); padding:15px; border-radius:12px; border:1px solid var(--color-border); box-shadow:0 2px 5px rgba(0,0,0,0.02); margin-bottom:20px;">';
+                
+                // Satır 1: Başlık (Sol) ve Seçim Butonları (Sağ) - FLEXBOX İLE AYNI SATIRDA
+                html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">';
+                html += '<h4 style="margin:0; font-size:12px; font-weight:800; color:var(--color-text-secondary); text-transform:uppercase;"><i class="' + iconClass + '" style="color:' + iconColor + '; margin-right:6px;"></i> ' + titleText + '</h4>';
+                
+                html += '<div style="display:flex; gap:4px; background:var(--color-bg-input); border-radius:8px; padding:4px;">';
+                ['all', 'tyt', 'ayt'].forEach((tab, i) => {
+                    const label = tab === 'all' ? 'TÜMÜ' : tab.toUpperCase();
+                    html += '<button onclick="window.switchCalModalTab(\'' + prefix + '\', \'' + tab + '\')" id="' + prefix + '_btn_' + tab + '" style="background:' + (i===0 ? 'var(--color-primary)' : 'transparent') + '; color:' + (i===0 ? '#fff' : 'var(--color-text-muted)') + '; border:none; padding:4px 12px; border-radius:6px; font-size:9px; font-weight:800; cursor:pointer; transition:0.2s;">' + label + '</button>';
+                });
+                html += '</div></div>';
+
+                // İçerikler (All, TYT, AYT)
+                ['all', 'tyt', 'ayt'].forEach((tab, i) => {
+                    const data = statsData[tab];
+                    const maxVal = Math.max(...Object.values(data), 1);
+                    const totalVal = Object.values(data).reduce((a,b)=>a+b, 0);
+
+                    let bars = Object.keys(data).sort((a,b)=>data[b]-data[a]).map(subj => {
+                        const val = data[subj];
+                        const w = (val / maxVal) * 100;
+                        const c = getColor(subj);
+                        const valStr = isTime ? formatTime(val) : val + ' Soru';
+                        return '<div style="margin-bottom:10px;">' +
+                                '<div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--color-text-main); margin-bottom:4px;">' +
+                                    '<span>' + subj + '</span><span style="color:' + c + ';">' + valStr + '</span>' +
+                                '</div>' +
+                                '<div style="background:var(--color-bg-input); border-radius:6px; height:8px; overflow:hidden;">' +
+                                    '<div style="width:' + w + '%; background:' + c + '; height:100%; border-radius:6px;"></div>' +
+                                '</div>' +
+                            '</div>';
                     }).join('');
 
-                // Playlist listesi
-                // Playlist kartlarını savedPlaylists'ten al
-                const plIds = Object.keys(playlistMap);
-                const plData = plIds.map(pid =>
-                    (typeof savedPlaylists !== 'undefined')
-                        ? savedPlaylists.find(p => p.id.toString() === pid)
-                        : null
-                ).filter(Boolean);
+                    if (!bars) bars = '<div style="font-size:11px; color:var(--color-text-muted); font-style:italic;">Bu alan için veri bulunmuyor.</div>';
 
-                const plHtml = plData.length > 0 ? `
-                    <div style="margin-top:4px;">
-                        <div style="font-size:11px;font-weight:800;color:var(--color-text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">
-                            <i class="fa-brands fa-youtube" style="color:#dc3545;"></i> Playlistler
-                        </div>
-                        <div style="display:flex;flex-direction:column;gap:6px;">
-                            ${plData.map(pl => {
-                                const thumb = pl.firstVideoThumb || '';
-                                const title = pl.customTitle || pl.subject || 'Playlist';
-                                const count = pl.videoCount || (pl.videos ? pl.videos.length : 0);
-                                const dur   = pl.totalDuration || '';
-                                const badge = (pl.examType || '').toUpperCase();
-                                const badgeColor = pl.examType === 'tyt' ? '#007bff' : '#6f42c1';
-                                return `<div style="display:flex;align-items:center;gap:8px;background:var(--color-bg-input);border-radius:var(--radius-md);overflow:hidden;">
-                                    <img src="${thumb}" style="width:52px;height:36px;object-fit:cover;flex-shrink:0;background:#111;">
-                                    <div style="flex:1;min-width:0;padding:4px 2px;">
-                                        <div style="font-size:11px;font-weight:800;color:var(--color-text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${title}</div>
-                                        <div style="font-size:10px;color:var(--color-text-muted);margin-top:1px;display:flex;align-items:center;gap:6px;">
-                                            <span><i class="fa-solid fa-list-ul"></i> ${count} video</span>
-                                            ${dur ? `<span><i class="fa-regular fa-clock"></i> ${dur}</span>` : ''}
-                                            ${badge ? `<span style="color:${badgeColor};font-weight:800;">${badge}</span>` : ''}
-                                        </div>
-                                    </div>
-                                </div>`;
-                            }).join('')}
-                        </div>
-                    </div>` : '';
+                    let pieHtml = '';
+                    if (totalVal > 0) {
+                        let conicArgs = [];
+                        let currentPct = 0;
+                        Object.keys(data).sort((a,b)=>data[b]-data[a]).forEach(subj => {
+                            const pct = (data[subj] / totalVal) * 100;
+                            const c = getColor(subj);
+                            conicArgs.push(c + ' ' + currentPct + '% ' + (currentPct+pct) + '%');
+                            currentPct += pct;
+                        });
+                        pieHtml = '<div style="width:85px; height:85px; border-radius:50%; background:conic-gradient(' + conicArgs.join(', ') + '); flex-shrink:0; box-shadow:0 2px 5px rgba(0,0,0,0.1);"></div>';
+                    } else {
+                        pieHtml = '<div style="width:85px; height:85px; border-radius:50%; background:var(--color-bg-input); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--color-text-muted); opacity:0.5;"><i class="fa-solid fa-chart-pie"></i></div>';
+                    }
 
-                summaryEl.innerHTML = `
-                    <div class="cal-summary-stat">
-                        <i class="fa-solid fa-stopwatch" style="color:var(--color-primary);"></i>
-                        <span>Toplam Çalışma</span>
-                        <span style="margin-left:auto;color:var(--color-primary);">${timeStr}</span>
-                    </div>
-                    ${totalQ > 0 ? `
-                    <div class="cal-summary-stat">
-                        <i class="fa-solid fa-clipboard-question" style="color:#fd7e14;"></i>
-                        <span>Çözülen Soru</span>
-                        <span style="margin-left:auto;color:#fd7e14;">${totalQ} soru</span>
-                    </div>` : ''}
-                    ${totalVideos > 0 ? `
-                    <div class="cal-summary-stat">
-                        <i class="fa-brands fa-youtube" style="color:#dc3545;"></i>
-                        <span>İzlenen Video</span>
-                        <span style="margin-left:auto;color:#dc3545;">${watchedVideos} / ${totalVideos}</span>
-                    </div>` : ''}
-                    <div style="margin-top:2px;">
-                        <div style="font-size:11px;font-weight:800;color:var(--color-text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">
-                            <i class="fa-solid fa-chart-bar"></i> Ders Dağılımı
-                        </div>
-                        <div style="display:flex;flex-direction:column;gap:5px;">${subjectBars}</div>
-                    </div>
-                    ${plHtml}
-                `;
+                    html += '<div id="' + prefix + '_content_' + tab + '" style="display:' + (i===0?'flex':'none') + '; gap:25px; align-items:center;">' +
+                                '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; min-width:0;">' + bars + '</div>' +
+                                '<div>' + pieHtml + '</div>' +
+                            '</div>';
+                });
+                html += '</div>';
+                return html;
+            };
+
+            const timeDistHtml = buildDistHtml('calTimeDist', stats.time, true, 'fa-solid fa-clock', 'Süre Dağılımı', 'var(--color-success)');
+            const qDistHtml = buildDistHtml('calQDist', stats.q, false, 'fa-solid fa-clipboard-question', 'Soru Dağılımı', 'var(--color-warning)');
+
+            // --- PLAYLIST ÖZETİ YENİ SİSTEM ---
+            const plIds = Object.keys(playlistMap);
+            let plHtml = '';
+            if (plIds.length > 0) {
+                plHtml = plIds.map(pid => {
+                    const originalPl = (typeof savedPlaylists !== 'undefined') ? savedPlaylists.find(p => p.id.toString() === pid) : null;
+                    if (!originalPl) return '';
+                    
+                    const dayVideos = playlistMap[pid].videos;
+                    let totalSecs = 0;
+                    let watchedCount = 0;
+                    
+                    dayVideos.forEach(vid => {
+                        if(vid._calcWatched) watchedCount++; // Düzeltilmiş doğru izlenme flag'ı kullanılıyor
+                        if (vid.duration) {
+                            const parts = vid.duration.split(':').map(Number).reverse();
+                            if (parts[0]) totalSecs += parts[0];
+                            if (parts[1]) totalSecs += parts[1] * 60;
+                            if (parts[2]) totalSecs += parts[2] * 3600;
+                        }
+                    });
+                    
+                    const h = Math.floor(totalSecs / 3600);
+                    const m = Math.floor((totalSecs % 3600) / 60);
+                    const durStr = h > 0 ? h + 'sa ' + m + 'dk' : m + 'dk';
+                    
+                    const thumb = originalPl.firstVideoThumb || '';
+                    const title = originalPl.customTitle || originalPl.subject || 'Playlist';
+                    const exType = (originalPl.examType || '').toUpperCase() || 'TYT';
+                    const subj = originalPl.subject || 'Ders Seçilmemiş';
+                    
+                    const badgeColor = exType === 'TYT' ? '#007bff' : '#6f42c1';
+                    const watchColor = watchedCount === dayVideos.length ? 'var(--color-success)' : 'var(--color-warning)';
+                    
+                    return '<div style="display:flex; align-items:center; gap:12px; background:var(--color-bg-input); border:1px solid var(--color-border); border-radius:10px; padding:10px; margin-bottom:10px;">' +
+                            '<img src="' + thumb + '" style="width:70px; height:45px; object-fit:cover; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">' +
+                            '<div style="flex:1;">' +
+                                '<div style="font-size:12px; font-weight:900; color:var(--color-text-main); margin-bottom:6px; display:flex; align-items:center; flex-wrap:wrap; gap:6px;">' + 
+                                    '<span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">' + title + '</span>' +
+                                    '<span style="font-size:9px; font-weight:800; background:' + badgeColor + '20; color:' + badgeColor + '; padding:3px 6px; border-radius:4px;">' + exType + '</span>' +
+                                    '<span style="font-size:9px; font-weight:800; background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); padding:2px 6px; border-radius:4px;">' + subj + '</span>' +
+                                '</div>' +
+                                '<div style="font-size:10px; color:var(--color-text-muted); display:flex; gap:12px; align-items:center;">' +
+                                    '<span style="color:' + watchColor + '; font-weight:800;"><i class="fa-solid fa-circle-check"></i> ' + watchedCount + ' / ' + dayVideos.length + ' İzlendi</span>' +
+                                    '<span style="color:var(--color-danger); font-weight:700;"><i class="fa-regular fa-clock"></i> ' + durStr + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                }).join('');
+            } else {
+                plHtml = '<div style="font-size:11px; color:var(--color-text-muted); font-style:italic;">Video verisi bulunmuyor.</div>';
             }
 
-            // Görünümü değiştir
-            document.getElementById('calCalendarView').style.display  = 'none';
-            document.getElementById('calMainHeader').style.display    = 'none';
-            document.getElementById('calSummaryHeader').style.display = 'flex';
-            document.getElementById('calSummaryDate').textContent     = dateText;
-            summaryEl.style.display = 'flex';
+            // --- MODAL AÇMA FONKSİYONU ---
+            window.openCalDetailModal = function() {
+                const existing = document.getElementById('calDetailModalOverlay');
+                if(existing) existing.remove();
+
+                const modalStr = '' +
+                '<div id="calDetailModalOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter:blur(5px);">' +
+                    '<div style="background:var(--color-bg-card, #ffffff); width:100%; max-width:550px; max-height:85vh; border-radius:16px; display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.4); overflow:hidden; animation: fadeIn 0.2s ease-out; border:1px solid var(--color-border);">' +
+                        
+                        '<div style="padding:16px 20px; background:var(--color-bg-input); border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center;">' +
+                            '<h3 style="margin:0; font-size:14px; font-weight:800; color:var(--color-text-main);"><i class="fa-solid fa-chart-pie" style="color:var(--color-primary); margin-right:6px;"></i> Detaylı Analiz</h3>' +
+                            '<button onclick="document.getElementById(\'calDetailModalOverlay\').remove()" style="background:none; border:none; color:var(--color-text-muted); font-size:20px; cursor:pointer; padding:0; line-height:1;"><i class="fa-solid fa-xmark"></i></button>' +
+                        '</div>' +
+
+                        '<div style="padding:20px; overflow-y:auto; display:flex; flex-direction:column;">' +
+                            '<div style="display:flex; gap:8px; margin-bottom:20px;">' + cardTasksModal + cardTimeModal + cardQModal + cardVidModal + '</div>' +
+                            
+                            timeDistHtml +
+                            qDistHtml +
+
+                            '<div style="background:var(--color-bg-card, #ffffff); padding:15px; border-radius:12px; border:1px solid var(--color-border); box-shadow:0 2px 5px rgba(0,0,0,0.02);">' +
+                                '<h4 style="margin:0 0 12px 0; font-size:12px; font-weight:800; color:var(--color-text-secondary); text-transform:uppercase;"><i class="fa-brands fa-youtube" style="color:var(--color-danger); margin-right:6px;"></i> Playlist Özeti</h4>' +
+                                plHtml +
+                            '</div>' +
+
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+
+                document.body.insertAdjacentHTML('beforeend', modalStr);
+            };
         }
 
         function showCalCalendarView() {
