@@ -5292,27 +5292,20 @@
 
                 if (task.taskVideos && task.taskVideos.length > 0) {
                     task.taskVideos.forEach(v => {
-                        // Video izlenme durumunu sağlam bir şekilde hesapla
-                        let isW = v.isWatched === true || v.isWatched === 'true' || task.isCompleted === true;
-                        
-                        // Eğer görevden değil de Playlist Merkezinden izlenmişse, ana veritabanından(savedPlaylists) durumu çek
-                        if (!isW && v.plId !== undefined && typeof savedPlaylists !== 'undefined') {
+                        totalVideos++;
+                        // Sadece savedPlaylists'ten oku — hiçbir şeye yazma
+                        let isW = false;
+                        if (v.plId !== undefined) {
                             const globalPl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
-                            if (globalPl && globalPl.videos) {
-                                const globalVid = globalPl.videos.find(pv => pv.videoId === v.videoId);
-                                if (globalVid && (globalVid.isWatched === true || globalVid.isWatched === 'true')) {
-                                    isW = true;
-                                }
+                            if (globalPl && globalPl.videos && v.index !== undefined && globalPl.videos[v.index] !== undefined) {
+                                isW = globalPl.videos[v.index].isWatched === true;
                             }
                         }
-
-                        totalVideos++;
                         if (isW) watchedVideos++;
-                        
+
                         if (v.plId !== undefined) {
                             const pid = v.plId.toString();
                             if (!playlistMap[pid]) playlistMap[pid] = { videos: [] };
-                            // Sadece bu göreve özel hesaplanmış izlenme durumunu videonun içine yazıyoruz
                             playlistMap[pid].videos.push({ ...v, _calcWatched: isW });
                         }
                     });
@@ -9271,7 +9264,7 @@
         document.getElementById('yesPlaylistSaveBtn').onclick = async () => {
             // Onay penceresini hemen kapat
             document.getElementById('playlistSaveConfirmModal').style.display = 'none';
-            
+
             if (!currentViewingPlaylistId || !currentUserUid) return;
 
             const plIndex = savedPlaylists.findIndex(p => p.id.toString() === currentViewingPlaylistId.toString());
@@ -9279,12 +9272,35 @@
 
             const pl = savedPlaylists[plIndex];
             const checkboxes = document.querySelectorAll('.video-watched-cb');
-            
-            // Yeni check durumlarını listeye kaydet
+
+            let changedTasks = []; // YENİ: Değişen görevleri takip edeceğimiz liste
+
+            // Yeni check durumlarını listeye kaydet ve görevlerle (userTasks) senkronize et
             checkboxes.forEach(cb => {
                 const idx = parseInt(cb.getAttribute('data-index'));
                 if(pl.videos && pl.videos[idx]) {
-                    pl.videos[idx].isWatched = cb.checked;
+                    const newStatus = cb.checked;
+                    
+                    // Eğer durum değişmişse senkronizasyonu başlat
+                    if (pl.videos[idx].isWatched !== newStatus) {
+                        pl.videos[idx].isWatched = newStatus;
+
+                        // Takvimdeki tüm görevleri tarayıp bu videoyu içerenleri de aynı duruma getir
+                        if (typeof userTasks !== 'undefined') {
+                            Object.keys(userTasks).forEach(dateKey => {
+                                userTasks[dateKey].forEach(task => {
+                                    if (task.taskVideos && task.taskVideos.length > 0) {
+                                        task.taskVideos.forEach(tv => {
+                                            if (tv.plId && tv.plId.toString() === pl.id.toString() && tv.videoId === pl.videos[idx].videoId) {
+                                                tv.isWatched = newStatus;
+                                                if (!changedTasks.includes(task)) changedTasks.push(task);
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    }
                 }
             });
 
@@ -9296,14 +9312,21 @@
             toast.querySelector('.toast-spinner').style.display = 'block';
 
             try {
-                // Firebase veritabanına yaz
+                // 1. Playlisti Firebase veritabanına yaz
                 const playlistDocRef = doc(db, "users", currentUserUid, "userPlaylists", pl.id.toString());
                 await setDoc(playlistDocRef, pl);
 
-                // 1. Modal içindeki sayacı ve ilerlemeyi yenile
+                // 2. Etkilenen (içinde o video olan) tüm görevleri Firebase'e kaydet (SENKRONİZASYON)
+                if (changedTasks.length > 0 && currentUserUid) {
+                    for (const t of changedTasks) {
+                        await setDoc(doc(db, "users", currentUserUid, "userTasks", t.id.toString()), t, { merge: true });
+                    }
+                }
+
+                // 3. Modal içindeki sayacı ve ilerlemeyi yenile
                 window.viewPlaylistDetails(currentViewingPlaylistId);
                 
-                // 2. YENİ: Arka plandaki kartların yüzdelik dilimini anında güncelle!
+                // 4. Arka plandaki kartların yüzdelik dilimini anında güncelle!
                 window.renderPlaylists();
                 
                 // Baloncuğu "Başarılı" durumuna çevir
@@ -11962,19 +11985,19 @@
                 vwTitle  = task.desc || task.subject || 'Görev';
                 vwIdx    = 0;
                 
-                // YENİ MANTIK: Eğer görev tamamlandıysa tüm videoları izlendi yap
-                if (task.isCompleted) {
-                    // Tüm videoların indekslerini (0, 1, 2...) Set içine ekle
-                    vwWatched = new Set(vwVideos.map((_, i) => i));
-                    
-                    // (Opsiyonel ama garanti olsun diye) objelerin içindeki değerleri de true yapalım
-                    vwVideos.forEach(v => v.isWatched = true);
-                } else {
-                    // Tamamlanmadıysa veritabanındaki mevcut durumları yükle (SENİN ORİJİNAL KODUN)
-                    vwWatched = new Set(
-                        vwVideos.map((v,i) => v.isWatched ? i : -1).filter(i => i >= 0)
-                    );
-                }
+                // vwWatched'ı SADECE savedPlaylists'ten kur — tek kalıcı kaynak budur.
+                // task.taskVideos[i].isWatched'a ASLA yazma; sadece oku (o alan güncel olmayabilir).
+                vwWatched = new Set();
+                vwVideos.forEach((v, i) => {
+                    let watched = false;
+                    if (v.plId !== undefined) {
+                        const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
+                        if (pl && pl.videos && v.index !== undefined && pl.videos[v.index] !== undefined) {
+                            watched = pl.videos[v.index].isWatched === true;
+                        }
+                    }
+                    if (watched) vwWatched.add(i);
+                });
 
                 document.getElementById('vwVideoListTitle').textContent = vwTitle;
                 showPlayerPane();
@@ -12071,61 +12094,48 @@
                 });
             }
 
-            // --- İZLENDİ TOGGLE (Güncellenmiş) ---
+            // --- İZLENDİ TOGGLE ---
             window.vwToggleWatched = async function(idx) {
                 if (!vwTask || !vwVideos) return;
-                
                 const isWatched = vwWatched.has(idx);
 
-                // GÖREV TAMAMLANMIŞSA VE TİK KALDIRILIYORSA ÖZEL UYARIYI ÇAĞIR
+                // Görev tamamlanmışsa ve tik kaldırılıyorsa onay sor
                 if (isWatched && vwTask.isCompleted) {
-                    // Tarayıcı confirm'i yerine bizim özel fonksiyonumuzu await ile bekletiyoruz
                     const onay = await showCustomConfirm("Bu videonun 'İzlendi' işaretini kaldırırsanız, ana programdaki bu görev de 'Tamamlanmadı' durumuna geri dönecektir. Onaylıyor musunuz?");
-                    
-                    if (!onay) return; // Kullanıcı iptal derse işlemi durdur
-
-                    // Onaylarsa görevi "tamamlanmadı" yap
+                    if (!onay) return;
                     vwTask.isCompleted = false;
-                    
+                    // Görevi Firebase'e kaydet
+                    if (currentUserUid) {
+                        try {
+                            await setDoc(doc(db, "users", currentUserUid, "userTasks", vwTask.id.toString()), vwTask, { merge: true });
+                        } catch(e) {}
+                    }
                     if (typeof renderWeeklyPlanner === 'function') renderWeeklyPlanner();
                     if (typeof renderDashboard === 'function') renderDashboard();
                 }
 
-                // Geri kalan orijinal Firebase ve durum güncelleme işlemleri aynen devam ediyor
+                // vwWatched Set'ini güncelle
                 if (isWatched) vwWatched.delete(idx);
                 else vwWatched.add(idx);
 
-                const v = vwVideos[idx];
+                const newStatus = vwWatched.has(idx);
+                const v = vwVideos[idx]; // vwVideos = task.taskVideos referansı
+
+                // savedPlaylists'teki ilgili videoyu güncelle (TEK YAZMA NOKTASI)
                 const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
-                if (pl && pl.videos && pl.videos[v.index] !== undefined) {
-                    pl.videos[v.index].isWatched = vwWatched.has(idx);
+                if (pl && pl.videos && v.index !== undefined && pl.videos[v.index] !== undefined) {
+                    pl.videos[v.index].isWatched = newStatus;
                     try {
-                        if (currentUserUid) await setDoc(doc(db,"users",currentUserUid,"userPlaylists",pl.id.toString()), pl, {merge:true});
-                    } catch(e){}
+                        if (currentUserUid) {
+                            await setDoc(doc(db, "users", currentUserUid, "userPlaylists", pl.id.toString()), pl, { merge: true });
+                        }
+                    } catch(e) { console.error('Playlist kaydetme hatası:', e); }
                 }
 
-                if (vwTask.taskVideos && vwTask.taskVideos[idx] !== undefined) {
-                    vwTask.taskVideos[idx] = {...vwTask.taskVideos[idx], isWatched: vwWatched.has(idx)};
-                }
-                
-                const dk = vwDay;
-                if (userTasks[dk]) {
-                    const ti = userTasks[dk].findIndex(t => t.id === vwTask.id);
-                    if (ti !== -1) {
-                        userTasks[dk][ti] = {
-                            ...userTasks[dk][ti], 
-                            taskVideos: vwTask.taskVideos,
-                            isCompleted: vwTask.isCompleted 
-                        };
-                        try {
-                            if (currentUserUid) await setDoc(doc(db,"users",currentUserUid,"userTasks",vwTask.id.toString()), userTasks[dk][ti], {merge:true});
-                        } catch(e){}
-                    }
-                }
-
-                vwVideos = vwTask.taskVideos;
+                // Arayüzü yenile — takvim/haftalık planlayıcı da savedPlaylists'i okuyacağı için doğru gösterir
                 renderVideoList();
-                renderPlaylistGrid(); 
+                renderPlaylistGrid();
+                if (typeof window.renderPlaylists === 'function') window.renderPlaylists();
             };
 
             // --- Video oynat ---
