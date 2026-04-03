@@ -5178,18 +5178,105 @@
             for (let i = 0; i < firstDay; i++) daysHtml += `<div class="day-box empty"></div>`;
 
             for (let i = 1; i <= daysInMonth; i++) {
-                const d   = new Date(year, month, i);
-                const dk  = calDateKey(d);
+                const d = new Date(year, month, i);
+                const dk = calDateKey(d);
                 const tasks = (typeof userTasks !== 'undefined' && userTasks[dk]) ? userTasks[dk] : [];
                 const hasTasks = tasks.length > 0;
-                const isToday  = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                
+                const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+                const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const isPast = d < todayMidnight;
+                const isFuture = d > todayMidnight;
+                
+                let cls = "day-box";
+                if(isToday) cls += " today";
+                
+                let customStyle = "border-radius: 12px; transition: all 0.2s ease; box-sizing: border-box;";
+                let innerHtml = `<span style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:12px; font-weight:800;">${i}</span>`;
+                const rightIconStyle = "position:absolute; right:4px; top:50%; transform:translateY(-50%);";
 
-                let cls = 'day-box';
-                if (isToday) cls += ' today';
+                // --- RENK VE GRADYAN MATEMATİĞİ ---
+                const hexToRgba = (hex, alpha) => {
+                    if (!hex || !hex.startsWith('#')) return hex;
+                    let r = parseInt(hex.slice(1, 3), 16),
+                        g = parseInt(hex.slice(3, 5), 16),
+                        b = parseInt(hex.slice(5, 7), 16);
+                    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                };
 
-                // Görev olan günlerdeki noktayı kaldırdık (Senin isteğin üzerine)
-                const dot = ''; 
-                daysHtml += `<div class="${cls}" style="position:relative;" data-datekey="${dk}" data-day="${i}">${i}${dot}</div>`;
+                // Renkleri aydınlatan akıllı fonksiyon (Gradyan geçişi için)
+                const adjustHex = (hex, amount) => {
+                    let color = hex.replace('#', '');
+                    if (color.length === 3) color = color.split('').map(c => c + c).join('');
+                    let r = Math.max(Math.min(255, parseInt(color.substring(0, 2), 16) + amount), 0).toString(16);
+                    let g = Math.max(Math.min(255, parseInt(color.substring(2, 4), 16) + amount), 0).toString(16);
+                    let b = Math.max(Math.min(255, parseInt(color.substring(4, 6), 16) + amount), 0).toString(16);
+                    return `#${r.padStart(2, '0')}${g.padStart(2, '0')}${b.padStart(2, '0')}`;
+                };
+
+                const getBgStr = (style, colorHex, opacity) => {
+                    if (style === 'gradient') {
+                        // Seçilen rengin 45 birim daha parlak tonunu bul ve ikisini şeffaflıkla birleştir!
+                        const color1 = hexToRgba(adjustHex(colorHex, 45), opacity);
+                        const color2 = hexToRgba(colorHex, opacity);
+                        return `linear-gradient(135deg, ${color1}, ${color2})`;
+                    }
+                    return hexToRgba(colorHex, opacity);
+                };
+
+                // --- Şeffaflık Destekli Arka Planlar (Düz veya Gradyan) ---
+                const bgCompleted = getBgStr(window.calColors?.bgStyleCompleted || 'solid', window.calColors?.completed || '#20c997', window.calColors?.bgOpacityCompleted ?? 1);
+                const bgUncompleted = getBgStr(window.calColors?.bgStyleUncompleted || 'solid', window.calColors?.uncompleted || '#f87171', window.calColors?.bgOpacityUncompleted ?? 1);
+                const bgEmpty = getBgStr(window.calColors?.bgStyleEmpty || 'solid', window.calColors?.empty || '#f8f9fa', window.calColors?.bgOpacityEmpty ?? 1);
+                const bgPlanned = getBgStr(window.calColors?.bgStylePlanned || 'solid', window.calColors?.planned || '#e6f2ff', window.calColors?.bgOpacityPlanned ?? 1);
+                const bgToday = getBgStr(window.calColors?.bgStyleToday || 'gradient', window.calColors?.today || '#6f42c1', window.calColors?.bgOpacityToday ?? 1);
+
+                // --- Şeffaflık Destekli Yazı Renkleri ---
+                const txtCompleted = hexToRgba(window.calColors?.textCompleted || '#ffffff', window.calColors?.textOpacityCompleted ?? 1);
+                const txtUncompleted = hexToRgba(window.calColors?.textUncompleted || '#ffffff', window.calColors?.textOpacityUncompleted ?? 1);
+                const txtEmpty = hexToRgba(window.calColors?.textEmpty || '#6c757d', window.calColors?.textOpacityEmpty ?? 1);
+                const txtPlanned = hexToRgba(window.calColors?.textPlanned || '#007bff', window.calColors?.textOpacityPlanned ?? 1);
+                const txtToday = hexToRgba(window.calColors?.textToday || '#ffffff', window.calColors?.textOpacityToday ?? 1);
+
+                // --- Şeffaflık Destekli Çerçeve (Border) ---
+                const getBorderStr = (style, colorHex, opacity) => style === 'none' ? 'none' : `2px ${style} ${hexToRgba(colorHex, opacity)}`;
+                
+                const brdCompleted = getBorderStr(window.calColors?.borderStyleCompleted || 'none', window.calColors?.borderColorCompleted || '#20c997', window.calColors?.borderOpacityCompleted ?? 1);
+                const brdUncompleted = getBorderStr(window.calColors?.borderStyleUncompleted || 'none', window.calColors?.borderColorUncompleted || '#f87171', window.calColors?.borderOpacityUncompleted ?? 1);
+                const brdPlanned = getBorderStr(window.calColors?.borderStylePlanned || 'solid', window.calColors?.borderColorPlanned || '#007bff', window.calColors?.borderOpacityPlanned ?? 1);
+                const brdEmpty = getBorderStr(window.calColors?.borderStyleEmpty || 'dashed', window.calColors?.borderColorEmpty || '#6c757d', window.calColors?.borderOpacityEmpty ?? 1);
+                const brdToday = getBorderStr(window.calColors?.borderStyleToday || 'none', window.calColors?.borderColorToday || '#6f42c1', window.calColors?.borderOpacityToday ?? 1);
+
+                if (isToday) {
+                    customStyle += ` background: ${bgToday}; color: ${txtToday}; border: ${brdToday}; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-weight: 900;`;
+                    innerHtml += `<i class="fa-solid fa-book-open" style="${rightIconStyle} font-size:8px; background:rgba(0,0,0,0.15); border-radius:50%; padding:4px;"></i>`;
+                } 
+                else if (isPast) {
+                    if (hasTasks) {
+                        const allCompleted = window.checkDayCompletion(tasks);
+                        if (allCompleted) {
+                            customStyle += ` background: ${bgCompleted}; color: ${txtCompleted}; border: ${brdCompleted}; box-shadow: 0 4px 10px rgba(0,0,0,0.15);`;
+                            innerHtml += `<i class="fa-solid fa-check" style="${rightIconStyle} font-size:9px; background:rgba(0,0,0,0.15); border-radius:50%; padding:3px;"></i>`;
+                        } else {
+                            customStyle += ` background: ${bgUncompleted}; color: ${txtUncompleted}; border: ${brdUncompleted}; box-shadow: 0 4px 10px rgba(0,0,0,0.15);`;
+                            innerHtml += `<i class="fa-solid fa-xmark" style="${rightIconStyle} font-size:9px; background:rgba(0,0,0,0.15); border-radius:50%; padding:3px 4px;"></i>`;
+                        }
+                    } else {
+                        customStyle += ` background: ${bgEmpty}; color: ${txtEmpty}; border: ${brdEmpty}; opacity: 0.6;`;
+                        innerHtml += `<i class="fa-solid fa-mug-hot" style="${rightIconStyle} font-size:10px; opacity:0.4;"></i>`;
+                    }
+                } 
+                else if (isFuture) {
+                    if (hasTasks) {
+                        customStyle += ` background: ${bgPlanned}; color: ${txtPlanned}; border: ${brdPlanned}; font-weight: 800; box-shadow: 0 4px 8px rgba(0,123,255,0.1);`;
+                        innerHtml += `<i class="fa-regular fa-calendar-check" style="${rightIconStyle} font-size:10px; opacity:0.8;"></i>`; 
+                    } else {
+                        customStyle += ` background: ${bgEmpty}; color: ${txtEmpty}; border: ${brdEmpty}; opacity: 0.6;`;
+                        innerHtml += `<i class="fa-solid fa-mug-hot" style="${rightIconStyle} font-size:10px; opacity:0.4;"></i>`;
+                    }
+                }
+                
+                daysHtml += `<div class="${cls}" style="position:relative; cursor:pointer; ${customStyle}" data-datekey="${dk}" data-day="${i}">${innerHtml}</div>`;
             }
             calendarDays.innerHTML = daysHtml;
 
@@ -5230,16 +5317,54 @@
 
             const tasks = (typeof userTasks !== 'undefined' && userTasks[dk]) ? userTasks[dk] : [];
 
+            // --- YENİ: GÜNÜN DURUM ROZETİNİ (BADGE) HESAPLAMA ---
+            let statusText = "Boş gün";
+            let statusColor = window.calColors?.empty ? "#495057" : "var(--color-text-muted)";
+            let statusBg = window.calColors?.empty || "var(--color-bg-input)";
+            let statusIcon = "fa-solid fa-mug-hot";
+            let hasCustomColor = false;
+
+            if (tasks.length > 0) {
+                const allCompleted = window.checkDayCompletion(tasks);
+                if (allCompleted) {
+                    statusText = "Tamamlandı";
+                    statusColor = window.calColors?.completed ? "#fff" : "var(--color-success)";
+                    statusBg = window.calColors?.completed || "var(--color-success-light)";
+                    statusIcon = "fa-solid fa-check";
+                    hasCustomColor = !!window.calColors?.completed;
+                } else {
+                    statusText = "Tamamlanmadı";
+                    statusColor = window.calColors?.uncompleted ? "#fff" : "var(--color-danger)"; 
+                    statusBg = window.calColors?.uncompleted || "var(--color-danger-light)";
+                    statusIcon = "fa-solid fa-xmark";
+                    hasCustomColor = !!window.calColors?.uncompleted;
+                }
+            }
+
+            let textShadowStyle = hasCustomColor ? 'text-shadow: 0 1px 3px rgba(0,0,0,0.4);' : '';
+            const statusBadgeHtml = '<div style="display:flex; align-items:center; gap:6px; font-size:10px; font-weight:900; color:' + statusColor + '; background:' + statusBg + '; padding:4px 10px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase; ' + textShadowStyle + '"><i class="' + statusIcon + '"></i> ' + statusText + '</div>';
+
+            // Üst UI Ayarlamaları
             document.getElementById('calCalendarView').style.display = 'none';
             document.getElementById('calMainHeader').style.display = 'none';
-            document.getElementById('calSummaryHeader').style.display = 'flex';
             
-            document.getElementById('calSummaryDate').innerHTML = 
+            const summaryHeader = document.getElementById('calSummaryHeader');
+            summaryHeader.style.display = 'flex';
+            summaryHeader.style.width = '100%'; 
+            
+            const summaryDateEl = document.getElementById('calSummaryDate');
+            summaryDateEl.style.flex = '1';
+            
+            // Detaylı butonunun yanına rozeti (statusBadgeHtml) ekledik
+            summaryDateEl.innerHTML = 
                 '<div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:10px;">' +
-                    '<span>' + dateText + '</span>' +
-                    '<button onclick="window.openCalDetailModal()" id="calDetailedViewBtn" style="background:var(--color-primary-light); color:var(--color-primary); border:1px solid var(--color-primary-border); padding:6px 14px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s; box-shadow:0 2px 4px rgba(0,123,255,0.1);">' +
-                        'Detaylı <i class="fa-solid fa-arrow-right"></i>' +
-                    '</button>' +
+                    '<span style="font-weight:800;">' + dateText + '</span>' +
+                    '<div style="display:flex; align-items:center; gap:8px;">' +
+                        statusBadgeHtml + 
+                        '<button onclick="window.openCalDetailModal()" id="calDetailedViewBtn" style="background:var(--color-primary-light); color:var(--color-primary); border:1px solid var(--color-primary-border); padding:6px 14px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s; box-shadow:0 2px 4px rgba(0,123,255,0.1);">' +
+                            'Detaylı <i class="fa-solid fa-arrow-right"></i>' +
+                        '</button>' +
+                    '</div>' +
                 '</div>';
             
             const summaryContainer = document.getElementById('calDaySummary');
@@ -5250,7 +5375,12 @@
             summaryContainer.style.overflow = 'hidden'; 
 
             if (tasks.length === 0) {
-                summaryContainer.innerHTML = '<div class="placeholder-text" style="font-size:14px; padding:30px 10px; background:var(--color-bg-card, #fff); border-radius:12px; border:1px dashed var(--color-border-strong); height:100%; display:flex; align-items:center; justify-content:center; flex:1;">Bu güne ait görev bulunmuyor.</div>';
+                // --- YENİ: BOŞ GÜN TASARIMI ---
+                const emptyBg = window.calColors?.empty || "var(--color-bg-input)";
+                summaryContainer.innerHTML = '<div style="font-size:18px; font-weight:800; color:var(--color-text-muted); background:' + emptyBg + '; border-radius:12px; border:2px dashed var(--color-border-strong); height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:15px; opacity:0.8; margin-top:10px;">' +
+                    '<i class="fa-solid fa-mug-hot" style="font-size:42px; opacity:0.5; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></i>' +
+                    '<span style="letter-spacing:1px; text-transform:uppercase;">Boş Gün</span>' +
+                '</div>';
                 return;
             }
 
@@ -5291,9 +5421,11 @@
                 }
 
                 if (task.taskVideos && task.taskVideos.length > 0) {
+                    
+                    // İŞTE ÇÖZÜM BURADA: Görevdeki video sayısını toplama ekliyoruz!
+                    totalVideos += task.taskVideos.length;
+
                     task.taskVideos.forEach(v => {
-                        totalVideos++;
-                        // Sadece savedPlaylists'ten oku — hiçbir şeye yazma
                         let isW = false;
                         if (v.plId !== undefined) {
                             const globalPl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
@@ -5356,11 +5488,9 @@
                     cardTasksMain + cardTimeMain + cardQMain + cardVidMain +
                 '</div>';
 
-            // --- YENİ DÜZEN DAĞILIM OLUŞTURUCU (Butonlar Başlığın Sağında) ---
             const buildDistHtml = (prefix, statsData, isTime, iconClass, titleText, iconColor) => {
                 let html = '<div style="background:var(--color-bg-card, #ffffff); padding:15px; border-radius:12px; border:1px solid var(--color-border); box-shadow:0 2px 5px rgba(0,0,0,0.02); margin-bottom:20px;">';
                 
-                // Satır 1: Başlık (Sol) ve Seçim Butonları (Sağ) - FLEXBOX İLE AYNI SATIRDA
                 html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">';
                 html += '<h4 style="margin:0; font-size:12px; font-weight:800; color:var(--color-text-secondary); text-transform:uppercase;"><i class="' + iconClass + '" style="color:' + iconColor + '; margin-right:6px;"></i> ' + titleText + '</h4>';
                 
@@ -5371,7 +5501,6 @@
                 });
                 html += '</div></div>';
 
-                // İçerikler (All, TYT, AYT)
                 ['all', 'tyt', 'ayt'].forEach((tab, i) => {
                     const data = statsData[tab];
                     const maxVal = Math.max(...Object.values(data), 1);
@@ -5421,7 +5550,6 @@
             const timeDistHtml = buildDistHtml('calTimeDist', stats.time, true, 'fa-solid fa-clock', 'Süre Dağılımı', 'var(--color-success)');
             const qDistHtml = buildDistHtml('calQDist', stats.q, false, 'fa-solid fa-clipboard-question', 'Soru Dağılımı', 'var(--color-warning)');
 
-            // --- PLAYLIST ÖZETİ YENİ SİSTEM ---
             const plIds = Object.keys(playlistMap);
             let plHtml = '';
             if (plIds.length > 0) {
@@ -5434,7 +5562,7 @@
                     let watchedCount = 0;
                     
                     dayVideos.forEach(vid => {
-                        if(vid._calcWatched) watchedCount++; // Düzeltilmiş doğru izlenme flag'ı kullanılıyor
+                        if(vid._calcWatched) watchedCount++; 
                         if (vid.duration) {
                             const parts = vid.duration.split(':').map(Number).reverse();
                             if (parts[0]) totalSecs += parts[0];
@@ -5474,7 +5602,6 @@
                 plHtml = '<div style="font-size:11px; color:var(--color-text-muted); font-style:italic;">Video verisi bulunmuyor.</div>';
             }
 
-            // --- MODAL AÇMA FONKSİYONU ---
             window.openCalDetailModal = function() {
                 const existing = document.getElementById('calDetailModalOverlay');
                 if(existing) existing.remove();
@@ -5508,13 +5635,34 @@
         }
 
         function showCalCalendarView() {
-            document.getElementById('calCalendarView').style.display  = 'flex';
-            document.getElementById('calMainHeader').style.display    = 'flex';
+            document.getElementById('calCalendarView').style.display = 'flex';
+            document.getElementById('calMainHeader').style.display = 'flex';
             document.getElementById('calSummaryHeader').style.display = 'none';
-            document.getElementById('calDaySummary').style.display    = 'none';
+            document.getElementById('calDaySummary').style.display = 'none';
         }
-
         document.getElementById('calBackBtn')?.addEventListener('click', showCalCalendarView);
+
+        // --- YENİ: TAKVİM DIŞINA TIKLANDIĞINDA ANA TAKVİME DÖNME MOTORU ---
+        document.addEventListener('click', function(e) {
+            const summaryHeader = document.getElementById('calSummaryHeader');
+            const calendarWidget = document.querySelector('.calendar-widget');
+            
+            // Sadece takvimin "Gün Özeti" ekranı açıksa kontrolü başlat
+            if (summaryHeader && summaryHeader.style.display === 'flex') {
+                
+                // 1. Tıklanan yer takvim kutusunun (widget) içi mi?
+                const isInsideCalendar = calendarWidget && calendarWidget.contains(e.target);
+                
+                // 2. Tıklanan yer "Detaylı" butonunun açtığı o büyük analiz baloncuğu mu?
+                const isInsideDetailModal = e.target.closest('#calDetailModalOverlay');
+                
+                // Eğer takvime VEYA takvimin kendi analiz baloncuğuna tıklanmamışsa 
+                // (Yani Denemelerim, Playlist Merkezi gibi ekranın başka bir yerine tıklandıysa)
+                if (!isInsideCalendar && !isInsideDetailModal) {
+                    showCalCalendarView(); // Takvimi anında sıfırla ve ana takvime dön
+                }
+            }
+        });
 
         // İleri - Geri Buton Dinleyicileri
         document.getElementById('calPrevMonthBtn')?.addEventListener('click', () => {
@@ -13872,6 +14020,218 @@
             });
         }
 
+        // --- YENİ: KÜRESEL GÜN TAMAMLANMA DENETLEYİCİSİ (Akıllı Koşul Motoru) ---
+        window.checkDayCompletion = function(tasks) {
+            if (!tasks || tasks.length === 0) return false;
+            
+            let dayTotalMins = 0;
+            let dayTotalQ = 0;
+            tasks.forEach(t => {
+                dayTotalMins += (parseInt(t.duration) || 0);
+                dayTotalQ += (parseInt(t.questionCount) || 0);
+            });
+
+            const conf = window.calColors || {};
+            const cAll = conf.condAllTasks !== undefined ? conf.condAllTasks : true; // Varsayılan: Açık
+            const cTimeAct = conf.condTimeActive || false;
+            const cTimeMins = conf.condTimeMins !== undefined ? parseInt(conf.condTimeMins) : 360;
+            const cQAct = conf.condQActive || false;
+            const cQCount = conf.condQCount !== undefined ? parseInt(conf.condQCount) : 100;
+
+            // Eğer HİÇBİR koşul seçilmemişse, güvenlik için varsayılanı (tüm görevler bitsin) baz al
+            if (!cAll && !cTimeAct && !cQAct) {
+                return tasks.every(t => t.isCompleted);
+            }
+
+            // Seçili olan BÜTÜN koşullar sağlanmalı (AND Mantığı)
+            let isCompleted = true;
+            if (cAll) isCompleted = isCompleted && tasks.every(t => t.isCompleted);
+            if (cTimeAct) isCompleted = isCompleted && (dayTotalMins >= cTimeMins);
+            if (cQAct) isCompleted = isCompleted && (dayTotalQ >= cQCount);
+
+            return isCompleted;
+        };
+
+        // --- TAKVİM AYARLARI SEKME DEĞİŞTİRİCİLERİ ---
+        window.switchSettingsTab = function(tabId) {
+            const tabs = ['Color', 'General'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tabBtn' + t);
+                const content = document.getElementById('tabContent' + t);
+                if (t === tabId) {
+                    if (btn) { btn.style.background = 'var(--color-primary)'; btn.style.color = '#fff'; }
+                    if (content) content.style.display = 'flex';
+                } else {
+                    if (btn) { btn.style.background = 'transparent'; btn.style.color = 'var(--color-text-muted)'; }
+                    if (content) content.style.display = 'none';
+                }
+            });
+        };
+
+        window.switchColorSubTab = function(subTabId) {
+            const subTabs = ['Bg', 'Text', 'Border', 'Condition'];
+            subTabs.forEach(st => {
+                const btn = document.getElementById('subTabBtn' + st);
+                const content = document.getElementById('subTabContent' + st);
+                if (st === subTabId) {
+                    if (btn) { btn.style.background = 'var(--color-primary-light)'; btn.style.color = 'var(--color-primary)'; }
+                    if (content) content.style.display = 'flex';
+                } else {
+                    if (btn) { btn.style.background = 'transparent'; btn.style.color = 'var(--color-text-muted)'; }
+                    if (content) content.style.display = 'none';
+                }
+            });
+        };
+
+        window.setCalBStyle = function(type, style) {
+            document.getElementById('calBorderStyle' + type).value = style;
+            ['none', 'solid', 'dashed'].forEach(opt => {
+                const btn = document.getElementById('btnStyle' + type + '_' + opt);
+                if(btn) {
+                    if(opt === style) { btn.style.background = 'var(--color-primary)'; btn.style.color = '#fff'; } 
+                    else { btn.style.background = 'transparent'; btn.style.color = 'var(--color-text-muted)'; }
+                }
+            });
+        };
+
+        window.setCalBgStyle = function(type, style) {
+            document.getElementById('calBgStyle' + type).value = style;
+            ['solid', 'gradient'].forEach(opt => {
+                const btn = document.getElementById('btnBgStyle' + type + '_' + opt);
+                if(btn) {
+                    if(opt === style) { btn.style.background = 'var(--color-primary)'; btn.style.color = '#fff'; } 
+                    else { btn.style.background = 'transparent'; btn.style.color = 'var(--color-text-muted)'; }
+                }
+            });
+        };
+
+        window.resetBorderRow = function(type, defStyle, defColor, defOpac) {
+            setCalBStyle(type, defStyle);
+            document.getElementById('calBorderColor' + type).value = defColor;
+            const opacInput = document.getElementById('calBorderOpacity' + type);
+            if(opacInput) { opacInput.value = defOpac; document.getElementById('lblOpac' + type).innerText = Math.round(defOpac * 100) + '%'; }
+        };
+
+        window.resetBgRow = function(type, defStyle, defColor, defOpac) {
+            setCalBgStyle(type, defStyle);
+            document.getElementById('calColor' + type).value = defColor;
+            const opacInput = document.getElementById('calBgOpacity' + type);
+            if(opacInput) { opacInput.value = defOpac; document.getElementById('lblBgOpac' + type).innerText = Math.round(defOpac * 100) + '%'; }
+        };
+
+        // --- TAKVİM ÖZEL RENK VE KOŞUL MOTORU ---
+        window.calColors = JSON.parse(localStorage.getItem('calColors')) || null;
+
+        const defaultCalColors = {
+            bgStyleCompleted: 'solid', completed: '#20c997', bgOpacityCompleted: '1', 
+            bgStyleUncompleted: 'solid', uncompleted: '#f87171', bgOpacityUncompleted: '1', 
+            bgStylePlanned: 'solid', planned: '#e6f2ff', bgOpacityPlanned: '1', 
+            bgStyleEmpty: 'solid', empty: '#f8f9fa', bgOpacityEmpty: '1', 
+            bgStyleToday: 'gradient', today: '#6f42c1', bgOpacityToday: '1',
+            textCompleted: '#ffffff', textOpacityCompleted: '1', textUncompleted: '#ffffff', textOpacityUncompleted: '1', 
+            textPlanned: '#007bff', textOpacityPlanned: '1', textEmpty: '#6c757d', textOpacityEmpty: '1', textToday: '#ffffff', textOpacityToday: '1',
+            borderStyleCompleted: 'none', borderColorCompleted: '#20c997', borderOpacityCompleted: '1',
+            borderStyleUncompleted: 'none', borderColorUncompleted: '#f87171', borderOpacityUncompleted: '1',
+            borderStylePlanned: 'solid', borderColorPlanned: '#007bff', borderOpacityPlanned: '1',
+            borderStyleEmpty: 'dashed', borderColorEmpty: '#6c757d', borderOpacityEmpty: '1',
+            borderStyleToday: 'none', borderColorToday: '#6f42c1', borderOpacityToday: '1',
+            // KOŞUL VARSAYILANLARI
+            condAllTasks: true, condTimeActive: false, condTimeMins: 360, condQActive: false, condQCount: 100
+        };
+
+        document.getElementById('calSettingsBtn')?.addEventListener('click', () => {
+            ['Completed', 'Uncompleted', 'Planned', 'Empty', 'Today'].forEach(t => {
+                const bgSty = window.calColors?.['bgStyle'+t] || defaultCalColors['bgStyle'+t]; setCalBgStyle(t, bgSty);
+                document.getElementById('calColor' + t).value = window.calColors?.[t.toLowerCase()] || defaultCalColors[t.toLowerCase()];
+                const bgOpac = window.calColors?.['bgOpacity'+t] !== undefined ? window.calColors['bgOpacity'+t] : defaultCalColors['bgOpacity'+t];
+                const bgOpIn = document.getElementById('calBgOpacity' + t); if(bgOpIn) { bgOpIn.value = bgOpac; document.getElementById('lblBgOpac' + t).innerText = Math.round(bgOpac * 100) + '%'; }
+                document.getElementById('calTextColor' + t).value = window.calColors?.['text'+t] || defaultCalColors['text'+t];
+                const txtOpac = window.calColors?.['textOpacity'+t] !== undefined ? window.calColors['textOpacity'+t] : defaultCalColors['textOpacity'+t];
+                const txtOpIn = document.getElementById('calTextOpacity' + t); if(txtOpIn) { txtOpIn.value = txtOpac; document.getElementById('lblTextOpac' + t).innerText = Math.round(txtOpac * 100) + '%'; }
+                const bStyle = window.calColors?.['borderStyle'+t] || defaultCalColors['borderStyle'+t];
+                const bOpac = window.calColors?.['borderOpacity'+t] !== undefined ? window.calColors['borderOpacity'+t] : defaultCalColors['borderOpacity'+t];
+                setCalBStyle(t, bStyle); document.getElementById('calBorderColor' + t).value = window.calColors?.['borderColor'+t] || defaultCalColors['borderColor'+t];
+                const opInput = document.getElementById('calBorderOpacity' + t); if(opInput){ opInput.value = bOpac; document.getElementById('lblOpac' + t).innerText = Math.round(bOpac * 100) + '%'; }
+            });
+
+            // KOŞUL EKRANINI YÜKLE
+            document.getElementById('calCondAllTasks').checked = window.calColors?.condAllTasks !== undefined ? window.calColors.condAllTasks : defaultCalColors.condAllTasks;
+            document.getElementById('calCondTimeAct').checked = window.calColors?.condTimeActive || defaultCalColors.condTimeActive;
+            const tMins = window.calColors?.condTimeMins !== undefined ? window.calColors.condTimeMins : defaultCalColors.condTimeMins;
+            document.getElementById('calCondTimeH').value = Math.floor(tMins / 60);
+            document.getElementById('calCondTimeM').value = tMins % 60;
+            document.getElementById('calCondQAct').checked = window.calColors?.condQActive || defaultCalColors.condQActive;
+            document.getElementById('calCondQCount').value = window.calColors?.condQCount !== undefined ? window.calColors.condQCount : defaultCalColors.condQCount;
+
+            document.getElementById('calSettingsModal').style.display = 'flex';
+        });
+
+        const closeCalSettings = () => document.getElementById('calSettingsModal').style.display = 'none';
+
+        const hasCalColorChanges = () => {
+            const current = {};
+            ['Completed', 'Uncompleted', 'Planned', 'Empty', 'Today'].forEach(t => {
+                current['bgStyle'+t] = document.getElementById('calBgStyle' + t).value; current[t.toLowerCase()] = document.getElementById('calColor' + t).value;
+                current['bgOpacity'+t] = document.getElementById('calBgOpacity' + t).value; current['text'+t] = document.getElementById('calTextColor' + t).value;
+                current['textOpacity'+t] = document.getElementById('calTextOpacity' + t).value; current['borderStyle'+t] = document.getElementById('calBorderStyle' + t).value;
+                current['borderColor'+t] = document.getElementById('calBorderColor' + t).value; current['borderOpacity'+t] = document.getElementById('calBorderOpacity' + t).value;
+            });
+            current['condAllTasks'] = document.getElementById('calCondAllTasks').checked;
+            current['condTimeActive'] = document.getElementById('calCondTimeAct').checked;
+            current['condTimeMins'] = (parseInt(document.getElementById('calCondTimeH').value) || 0) * 60 + (parseInt(document.getElementById('calCondTimeM').value) || 0);
+            current['condQActive'] = document.getElementById('calCondQAct').checked;
+            current['condQCount'] = parseInt(document.getElementById('calCondQCount').value) || 0;
+
+            const saved = { ...defaultCalColors, ...window.calColors };
+            return Object.keys(current).some(key => String(current[key]).toLowerCase() !== String(saved[key]).toLowerCase());
+        };
+
+        const handleCloseWithConfirm = () => { if (hasCalColorChanges()) { document.getElementById('calColorCancelConfirmModal').style.display = 'flex'; } else { closeCalSettings(); } };
+        document.getElementById('closeCalSettingsModalBtn')?.addEventListener('click', handleCloseWithConfirm);
+        document.getElementById('cancelCalSettingsBtn')?.addEventListener('click', handleCloseWithConfirm);
+        document.getElementById('yesCalColorCancelBtn')?.addEventListener('click', () => { document.getElementById('calColorCancelConfirmModal').style.display = 'none'; closeCalSettings(); });
+
+        document.getElementById('resetCalColorsBtn')?.addEventListener('click', () => {
+            ['Completed', 'Uncompleted', 'Planned', 'Empty', 'Today'].forEach(t => {
+                resetBgRow(t, defaultCalColors['bgStyle'+t], defaultCalColors[t.toLowerCase()], defaultCalColors['bgOpacity'+t]);
+                document.getElementById('calTextColor' + t).value = defaultCalColors['text'+t]; document.getElementById('calTextOpacity' + t).value = defaultCalColors['textOpacity'+t]; document.getElementById('lblTextOpac' + t).innerText = '100%';
+                resetBorderRow(t, defaultCalColors['borderStyle'+t], defaultCalColors['borderColor'+t], defaultCalColors['borderOpacity'+t]);
+            });
+            document.getElementById('calCondAllTasks').checked = defaultCalColors.condAllTasks;
+            document.getElementById('calCondTimeAct').checked = defaultCalColors.condTimeActive;
+            document.getElementById('calCondTimeH').value = Math.floor(defaultCalColors.condTimeMins / 60);
+            document.getElementById('calCondTimeM').value = defaultCalColors.condTimeMins % 60;
+            document.getElementById('calCondQAct').checked = defaultCalColors.condQActive;
+            document.getElementById('calCondQCount').value = defaultCalColors.condQCount;
+        });
+
+        document.getElementById('saveCalSettingsBtn')?.addEventListener('click', () => {
+            if (!hasCalColorChanges()) { closeCalSettings(); return; }
+            document.getElementById('calColorSaveConfirmModal').style.display = 'flex';
+        });
+
+        document.getElementById('yesCalColorSaveBtn')?.addEventListener('click', () => {
+            document.getElementById('calColorSaveConfirmModal').style.display = 'none';
+            let newColors = {};
+            ['Completed', 'Uncompleted', 'Planned', 'Empty', 'Today'].forEach(t => {
+                newColors['bgStyle'+t] = document.getElementById('calBgStyle' + t).value; newColors[t.toLowerCase()] = document.getElementById('calColor' + t).value;
+                newColors['bgOpacity'+t] = document.getElementById('calBgOpacity' + t).value; newColors['text'+t] = document.getElementById('calTextColor' + t).value;
+                newColors['textOpacity'+t] = document.getElementById('calTextOpacity' + t).value; newColors['borderStyle'+t] = document.getElementById('calBorderStyle' + t).value;
+                newColors['borderColor'+t] = document.getElementById('calBorderColor' + t).value; newColors['borderOpacity'+t] = document.getElementById('calBorderOpacity' + t).value;
+            });
+            newColors['condAllTasks'] = document.getElementById('calCondAllTasks').checked;
+            newColors['condTimeActive'] = document.getElementById('calCondTimeAct').checked;
+            newColors['condTimeMins'] = (parseInt(document.getElementById('calCondTimeH').value) || 0) * 60 + (parseInt(document.getElementById('calCondTimeM').value) || 0);
+            newColors['condQActive'] = document.getElementById('calCondQAct').checked;
+            newColors['condQCount'] = parseInt(document.getElementById('calCondQCount').value) || 0;
+
+            window.calColors = newColors;
+            localStorage.setItem('calColors', JSON.stringify(window.calColors));
+            closeCalSettings();
+            if (typeof renderCalendar === 'function') renderCalendar();
+            if (document.getElementById('calSummaryHeader')?.style.display === 'flex') { document.getElementById('calBackBtn')?.click(); }
+        });
+
     </script>
 
     <div class="menu-overlay" id="menuOverlay"></div>
@@ -14111,6 +14471,481 @@
             <div style="display:flex; gap:12px; justify-content:center;">
                 <button id="customConfirmCancelBtn" style="flex:1; padding:12px; border-radius:10px; border:1px solid #333; background:#222; color:#ccc; font-weight:700; cursor:pointer; transition:0.2s; font-size: 14px;" onmouseover="this.style.background='#333'; this.style.color='#fff';" onmouseout="this.style.background='#222'; this.style.color='#ccc';">İptal</button>
                 <button id="customConfirmOkBtn" style="flex:1; padding:12px; border-radius:10px; border:none; background:linear-gradient(135deg, #ff4444 0%, #cc0000 100%); color:white; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 15px rgba(255,51,51,0.3); font-size: 14px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255,51,51,0.5)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255,51,51,0.3)';">Onaylıyorum</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* PREMIUM ŞEFFAFLIK SLIDER TASARIMI */
+        .premium-opacity-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 10px;
+            background: linear-gradient(to right, var(--color-bg-input), var(--color-primary));
+            outline: none;
+            opacity: 0.85;
+            transition: opacity 0.2s, transform 0.2s;
+            cursor: pointer;
+            margin: 5px 0;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .premium-opacity-slider:hover {
+            opacity: 1;
+        }
+
+        .premium-opacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        .premium-opacity-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .premium-opacity-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        .premium-opacity-slider::-moz-range-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* PREMIUM SWITCH (ŞALTER) TASARIMI */
+        .premium-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+        }
+        .premium-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .premium-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--color-border-strong);
+            transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 34px;
+        }
+        .premium-switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .premium-switch input:checked + .premium-switch-slider {
+            background-color: var(--color-success);
+        }
+        .premium-switch input:checked + .premium-switch-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* PREMIUM SAYI GİRİŞ KUTUSU */
+        .premium-number-input {
+            width: 42px;
+            padding: 6px 4px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: var(--color-bg-input);
+            color: var(--color-text-main);
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            outline: none;
+            transition: 0.2s;
+            -moz-appearance: textfield; /* Firefox oklarını gizler */
+        }
+        /* Chrome/Safari oklarını gizler */
+        .premium-number-input::-webkit-outer-spin-button,
+        .premium-number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .premium-number-input:focus {
+            border-color: var(--color-primary);
+            background: var(--color-bg-card);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+    </style>
+
+    <div id="calSettingsModal" class="custom-modal" style="z-index: 4000;">
+        <div class="custom-modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-gear" style="color: var(--color-primary); margin-right: 8px;"></i> Takvim Ayarları</h3>
+                <span class="close-modal-btn" id="closeCalSettingsModalBtn">&times;</span>
+            </div>
+            
+            <div class="modal-body" style="gap: 15px;">
+                
+                <div style="display: flex; gap: 5px; background: var(--color-bg-input); padding: 6px; border-radius: 12px; border: 1px solid var(--color-border);">
+                    <button id="tabBtnColor" onclick="switchSettingsTab('Color')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-palette" style="margin-right: 6px;"></i> Görünüm & Renk</button>
+                    <button id="tabBtnGeneral" onclick="switchSettingsTab('General')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: transparent; color: var(--color-text-muted); font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-sliders" style="margin-right: 6px;"></i> Genel</button>
+                </div>
+
+                <div id="tabContentColor" style="display: flex; flex-direction: column; gap: 10px;">
+                    
+                    <div style="display: flex; gap: 5px; background: var(--color-bg-card); padding: 4px; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 5px;">
+                        <button id="subTabBtnCondition" onclick="switchColorSubTab('Condition')" style="flex: 1; padding: 6px; border-radius: 6px; border: none; background: var(--color-primary-light); color: var(--color-primary); font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s;">Koşullar</button>
+                        <button id="subTabBtnBg" onclick="switchColorSubTab('Bg')" style="flex: 1; padding: 6px; border-radius: 6px; border: none; background: transparent; color: var(--color-text-muted); font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s;">Arka Plan</button>
+                        <button id="subTabBtnText" onclick="switchColorSubTab('Text')" style="flex: 1; padding: 6px; border-radius: 6px; border: none; background: transparent; color: var(--color-text-muted); font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s;">Yazı & İkon</button>
+                        <button id="subTabBtnBorder" onclick="switchColorSubTab('Border')" style="flex: 1; padding: 6px; border-radius: 6px; border: none; background: transparent; color: var(--color-text-muted); font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s;">Dış Çerçeve</button>
+                    </div>
+
+                    <div id="subTabContentCondition" style="display: flex; flex-direction: column; gap: 10px;">
+                        <p style="font-size: 12px; color: var(--color-text-muted); margin: 0 0 5px 0; font-weight: 600;">Bir günün "Tamamlandı" sayılması için hangi hedeflerin tutturulması gerektiğini seçin.</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 14px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); transition: 0.2s;">
+                            <div style="padding-right: 15px;">
+                                <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main); display: flex; align-items: center; gap: 8px; margin-bottom: 4px;"><i class="fa-solid fa-list-check" style="color: var(--color-success); font-size: 16px;"></i> Görevlerin Tamamı</span>
+                                <span style="font-size: 11px; color: var(--color-text-muted); line-height: 1.3; display: block;">Eklenen tüm görevler tamamlandı olarak işaretlenmiş olmalı</span>
+                            </div>
+                            <label class="premium-switch" style="flex-shrink:0;">
+                                <input type="checkbox" id="calCondAllTasks">
+                                <span class="premium-switch-slider"></span>
+                            </label>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 14px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); transition: 0.2s; flex-wrap: wrap; gap: 15px;">
+                            <div style="flex: 1; min-width: 180px; padding-right: 10px;">
+                                <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main); display: flex; align-items: center; gap: 8px; margin-bottom: 4px;"><i class="fa-solid fa-stopwatch" style="color: var(--color-warning); font-size: 16px;"></i> Hedef Süre</span>
+                                <span style="font-size: 11px; color: var(--color-text-muted); line-height: 1.3; display: block;">En az belirlenen toplam çalışma süresine ulaşılmalı</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="display: flex; gap: 6px; align-items: center; background: var(--color-bg-card); padding: 5px 8px; border-radius: 10px; border: 1px solid var(--color-border); box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+                                    <input type="number" class="premium-number-input" id="calCondTimeH" min="0" max="24" value="6">
+                                    <span style="font-size:12px; font-weight:800; color:var(--color-text-muted);">sa</span>
+                                    <input type="number" class="premium-number-input" id="calCondTimeM" min="0" max="59" value="0">
+                                    <span style="font-size:12px; font-weight:800; color:var(--color-text-muted);">dk</span>
+                                </div>
+                                <label class="premium-switch" style="flex-shrink:0;">
+                                    <input type="checkbox" id="calCondTimeAct">
+                                    <span class="premium-switch-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 14px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); transition: 0.2s; flex-wrap: wrap; gap: 15px;">
+                            <div style="flex: 1; min-width: 180px; padding-right: 10px;">
+                                <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main); display: flex; align-items: center; gap: 8px; margin-bottom: 4px;"><i class="fa-solid fa-clipboard-question" style="color: var(--color-danger); font-size: 16px;"></i> Hedef Soru</span>
+                                <span style="font-size: 11px; color: var(--color-text-muted); line-height: 1.3; display: block;">En az belirlenen toplam soru sayısına ulaşılmalı</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="display: flex; gap: 6px; align-items: center; background: var(--color-bg-card); padding: 5px 8px; border-radius: 10px; border: 1px solid var(--color-border); box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+                                    <input type="number" class="premium-number-input" id="calCondQCount" min="0" value="100" style="width: 55px;">
+                                    <span style="font-size:12px; font-weight:800; color:var(--color-text-muted); padding-right:4px;">soru</span>
+                                </div>
+                                <label class="premium-switch" style="flex-shrink:0;">
+                                    <input type="checkbox" id="calCondQAct">
+                                    <span class="premium-switch-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="subTabContentBg" style="display: none; flex-direction: column; gap: 10px;">
+                        <input type="hidden" id="calBgStyleCompleted" value="solid">
+                        <input type="hidden" id="calBgStyleUncompleted" value="solid">
+                        <input type="hidden" id="calBgStylePlanned" value="solid">
+                        <input type="hidden" id="calBgStyleEmpty" value="solid">
+                        <input type="hidden" id="calBgStyleToday" value="gradient">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-check" style="color: var(--color-success); margin-right: 6px;"></i> Tamamlanan</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnBgStyleCompleted_solid" onclick="setCalBgStyle('Completed', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnBgStyleCompleted_gradient" onclick="setCalBgStyle('Completed', 'gradient')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Gradyan</button>
+                                </div>
+                                <input type="color" id="calColorCompleted" value="#20c997" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted);" id="lblBgOpacCompleted">100%</span>
+                                    <input type="range" id="calBgOpacityCompleted" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblBgOpacCompleted').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBgRow('Completed', 'solid', '#20c997', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-xmark" style="color: var(--color-danger); margin-right: 6px;"></i> Tamamlanmayan</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnBgStyleUncompleted_solid" onclick="setCalBgStyle('Uncompleted', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnBgStyleUncompleted_gradient" onclick="setCalBgStyle('Uncompleted', 'gradient')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Gradyan</button>
+                                </div>
+                                <input type="color" id="calColorUncompleted" value="#f87171" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted);" id="lblBgOpacUncompleted">100%</span>
+                                    <input type="range" id="calBgOpacityUncompleted" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblBgOpacUncompleted').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBgRow('Uncompleted', 'solid', '#f87171', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-regular fa-calendar-check" style="color: var(--color-primary); margin-right: 6px;"></i> Planlanmış</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnBgStylePlanned_solid" onclick="setCalBgStyle('Planned', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnBgStylePlanned_gradient" onclick="setCalBgStyle('Planned', 'gradient')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Gradyan</button>
+                                </div>
+                                <input type="color" id="calColorPlanned" value="#e6f2ff" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted);" id="lblBgOpacPlanned">100%</span>
+                                    <input type="range" id="calBgOpacityPlanned" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblBgOpacPlanned').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBgRow('Planned', 'solid', '#e6f2ff', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-mug-hot" style="color: var(--color-text-muted); margin-right: 6px;"></i> Boş Gün</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnBgStyleEmpty_solid" onclick="setCalBgStyle('Empty', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnBgStyleEmpty_gradient" onclick="setCalBgStyle('Empty', 'gradient')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Gradyan</button>
+                                </div>
+                                <input type="color" id="calColorEmpty" value="#f8f9fa" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted);" id="lblBgOpacEmpty">100%</span>
+                                    <input type="range" id="calBgOpacityEmpty" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblBgOpacEmpty').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBgRow('Empty', 'solid', '#f8f9fa', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-book-open" style="color: #6f42c1; margin-right: 6px;"></i> Bugün</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnBgStyleToday_solid" onclick="setCalBgStyle('Today', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnBgStyleToday_gradient" onclick="setCalBgStyle('Today', 'gradient')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Gradyan</button>
+                                </div>
+                                <input type="color" id="calColorToday" value="#6f42c1" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted);" id="lblBgOpacToday">100%</span>
+                                    <input type="range" id="calBgOpacityToday" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblBgOpacToday').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBgRow('Today', 'gradient', '#6f42c1', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="subTabContentText" style="display: none; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-check" style="color: var(--color-success); margin-right: 6px;"></i> Tamamlanan</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="calTextColorCompleted" value="#ffffff" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblTextOpacCompleted">100%</span>
+                                    <input type="range" id="calTextOpacityCompleted" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblTextOpacCompleted').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="document.getElementById('calTextColorCompleted').value='#ffffff'; document.getElementById('calTextOpacityCompleted').value='1'; document.getElementById('lblTextOpacCompleted').innerText='100%';" title="Varsayılana Dön" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-xmark" style="color: var(--color-danger); margin-right: 6px;"></i> Tamamlanmayan</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="calTextColorUncompleted" value="#ffffff" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblTextOpacUncompleted">100%</span>
+                                    <input type="range" id="calTextOpacityUncompleted" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblTextOpacUncompleted').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="document.getElementById('calTextColorUncompleted').value='#ffffff'; document.getElementById('calTextOpacityUncompleted').value='1'; document.getElementById('lblTextOpacUncompleted').innerText='100%';" title="Varsayılana Dön" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-regular fa-calendar-check" style="color: var(--color-primary); margin-right: 6px;"></i> Planlanmış</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="calTextColorPlanned" value="#007bff" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblTextOpacPlanned">100%</span>
+                                    <input type="range" id="calTextOpacityPlanned" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblTextOpacPlanned').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="document.getElementById('calTextColorPlanned').value='#007bff'; document.getElementById('calTextOpacityPlanned').value='1'; document.getElementById('lblTextOpacPlanned').innerText='100%';" title="Varsayılana Dön" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-mug-hot" style="color: var(--color-text-muted); margin-right: 6px;"></i> Boş Gün</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="calTextColorEmpty" value="#6c757d" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblTextOpacEmpty">100%</span>
+                                    <input type="range" id="calTextOpacityEmpty" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblTextOpacEmpty').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="document.getElementById('calTextColorEmpty').value='#6c757d'; document.getElementById('calTextOpacityEmpty').value='1'; document.getElementById('lblTextOpacEmpty').innerText='100%';" title="Varsayılana Dön" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-book-open" style="color: #6f42c1; margin-right: 6px;"></i> Bugün</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="calTextColorToday" value="#ffffff" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblTextOpacToday">100%</span>
+                                    <input type="range" id="calTextOpacityToday" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblTextOpacToday').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="document.getElementById('calTextColorToday').value='#ffffff'; document.getElementById('calTextOpacityToday').value='1'; document.getElementById('lblTextOpacToday').innerText='100%';" title="Varsayılana Dön" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="subTabContentBorder" style="display: none; flex-direction: column; gap: 10px;">
+                        <input type="hidden" id="calBorderStyleCompleted" value="none">
+                        <input type="hidden" id="calBorderStyleUncompleted" value="none">
+                        <input type="hidden" id="calBorderStylePlanned" value="solid">
+                        <input type="hidden" id="calBorderStyleEmpty" value="dashed">
+                        <input type="hidden" id="calBorderStyleToday" value="none">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-check" style="color: var(--color-success); margin-right: 6px;"></i> Tamamlanan</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnStyleCompleted_none" onclick="setCalBStyle('Completed', 'none')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Yok</button>
+                                    <button id="btnStyleCompleted_solid" onclick="setCalBStyle('Completed', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnStyleCompleted_dashed" onclick="setCalBStyle('Completed', 'dashed')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Kesik</button>
+                                </div>
+                                <input type="color" id="calBorderColorCompleted" value="#20c997" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblOpacCompleted">100%</span>
+                                    <input type="range" id="calBorderOpacityCompleted" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblOpacCompleted').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBorderRow('Completed', 'none', '#20c997', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-xmark" style="color: var(--color-danger); margin-right: 6px;"></i> Tamamlanmayan</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnStyleUncompleted_none" onclick="setCalBStyle('Uncompleted', 'none')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Yok</button>
+                                    <button id="btnStyleUncompleted_solid" onclick="setCalBStyle('Uncompleted', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnStyleUncompleted_dashed" onclick="setCalBStyle('Uncompleted', 'dashed')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Kesik</button>
+                                </div>
+                                <input type="color" id="calBorderColorUncompleted" value="#f87171" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblOpacUncompleted">100%</span>
+                                    <input type="range" id="calBorderOpacityUncompleted" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblOpacUncompleted').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBorderRow('Uncompleted', 'none', '#f87171', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-regular fa-calendar-check" style="color: var(--color-primary); margin-right: 6px;"></i> Planlanmış</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnStylePlanned_none" onclick="setCalBStyle('Planned', 'none')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Yok</button>
+                                    <button id="btnStylePlanned_solid" onclick="setCalBStyle('Planned', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnStylePlanned_dashed" onclick="setCalBStyle('Planned', 'dashed')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Kesik</button>
+                                </div>
+                                <input type="color" id="calBorderColorPlanned" value="#007bff" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblOpacPlanned">100%</span>
+                                    <input type="range" id="calBorderOpacityPlanned" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblOpacPlanned').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBorderRow('Planned', 'solid', '#007bff', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-mug-hot" style="color: var(--color-text-muted); margin-right: 6px;"></i> Boş Gün</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnStyleEmpty_none" onclick="setCalBStyle('Empty', 'none')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Yok</button>
+                                    <button id="btnStyleEmpty_solid" onclick="setCalBStyle('Empty', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnStyleEmpty_dashed" onclick="setCalBStyle('Empty', 'dashed')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Kesik</button>
+                                </div>
+                                <input type="color" id="calBorderColorEmpty" value="#6c757d" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblOpacEmpty">100%</span>
+                                    <input type="range" id="calBorderOpacityEmpty" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblOpacEmpty').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBorderRow('Empty', 'dashed', '#6c757d', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-input); padding: 8px 18px; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--color-text-main);"><i class="fa-solid fa-book-open" style="color: #6f42c1; margin-right: 6px;"></i> Bugün</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; background: var(--color-bg-card); padding: 3px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                    <button id="btnStyleToday_none" onclick="setCalBStyle('Today', 'none')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Yok</button>
+                                    <button id="btnStyleToday_solid" onclick="setCalBStyle('Today', 'solid')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Düz</button>
+                                    <button id="btnStyleToday_dashed" onclick="setCalBStyle('Today', 'dashed')" style="border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; transition:0.2s;">Kesik</button>
+                                </div>
+                                <input type="color" id="calBorderColorToday" value="#6f42c1" style="border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; background: transparent; padding: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 45px;">
+                                    <span style="font-size: 8px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 2px;" id="lblOpacToday">100%</span>
+                                    <input type="range" id="calBorderOpacityToday" min="0" max="1" step="0.1" value="1" class="premium-opacity-slider" oninput="document.getElementById('lblOpacToday').innerText = Math.round(this.value * 100) + '%'">
+                                </div>
+                                <button onclick="resetBorderRow('Today', 'none', '#6f42c1', '1')" title="Sıfırla" style="background:var(--color-bg-card); border:1px solid var(--color-border); color:var(--color-text-muted); width:26px; height:26px; border-radius:6px; cursor:pointer; margin-left:4px;"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="tabContentGeneral" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; color: var(--color-text-muted); gap: 15px;">
+                    <i class="fa-solid fa-person-digging" style="font-size: 48px; opacity: 0.3;"></i>
+                    <span style="font-size: 15px; font-weight: 800; letter-spacing: 0.5px;">Bu bölüm yakında eklenecek.</span>
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="display: flex; justify-content: space-between; background: var(--color-bg-input); padding: 15px 25px;">
+                <button class="cancel-note-btn" id="resetCalColorsBtn" style="color: var(--color-danger); border-color: #ffc2c2; background: var(--color-danger-light); padding: 8px 15px; font-size: 12px;" title="Tüm renkleri varsayılana getirir ama kaydetmez"><i class="fa-solid fa-rotate-left"></i> Tümünü Sıfırla</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="cancel-note-btn" id="cancelCalSettingsBtn" style="padding: 8px 15px; font-size: 12px;">İptal</button>
+                    <button class="save-note-btn" id="saveCalSettingsBtn" style="padding: 8px 20px; font-size: 12px;"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calColorSaveConfirmModal" class="custom-modal" style="z-index: 4500;">
+        <div class="custom-modal-content modal-centered" style="text-align: center; max-width: 380px;">
+            <i class="fa-solid fa-floppy-disk" style="color: var(--color-success); font-size: 48px; margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(40,167,69,0.3));"></i>
+            <h3 class="modal-title" style="color: var(--color-success); font-size: 18px; font-weight: 900; margin-bottom: 10px;">Renkleri Kaydet</h3>
+            <p class="modal-desc" style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 20px;">Yeni takvim renklerinizi uygulamak istediğinize emin misiniz?</p>
+            <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center;">
+                <button class="cancel-note-btn" onclick="document.getElementById('calColorSaveConfirmModal').style.display='none'" style="flex:1;">Hayır, Dön</button>
+                <button class="save-note-btn" id="yesCalColorSaveBtn" style="flex:1; background: var(--color-success); border-color: var(--color-success); box-shadow: 0 4px 10px rgba(40,167,69,0.2);">Evet, Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calColorCancelConfirmModal" class="custom-modal" style="z-index: 4500;">
+        <div class="custom-modal-content modal-centered" style="text-align: center; max-width: 380px;">
+            <i class="fa-solid fa-triangle-exclamation" style="color: var(--color-danger); font-size: 48px; margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(220,53,69,0.3));"></i>
+            <h3 class="modal-title" style="color: var(--color-danger); font-size: 18px; font-weight: 900; margin-bottom: 10px;">Kaydedilmemiş Değişiklikler</h3>
+            <p class="modal-desc" style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 20px;">Kaydetmediğiniz renk değişiklikleri var. Çıkmak istediğinize emin misiniz?</p>
+            <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center;">
+                <button class="cancel-note-btn" onclick="document.getElementById('calColorCancelConfirmModal').style.display='none'" style="flex:1;">Hayır, Kal</button>
+                <button class="save-note-btn" id="yesCalColorCancelBtn" style="flex:1; background: var(--color-danger); border-color: var(--color-danger); box-shadow: 0 4px 10px rgba(220,53,69,0.2);">Evet, Çık</button>
             </div>
         </div>
     </div>
