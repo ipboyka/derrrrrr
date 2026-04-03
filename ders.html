@@ -1931,27 +1931,49 @@
 
         /* --- GÜNLÜK VE HAFTALIK PLANLAYICI: Ortak Transparanlık ve Elit Minimal Tik --- */
         .planner-task-card.task-completed {
-            opacity: 0.50 !important;
+            opacity: 0.75 !important; /* Artırıldı: 0.50 → 0.75, daha okunabilir */
             background-color: var(--color-bg-card) !important;
             border-color: #d4edda !important;
             position: relative !important;
             overflow: hidden !important; 
+            flex-shrink: 0 !important; /* YENİ: Görevlerin ezilmesini KESİN OLARAK engeller, normal görevler gibi scroll yaptırır! */
+        }
+
+        /* 1. KATMAN: Yazıları soluklaştıran yarı saydam "Cam Perde" */
+        .planner-task-card.task-completed::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: var(--color-bg-card) !important;
+            opacity: 0.45 !important; /* Azaltıldı: 0.65 → 0.45, yazıları daha az örter */
+            z-index: 5 !important;
+            pointer-events: none !important;
         }
         
+        /* 2. KATMAN: Perdenin üstüne binen %100 CANLI Sembol */
         .planner-task-card.task-completed::after {
-            content: var(--completed-icon-content, '\f00c') !important; /* YENİ: DİNAMİK YAPI */
+            content: var(--completed-icon-content, '\f00c') !important;
             font-family: "Font Awesome 6 Free" !important;
             font-weight: 900 !important;
             position: absolute !important;
             top: 50% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
-            font-size: 85px !important;
+            font-size: 60px !important; 
             color: var(--color-success) !important;
-            z-index: 10 !important;
+            z-index: 10 !important; /* Cam perdenin (5) üstüne çıkar */
             pointer-events: none !important;
-            opacity: 0.85 !important;
-            text-shadow: 0 5px 25px rgba(40, 167, 69, 0.3) !important;
+            opacity: 1 !important; /* TİK ARTIK TAMAMEN CANLI VE NET! */
+            text-shadow: 0 5px 15px rgba(40, 167, 69, 0.4) !important; /* Canlılığı destekleyen 3D gölge */
+        }
+
+        /* --- SADECE GÜNLÜK PLANLAYICIDAKİ TİK BOYUTU --- */
+        #todayTasksList .planner-task-card.task-completed::after {
+            font-size: 40px !important; 
+            text-shadow: 0 3px 10px rgba(40, 167, 69, 0.3) !important; 
         }
 
         /* --- AYARLAR MODALI İKON SEÇİM KUTULARI TASARIMI --- */
@@ -2141,7 +2163,9 @@
         .planner-task-card {
             background: #fdfefe;
             border: 1px solid #e1e9f0;
-            border-left: 4px solid var(--color-primary);
+            border-left-width: 4px;
+            border-left-style: solid;
+            border-left-color: var(--color-primary); /* Bu varsayılan; JS her zaman inline style ile üzerine yazar */
             border-radius: var(--radius-md);
             padding: 10px;
             display: flex;
@@ -2275,13 +2299,19 @@
 
         /* Tıklanan Görevlerin Renk Değişimleri */
         .task-card-selected-delete {
-            border-color: var(--color-danger) !important;
+            border-top-color: var(--color-danger) !important;
+            border-right-color: var(--color-danger) !important;
+            border-bottom-color: var(--color-danger) !important;
+            /* border-left-color kasıtlı olarak dokunulmadı — JS'den gelen ders rengi kalır */
             background-color: #fff0f0 !important;
             box-shadow: 0 0 0 2px rgba(217, 83, 79, 0.2) !important;
         }
 
         .task-card-selected-duplicate {
-            border-color: var(--color-primary) !important;
+            border-top-color: var(--color-primary) !important;
+            border-right-color: var(--color-primary) !important;
+            border-bottom-color: var(--color-primary) !important;
+            /* border-left-color kasıtlı olarak dokunulmadı — JS'den gelen ders rengi kalır */
             background-color: #e6f2ff !important;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2) !important;
         }
@@ -2294,7 +2324,7 @@
         .action-drop-zone.complete-mode { background-color: var(--color-success); border-color: var(--color-success); border-style: solid; color: white; cursor: pointer; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
         .action-drop-zone.complete-mode:hover { background-color: var(--color-success-hover); }
 
-        .task-card-selected-complete { border-color: var(--color-success) !important; background-color: #f0fff4 !important; box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2) !important; }
+        .task-card-selected-complete { border-top-color: var(--color-success) !important; border-right-color: var(--color-success) !important; border-bottom-color: var(--color-success) !important; /* border-left-color kasıtlı olarak dokunulmadı — ders rengi kalır */ background-color: #f0fff4 !important; box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2) !important; }
 
         /* Sürükle-bırak işlemini ikonların engellemesini KESİN çözer */
         .action-drop-zone * {
@@ -3025,13 +3055,29 @@
 
         <div class="widget-box dashboard-widget schedule-widget">
             <div class="widget-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-calendar-day widget-icon"></i>
-                    <h2 class="widget-title" id="dashboardScheduleTitle" style="margin-right: 5px; min-width: 140px;">Bugünün Programı</h2>
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <button id="prevDashDayBtn" style="background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Önceki Gün"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button id="nextDashDayBtn" style="background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Sonraki Gün"><i class="fa-solid fa-chevron-right"></i></button>
+                <div style="display: flex; align-items: center; gap: 6px; min-width: 0; position: relative;">
+                    <i class="fa-solid fa-calendar-day widget-icon" id="dashCalIconBtn" style="flex-shrink: 0; cursor: pointer;" data-custom-title="Gün Seç"></i>
+
+                    <!-- Mini Takvim Balonu -->
+                    <div id="dashMiniCalPopup" style="display:none; position:absolute; top:calc(100% + 10px); left:0; z-index:500; background:var(--color-bg-card); border:1px solid var(--color-border-medium); border-radius:var(--radius-lg); box-shadow:var(--shadow-modal); padding:12px; width:230px; animation: slideUp 0.2s ease;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <button id="dashMiniCalPrev" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; padding:2px 6px;"><i class="fa-solid fa-chevron-left"></i></button>
+                            <span id="dashMiniCalTitle" style="font-size:13px; font-weight:800; color:var(--color-text-main);"></span>
+                            <button id="dashMiniCalNext" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; padding:2px 6px;"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:9px; font-weight:700; color:var(--color-text-muted); margin-bottom:4px;">
+                            <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
+                        </div>
+                        <div id="dashMiniCalGrid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px;"></div>
+                        <div style="margin-top:8px; border-top:1px solid var(--color-border); padding-top:8px; text-align:center;">
+                            <button id="dashMiniCalTodayBtn" style="background:var(--color-primary); color:white; border:none; border-radius:var(--radius-md); padding:5px 16px; font-size:11px; font-weight:800; cursor:pointer;">Bugün</button>
+                        </div>
                     </div>
+
+                    <h2 class="widget-title" id="dashboardScheduleTitle" style="white-space: nowrap;">Bugünün Programı</h2>
+                    <button id="prevDashDayBtn" style="flex-shrink: 0; background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Önceki Gün"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button id="nextDashDayBtn" style="flex-shrink: 0; background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Sonraki Gün"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button id="resetDashDayBtn" style="flex-shrink: 0; background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Bugüne Dön"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center;">
     
@@ -4718,6 +4764,57 @@
                             <label for="layoutRow"><i class="fa-solid fa-table-list" style="margin-right: 4px;"></i> Satır (Yatay)</label>
                         </div>
                     </div>
+
+                    <div style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-md); padding: 15px; margin-top: 15px;">
+                        <h4 style="color: var(--color-primary); font-size: 14px; margin-top: 0; margin-bottom: 8px;">
+                            <i class="fa-solid fa-check-double" style="margin-right: 5px;"></i> Tamamlanma Sembolü
+                        </h4>
+                        <p style="font-size: 11px; color: var(--color-text-muted); margin-bottom: 12px;">Görev tamamlandığında görünecek olan onay işaretini seç.</p>
+                        
+                        <div id="iconOptions" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                            
+                            <label class="settings-icon-option active" data-icon-value="'\f00c'">
+                                <input type="radio" name="iconChoice" value="'\f00c'" style="display:none;" checked>
+                                <i class="fa-solid fa-check"></i>
+                            </label>
+                            
+                            <label class="settings-icon-option" data-icon-value="'\f058'">
+                                <input type="radio" name="iconChoice" value="'\f058'" style="display:none;">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </label>
+                            
+                            <label class="settings-icon-option" data-icon-value="'\f14a'">
+                                <input type="radio" name="iconChoice" value="'\f14a'" style="display:none;">
+                                <i class="fa-solid fa-square-check"></i>
+                            </label>
+                            
+                            <label class="settings-icon-option" data-icon-value="'\f560'">
+                                <input type="radio" name="iconChoice" value="'\f560'" style="display:none;">
+                                <i class="fa-solid fa-check-double"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f005'">
+                                <input type="radio" name="iconChoice" value="'\f005'" style="display:none;">
+                                <i class="fa-solid fa-star"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f091'">
+                                <input type="radio" name="iconChoice" value="'\f091'" style="display:none;">
+                                <i class="fa-solid fa-trophy"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f135'">
+                                <input type="radio" name="iconChoice" value="'\f135'" style="display:none;">
+                                <i class="fa-solid fa-rocket"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f164'">
+                                <input type="radio" name="iconChoice" value="'\f164'" style="display:none;">
+                                <i class="fa-solid fa-thumbs-up"></i>
+                            </label>
+
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: flex-end; border-top: 1px solid #eef2f5;">
@@ -5777,12 +5874,11 @@
             subjectContainer.innerHTML = ""; 
             if (currentExam === "tyt") {
                 lessonData.tyt.forEach(lesson => {
-                    subjectContainer.innerHTML += `
-                        <div class="lesson-column">
-                            <i class="fa-solid ${lesson.icon} lesson-icon"></i>
-                            <span class="lesson-name">${lesson.name}</span>
-                        </div>
-                    `;
+                    const col = document.createElement('div');
+                    col.className = 'lesson-column';
+                    col.innerHTML = `<i class="fa-solid ${lesson.icon} lesson-icon"></i><span class="lesson-name">${lesson.name}</span>`;
+                    col.addEventListener('click', () => openLessonDetail(lesson.name));
+                    subjectContainer.appendChild(col);
                 });
             } else {
                 if (currentTrack === "dil") {
@@ -5804,15 +5900,316 @@
                     subjectContainer.innerHTML = `<div class="lang-container">${sidebarHtml}${contentHtml}</div>`;
                 } else {
                     lessonData.ayt[currentTrack].forEach(lesson => {
-                        subjectContainer.innerHTML += `
-                            <div class="lesson-column">
-                                <i class="fa-solid ${lesson.icon} lesson-icon"></i>
-                                <span class="lesson-name">${lesson.name}</span>
-                            </div>
-                        `;
+                        const col = document.createElement('div');
+                        col.className = 'lesson-column';
+                        col.innerHTML = `<i class="fa-solid ${lesson.icon} lesson-icon"></i><span class="lesson-name">${lesson.name}</span>`;
+                        col.addEventListener('click', () => openLessonDetail(lesson.name));
+                        subjectContainer.appendChild(col);
                     });
                 }
             }
+        }
+
+        // Ders detay görünümü: Konular / Playlistler
+        function openLessonDetail(lessonName) {
+            showLessonMenu(lessonName);
+        }
+
+        function showLessonMenu(lessonName) {
+            // Header'ı gizle, container tam alanı kaplasın
+            document.querySelector('.subject-header').style.display = 'none';
+            subjectContainer.style.flex = '1';
+
+            subjectContainer.innerHTML = `
+                <div style="display:flex; flex-direction:column; width:100%; height:100%; min-height:0; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                        <button id="lessonMenuBackBtn" style="background:var(--color-bg-hover); border:none; color:var(--color-primary); width:28px; height:28px; border-radius:var(--radius-md); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-bg-hover)';this.style.color='var(--color-primary)'">
+                            <i class="fa-solid fa-arrow-left" style="font-size:11px;"></i>
+                        </button>
+                        <span style="font-size:13px; font-weight:800; color:var(--color-text-main); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${lessonName}</span>
+                    </div>
+                    <div style="display:flex; flex-direction:row; gap:10px; flex:1; min-height:0;">
+                        <button id="btnKonular" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:var(--color-bg-input); border:2px solid var(--color-border); border-radius:var(--radius-lg); cursor:pointer; transition:var(--transition-fast); font-family:inherit;"
+                            onmouseover="this.style.background='var(--color-primary-lighter)';this.style.borderColor='var(--color-primary-border)'"
+                            onmouseout="this.style.background='var(--color-bg-input)';this.style.borderColor='var(--color-border)'">
+                            <i class="fa-solid fa-list-check" style="font-size:26px; color:var(--color-primary);"></i>
+                            <span style="font-size:13px; font-weight:800; color:var(--color-text-main);">Konular</span>
+                        </button>
+                        <button id="btnPlaylistler" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:var(--color-bg-input); border:2px solid var(--color-border); border-radius:var(--radius-lg); cursor:pointer; transition:var(--transition-fast); font-family:inherit;"
+                            onmouseover="this.style.background='#fff0f0';this.style.borderColor='#ffaaaa'"
+                            onmouseout="this.style.background='var(--color-bg-input)';this.style.borderColor='var(--color-border)'">
+                            <i class="fa-brands fa-youtube" style="font-size:26px; color:#ff4444;"></i>
+                            <span style="font-size:13px; font-weight:800; color:var(--color-text-main);">Playlistler</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('lessonMenuBackBtn').addEventListener('click', () => {
+                document.querySelector('.subject-header').style.display = '';
+                subjectContainer.style.flex = '';
+                renderLessons();
+            });
+            document.getElementById('btnKonular').addEventListener('click', () => showLessonKonular(lessonName));
+            document.getElementById('btnPlaylistler').addEventListener('click', () => showLessonPlaylistler(lessonName));
+        }
+
+        // --- KONU VERİLERİ ---
+        const topicData = {
+            "Türkçe": ["Sözcükte Anlam","Söz Yorumu","Deyim ve Atasözü","Cümlede Anlam","Paragrafta Anlatım Teknikleri","Paragrafta Düşünceyi Geliştirme Yolları","Paragrafta Yapı","Paragrafta Konu-Ana Düşünce","Paragrafta Yardımcı Düşünce","Ses Bilgisi","Yazım Kuralları","Noktalama İşaretleri","Sözcükte Yapı/Ekler","İsimler","Zamirler","Sıfatlar","Zarflar","Edat – Bağlaç – Ünlem","Fiilde Anlam (Kip-Kişi-Yapı)","Ek Fiil","Fiilimsi","Fiilde Çatı","Sözcük Grupları","Cümlenin Ögeleri","Cümle Türleri","Anlatım Bozukluğu"],
+            "Sosyal Bilimler": ["Tarih Bilimi","Osmanlı Tarihi","Türk İnkılap Tarihi","Coğrafya Temel Kavramlar","Türkiye Coğrafyası","Felsefe","Psikoloji","Sosyoloji","Mantık","Din Kültürü"],
+            "Temel Matematik": ["Sayılar","Bölme-Bölünebilme","Rasyonel Sayılar","Üslü Sayılar","Köklü Sayılar","Çarpanlara Ayırma","Denklemler","Problemler","Kümeler","Fonksiyonlar","Permütasyon","Olasılık","İstatistik","Dörtgenler","Trigonometri"],
+            "Fen Bilimleri": ["Fizik: Hareket","Fizik: Kuvvet","Fizik: Elektrik","Kimya: Atom","Kimya: Periyodik Tablo","Kimya: Bağlar","Kimya: Madde","Biyoloji: Hücre","Biyoloji: Canlılar","Biyoloji: Genetik"],
+            "Matematik": ["Fonksiyonlar","Polinomlar","Logaritma","Diziler","İkinci Dereceden Denklemler","Trigonometri","Vektörler","Karmaşık Sayılar","Permütasyon","Kombinasyon","Binom","Olasılık","İstatistik","Limit","Türev","İntegral","Analitik Geometri","Doğrular","Çember","Parabol"],
+            "Fizik": ["Vektörler","Kinematik","Dinamik","İş-Enerji","Momentum","Tork","Basit Harmonik Hareket","Dalgalar","Optik","Elektrostatik","Elektrik Akımı","Manyetizma","Modern Fizik"],
+            "Kimya": ["Atom Modelleri","Periyodik Tablo","Kimyasal Bağlar","Maddenin Halleri","Çözeltiler","Asit-Baz","Kimyasal Denge","Kimyasal Tepkimeler","Elektrokimya","Organik Kimya"],
+            "Biyoloji": ["Hücre","Hücre Bölünmesi","Kalıtım","Genetik Mühendisliği","Canlıların Sınıflandırılması","Bitkiler","Hayvanlar","Ekosistem","Fotosentez","Solunum","Dolaşım Sistemi","Sinir Sistemi"],
+            "Edebiyat": ["Şiir Bilgisi","Edebi Sanatlar","Halk Edebiyatı","Divan Edebiyatı","Tanzimat Edebiyatı","Servet-i Fünun","Milli Edebiyat","Cumhuriyet Edebiyatı","Roman","Hikâye","Tiyatro"],
+            "Tarih (1)": ["İlk Uygarlıklar","Orta Çağ","Osmanlı Kuruluş","Osmanlı Yükselme","Osmanlı Gerileme","Osmanlı Çöküş","Fransız İhtilali","Sanayi Devrimi"],
+            "Tarih (1-2)": ["İlk Çağ","Orta Çağ","Yeni Çağ","Yakın Çağ","Osmanlı Tarihi","Kurtuluş Savaşı","Atatürk Dönemi","Türkiye Cumhuriyeti"],
+            "Coğrafya (1)": ["Doğa ve İnsan","İklim","Yeryüzü Şekilleri","Nüfus","Yerleşme","Ekonomi"],
+            "Coğrafya (1-2)": ["Harita","İklim Tipleri","Türkiye İklimi","Türkiye Nüfusu","Tarım","Sanayi","Enerji","Çevre"],
+            "Felsefe Grubu": ["Felsefenin Alanı","Bilgi Felsefesi","Varlık Felsefesi","Ahlak Felsefesi","Siyaset Felsefesi","Mantık","Psikoloji","Sosyoloji"],
+            "Din Kültürü": ["İslam'ın Temel Kavramları","İbadetler","Kuran","Hz. Muhammed","İslam Tarihi","Diyanet ve Din Hizmetleri"],
+            "İngilizce": ["Tenses","Modals","Conditionals","Passive Voice","Relative Clauses","Reported Speech","Vocabulary","Reading","Listening","Writing"],
+            "Almanca": ["Grammatik","Zeiten","Modalverben","Wortschatz","Lesen","Hören"],
+            "Arapça": ["Alfabe","Gramer","Fiiller","İsimler","Cümle Yapısı"],
+            "Fransızca": ["Grammaire","Les Temps","Vocabulaire","Lecture","Expression"],
+            "Rusça": ["Алфавит","Грамматика","Глаголы","Существительные","Разговор"]
+        };
+
+        window.completedTopics = window.completedTopics || {};
+
+        async function saveCompletedTopics() {
+            if (!currentUserUid) return;
+            try {
+                await setDoc(doc(db, "users", currentUserUid), { completedTopics: window.completedTopics }, { merge: true });
+            } catch(e) { console.error(e); }
+        }
+
+        function showLessonKonular(lessonName) {
+            const topics      = topicData[lessonName] || [];
+            const completed   = window.completedTopics[lessonName] || [];
+            const doneCount   = completed.length;
+            const undoneCount = topics.length - doneCount;
+            const pct = topics.length > 0 ? Math.round((doneCount / topics.length) * 100) : 0;
+
+            const widget = subjectContainer.closest('.subject-widget');
+            if (widget) widget.style.position = 'relative';
+
+            subjectContainer.innerHTML = `
+                <div style="display:flex;flex-direction:column;width:100%;height:100%;min-height:0;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                        <button id="lessonKonularBackBtn" style="background:var(--color-bg-hover);border:none;color:var(--color-primary);width:28px;height:28px;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-bg-hover)';this.style.color='var(--color-primary)'">
+                            <i class="fa-solid fa-arrow-left" style="font-size:11px;"></i>
+                        </button>
+                        <span style="font-size:13px;font-weight:800;color:var(--color-text-main);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lessonName} <span style="color:var(--color-primary);">· Konular</span></span>
+                        <button id="topicDetailBtn" style="background:var(--color-bg-hover);border:1px solid var(--color-border);color:var(--color-primary);width:28px;height:28px;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-bg-hover)';this.style.color='var(--color-primary)'" data-custom-title="Tümünü Yönet">
+                            <i class="fa-solid fa-sliders" style="font-size:11px;"></i>
+                        </button>
+                    </div>
+                    <div style="flex-shrink:0;background:var(--color-border);border-radius:4px;height:5px;overflow:hidden;">
+                        <div style="width:${pct}%;height:100%;background:var(--color-success);border-radius:4px;transition:width 0.4s ease;"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:row;gap:10px;flex:1;min-height:0;">
+                        <button id="btnTamamlananlar" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--color-success-light);border:2px solid var(--color-success-border);border-radius:var(--radius-lg);cursor:pointer;transition:var(--transition-fast);font-family:inherit;">
+                            <i class="fa-solid fa-check-circle" style="font-size:26px;color:var(--color-success);"></i>
+                            <span style="font-size:13px;font-weight:800;color:var(--color-success);">Tamamlanan</span>
+                            <span style="font-size:18px;font-weight:900;color:var(--color-success);">${doneCount}</span>
+                        </button>
+                        <button id="btnTamamlanmayanlar" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--color-bg-input);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;transition:var(--transition-fast);font-family:inherit;">
+                            <i class="fa-solid fa-circle-half-stroke" style="font-size:26px;color:var(--color-primary);"></i>
+                            <span style="font-size:13px;font-weight:800;color:var(--color-text-main);">Tamamlanmayan</span>
+                            <span style="font-size:18px;font-weight:900;color:var(--color-primary);">${undoneCount}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="topicDetailOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.35);border-radius:var(--radius-xl);z-index:50;backdrop-filter:blur(2px);"></div>
+                <div id="topicDetailPopup" style="display:none;position:absolute;inset:8px;background:var(--color-bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-modal);z-index:51;flex-direction:column;gap:0;overflow:hidden;animation:slideUp 0.2s ease;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--color-border);flex-shrink:0;background:var(--color-bg-input);">
+                        <span style="font-size:13px;font-weight:800;color:var(--color-text-main);flex:1;">${lessonName} · Konular</span>
+                        <button id="topicDetailCloseBtn" style="background:none;border:none;font-size:18px;color:var(--color-text-muted);cursor:pointer;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='var(--color-danger)'" onmouseout="this.style.color='var(--color-text-muted)'">&times;</button>
+                    </div>
+                    <div style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--color-border);flex-shrink:0;">
+                        <button id="topicMarkAllBtn" style="flex:1;padding:7px;background:var(--color-success-light);border:1px solid var(--color-success-border);border-radius:var(--radius-md);color:var(--color-success);font-size:11px;font-weight:800;cursor:pointer;transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-success)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-success-light)';this.style.color='var(--color-success)'">
+                            <i class="fa-solid fa-check-double"></i> Tümünü Tamamla
+                        </button>
+                        <button id="topicClearAllBtn" style="flex:1;padding:7px;background:var(--color-danger-light);border:1px solid var(--color-danger-border);border-radius:var(--radius-md);color:var(--color-danger);font-size:11px;font-weight:800;cursor:pointer;transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-danger)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-danger-light)';this.style.color='var(--color-danger)'">
+                            <i class="fa-solid fa-rotate-left"></i> Sıfırla
+                        </button>
+                    </div>
+                    <div id="topicDetailList" style="flex:1;overflow-y:auto;padding:8px 14px;display:flex;flex-direction:column;gap:4px;"></div>
+                </div>
+            `;
+
+            document.getElementById('lessonKonularBackBtn').addEventListener('click', () => {
+                if (widget) widget.style.position = '';
+                showLessonMenu(lessonName);
+            });
+            document.getElementById('btnTamamlananlar').addEventListener('click', () => showTopicFilteredList(lessonName, true));
+            document.getElementById('btnTamamlanmayanlar').addEventListener('click', () => showTopicFilteredList(lessonName, false));
+            document.getElementById('topicDetailBtn').addEventListener('click', () => openTopicDetailPopup(lessonName));
+        }
+
+        function showTopicFilteredList(lessonName, showDone) {
+            const topics    = topicData[lessonName] || [];
+            const completed = window.completedTopics[lessonName] || [];
+            const filtered  = topics.filter(t => showDone ? completed.includes(t) : !completed.includes(t));
+            const accentColor = showDone ? 'var(--color-success)' : 'var(--color-primary)';
+            const label       = showDone ? 'Tamamlanan' : 'Tamamlanmayan';
+
+            let listHtml = '';
+            if (filtered.length === 0) {
+                listHtml = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--color-text-muted);">
+                    <i class="fa-solid ${showDone ? 'fa-check-circle' : 'fa-circle-half-stroke'}" style="font-size:24px;color:${accentColor};opacity:0.4;"></i>
+                    <span style="font-size:12px;font-weight:700;">${showDone ? 'Henüz tamamlanan konu yok.' : 'Tüm konular tamamlandı!'}</span>
+                </div>`;
+            } else {
+                listHtml = filtered.map(topic => `
+                    <div style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--color-border);">
+                        <div style="width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+                            background:${showDone ? 'var(--color-success)' : 'var(--color-bg-input)'};
+                            border:2px solid ${showDone ? 'var(--color-success)' : 'var(--color-border-medium)'};">
+                            ${showDone ? '<i class="fa-solid fa-check" style="font-size:9px;color:#fff;"></i>' : ''}
+                        </div>
+                        <span style="font-size:12px;font-weight:${showDone ? '700' : '600'};color:${showDone ? 'var(--color-success)' : 'var(--color-text-main)'};text-decoration:${showDone ? 'line-through' : 'none'};flex:1;">${topic}</span>
+                    </div>`).join('');
+            }
+
+            subjectContainer.innerHTML = `
+                <div style="display:flex;flex-direction:column;width:100%;height:100%;min-height:0;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                        <button id="topicFilterBackBtn" style="background:var(--color-bg-hover);border:none;color:var(--color-primary);width:28px;height:28px;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-bg-hover)';this.style.color='var(--color-primary)'">
+                            <i class="fa-solid fa-arrow-left" style="font-size:11px;"></i>
+                        </button>
+                        <span style="font-size:13px;font-weight:800;color:var(--color-text-main);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lessonName} <span style="color:${accentColor};">· ${label}</span></span>
+                        <span style="font-size:11px;font-weight:800;color:${accentColor};flex-shrink:0;">${filtered.length}</span>
+                    </div>
+                    <div style="flex:1;overflow-y:auto;min-height:0;">${listHtml}</div>
+                </div>
+            `;
+            document.getElementById('topicFilterBackBtn').addEventListener('click', () => showLessonKonular(lessonName));
+        }
+
+        function openTopicDetailPopup(lessonName) {
+            const topics    = topicData[lessonName] || [];
+            const overlay   = document.getElementById('topicDetailOverlay');
+            const popup     = document.getElementById('topicDetailPopup');
+            const list      = document.getElementById('topicDetailList');
+
+            function renderPopupList() {
+                const completed = window.completedTopics[lessonName] || [];
+                list.innerHTML = topics.map(topic => {
+                    const isDone = completed.includes(topic);
+                    return `<div class="topic-popup-row" data-topic="${topic}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-md);cursor:pointer;transition:background 0.15s;background:${isDone ? 'var(--color-success-light)' : 'transparent'};"
+                        onmouseover="this.style.background='${isDone ? 'var(--color-success-light)' : 'var(--color-bg-hover)'}'"
+                        onmouseout="this.style.background='${isDone ? 'var(--color-success-light)' : 'transparent'}'">
+                        <div style="width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+                            background:${isDone ? 'var(--color-success)' : 'var(--color-bg-input)'};
+                            border:2px solid ${isDone ? 'var(--color-success)' : 'var(--color-border-medium)'};">
+                            ${isDone ? '<i class="fa-solid fa-check" style="font-size:10px;color:#fff;"></i>' : ''}
+                        </div>
+                        <span style="font-size:12px;font-weight:${isDone ? '700' : '600'};color:${isDone ? 'var(--color-success)' : 'var(--color-text-main)'};flex:1;">${topic}</span>
+                        <span style="font-size:10px;font-weight:700;color:${isDone ? 'var(--color-success)' : 'var(--color-text-muted)'};">${isDone ? 'Tamamlandı' : 'Tamamlanmadı'}</span>
+                    </div>`;
+                }).join('');
+
+                // Satır tıklama
+                list.querySelectorAll('.topic-popup-row').forEach(row => {
+                    row.addEventListener('click', async () => {
+                        const topic = row.dataset.topic;
+                        if (!window.completedTopics[lessonName]) window.completedTopics[lessonName] = [];
+                        const arr = window.completedTopics[lessonName];
+                        const idx = arr.indexOf(topic);
+                        if (idx >= 0) arr.splice(idx, 1); else arr.push(topic);
+                        await saveCompletedTopics();
+                        renderPopupList();
+                        showLessonKonular(lessonName); // arka listeyi güncelle
+                        // Popup'ı kapat
+                    });
+                });
+            }
+
+            renderPopupList();
+            overlay.style.display = 'block';
+            popup.style.display = 'flex';
+
+            // Kapat
+            const closePopup = () => {
+                overlay.style.display = 'none';
+                popup.style.display = 'none';
+            };
+            document.getElementById('topicDetailCloseBtn').onclick = closePopup;
+            overlay.onclick = closePopup;
+
+            // Tümünü tamamla
+            document.getElementById('topicMarkAllBtn').onclick = async () => {
+                window.completedTopics[lessonName] = [...topics];
+                await saveCompletedTopics();
+                renderPopupList();
+                showLessonKonular(lessonName);
+            };
+
+            // Sıfırla
+            document.getElementById('topicClearAllBtn').onclick = async () => {
+                window.completedTopics[lessonName] = [];
+                await saveCompletedTopics();
+                renderPopupList();
+                showLessonKonular(lessonName);
+            };
+        }
+
+        function showLessonPlaylistler(lessonName) {
+            const mainPlaylists = savedPlaylists.filter(p => p.isMain && p.subject === lessonName);
+
+            let listHtml = '';
+            if (mainPlaylists.length === 0) {
+                listHtml = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:8px; color:var(--color-text-muted);">
+                    <i class="fa-brands fa-youtube" style="font-size:28px; color:#ffaaaa;"></i>
+                    <span style="font-size:12px; font-weight:700; text-align:center;"><b>${lessonName}</b> için ana playlist bulunamadı.<br><span style="font-size:11px;">Playlistler menüsünden "Ana" olarak işaretle.</span></span>
+                </div>`;
+            } else {
+                listHtml = '<div style="display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start;">';
+                mainPlaylists.forEach(pl => {
+                    const total   = pl.videos ? pl.videos.length : 0;
+                    const watched = pl.videos ? pl.videos.filter(v => v.isWatched).length : 0;
+                    const planned = pl.videos ? pl.videos.filter(v => v.isPlanned).length : 0;
+                    const pct     = total > 0 ? Math.round((watched / total) * 100) : 0;
+                    const title   = pl.customTitle || pl.subject;
+                    listHtml += `
+                        <div style="flex:1; min-width:120px; background:var(--color-bg-input); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:10px 12px; cursor:pointer; transition:var(--transition-fast);"
+                             onmouseover="this.style.borderColor='var(--color-primary-border)';this.style.background='var(--color-primary-lighter)'"
+                             onmouseout="this.style.borderColor='var(--color-border)';this.style.background='var(--color-bg-input)'"
+                             onclick="window.openVideoSelectionFromSubject && window.openVideoSelectionFromSubject('${pl.id}')">
+                            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                                <i class="fa-brands fa-youtube" style="color:#ff4444; font-size:13px; flex-shrink:0;"></i>
+                                <span style="font-size:11px; font-weight:800; color:var(--color-text-main); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${title}</span>
+                            </div>
+                            <div style="background:var(--color-border); border-radius:4px; height:5px; overflow:hidden; margin-bottom:4px;">
+                                <div style="width:${pct}%; height:100%; background:var(--color-success); border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">%${pct}</span>
+                                <span style="font-size:10px; font-weight:700; color:var(--color-primary);">${watched}/${total}</span>
+                            </div>
+                            ${planned > 0 ? `<div style="margin-top:4px; font-size:10px; font-weight:700; color:#17a2b8;"><i class="fa-solid fa-calendar-plus"></i> ${planned} plana eklendi</div>` : ''}
+                        </div>`;
+                });
+                listHtml += '</div>';
+            }
+
+            subjectContainer.innerHTML = `
+                <div style="display:flex; flex-direction:column; width:100%; height:100%; min-height:0; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                        <button id="lessonPlBackBtn" style="background:var(--color-bg-hover); border:none; color:var(--color-primary); width:28px; height:28px; border-radius:var(--radius-md); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:var(--transition-fast);" onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff'" onmouseout="this.style.background='var(--color-bg-hover)';this.style.color='var(--color-primary)'">
+                            <i class="fa-solid fa-arrow-left" style="font-size:11px;"></i>
+                        </button>
+                        <span style="font-size:13px; font-weight:800; color:var(--color-text-main);">${lessonName} <span style="color:#ff4444;">· Playlistler</span></span>
+                    </div>
+                    <div style="flex:1; overflow-y:auto; min-height:0;">${listHtml}</div>
+                </div>
+            `;
+            document.getElementById('lessonPlBackBtn').addEventListener('click', () => showLessonMenu(lessonName));
         }
 
         window.selectLanguage = function(langName, btnElement) {
@@ -5951,112 +6348,113 @@
 
         // --- FIREBASE: KULLANICI GİRİŞ DURUMUNU DİNLE ---
         onAuthStateChanged(auth, async (user) => {
-            // Hızlı yükleme süresi korundu (2.5 saniye yerine 0.4 saniye)
             const minLoadTime = new Promise(resolve => setTimeout(resolve, 400));
+
+            // Güvenlik ağı: Firebase 10 saniye içinde cevap vermezse loader'ı yine de kaldır
+            const safetyTimeout = setTimeout(() => {
+                console.warn('Yükleme zaman aşımına uğradı, loader kapatılıyor.');
+                hideLoader();
+            }, 10000);
 
             if (user) {
                 currentUserUid = user.uid;
 
-                // YAN MENÜ KONTROLÜ (GİRİŞ YAPILDI)
                 if(document.getElementById('sideMenuProfileBtn')) document.getElementById('sideMenuProfileBtn').style.display = '';
                 if(document.getElementById('sideMenuLoginBtn')) document.getElementById('sideMenuLoginBtn').style.display = 'none';
                 if(document.getElementById('sideMenuRegisterBtn')) document.getElementById('sideMenuRegisterBtn').style.display = 'none';
 
-                // Önce varsayılan olarak Profil yazısıyla oluştur (Hızlı görünüm için)
-                // Eğer Firebase profilinde isim varsa direkt onu yazar
                 const initialName = user.displayName || "Profil";
                 document.getElementById('headerAuthContainer').innerHTML = `
                     <button class="header-icon-btn" id="headerProfileBtn" onclick="window.openProfileModal()"><i class="fa-solid fa-user"></i> ${initialName}</button>
                     <button class="header-icon-btn" id="headerSettingsBtn"><i class="fa-solid fa-gear"></i> Ayarlar</button>
                 `;
-                // Buton dinamik oluşturulduğu için listener'ı burada bağla
                 document.getElementById('headerSettingsBtn').addEventListener('click', window.openSettingsModal);
 
                 try {
-
+                    // Planner profilleri önce (diğerleri buna bağlı)
                     if (window.loadPlannerProfilesFromDB) {
                         await window.loadPlannerProfilesFromDB();
                     }
 
-                    // 1. Notları Çek ve Profil Verisini Hafızaya Al
-                    const userDocRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(userDocRef);
-                    
-                    if (docSnap.exists()) {
-                        const userData = docSnap.data();
-                        window.currentUserProfileData = userData;                        
+                    // Tüm koleksiyonları PARALEL çek — sıralı bekleme yok
+                    const [
+                        userDocSnap,
+                        notesSnap,
+                        examsSnap,
+                        playlistsSnap,
+                        tasksSnap
+                    ] = await Promise.all([
+                        getDoc(doc(db, "users", user.uid)),
+                        getDocs(collection(db, "users", user.uid, "userNotes")),
+                        getDocs(collection(db, "users", user.uid, "userExams")),
+                        getDocs(collection(db, "users", user.uid, "userPlaylists")),
+                        getDocs(collection(db, "users", user.uid, "userTasks"))
+                    ]);
+
+                    // Profil verisi
+                    if (userDocSnap.exists()) {
+                        const userData = userDocSnap.data();
+                        window.currentUserProfileData = userData;
                         if (userData.username) {
                             const profBtn = document.getElementById('headerProfileBtn');
                             if (profBtn) profBtn.innerHTML = `<i class="fa-solid fa-user"></i> ${userData.username}`;
                         }
-                    } else {
-                        window.currentUserProfileData = {}; // Boşsa da çökmesin diye boş obje atıyoruz
-                    }
-                    if (docSnap.exists() && docSnap.data().notes && docSnap.data().notes.length > 0) {
-                        const oldNotes = docSnap.data().notes;
-                        for (let oldNote of oldNotes) {
-                            const newNoteRef = doc(db, "users", user.uid, "userNotes", oldNote.id.toString());
-                            await setDoc(newNoteRef, oldNote);
+                        // Konu tamamlanma verilerini yükle
+                        window.completedTopics = userData.completedTopics || {};
+                        // Eski not migrasyonu (varsa)
+                        if (userData.notes && userData.notes.length > 0) {
+                            const migrationPromises = userData.notes.map(oldNote =>
+                                setDoc(doc(db, "users", user.uid, "userNotes", oldNote.id.toString()), oldNote)
+                            );
+                            await Promise.all(migrationPromises);
+                            await setDoc(doc(db, "users", user.uid), { notes: [] }, { merge: true });
                         }
-                        await setDoc(userDocRef, { notes: [] }, { merge: true });
+                    } else {
+                        window.currentUserProfileData = {};
                     }
 
-                    const notesCollectionRef = collection(db, "users", user.uid, "userNotes");
-                    const querySnapshot = await getDocs(notesCollectionRef);
+                    // Notlar
                     savedNotes = [];
-                    querySnapshot.forEach((docSnap) => {
-                        savedNotes.push(docSnap.data());
-                    });
+                    notesSnap.forEach(d => savedNotes.push(d.data()));
                     savedNotes.sort((a, b) => b.id - a.id);
                     renderNotesToScreen();
 
-                    // 2. Denemeleri Çek
-                    const examsCollectionRef = collection(db, "users", user.uid, "userExams");
-                    const examsSnapshot = await getDocs(examsCollectionRef);
+                    // Denemeler
                     savedExams = [];
-                    examsSnapshot.forEach((docSnap) => savedExams.push(docSnap.data()));
+                    examsSnap.forEach(d => savedExams.push(d.data()));
                     renderExamsToScreen();
 
-                    // 3. Playlistleri Çek
-                    const playlistsCollectionRef = collection(db, "users", user.uid, "userPlaylists");
-                    const playlistsSnapshot = await getDocs(playlistsCollectionRef);
+                    // Playlistler
                     savedPlaylists = [];
-                    playlistsSnapshot.forEach((docSnap) => savedPlaylists.push(docSnap.data()));
+                    playlistsSnap.forEach(d => savedPlaylists.push(d.data()));
                     window.renderPlaylists?.();
 
-                    // 4. GÖREVLERİ ÇEK (DÜZELTİLEN KISIM)
-                    const tasksCollectionRef = collection(db, "users", user.uid, "userTasks");
-                    const tasksSnapshot = await getDocs(tasksCollectionRef);
-                    
-                    userTasks = {}; // HATALI window.userTasks KALDIRILDI, ORİJİNALE DÖNDÜ
-                    
-                    tasksSnapshot.forEach((docSnap) => {
-                        const taskData = docSnap.data();
-                        if (!userTasks[taskData.dateKey]) {
-                            userTasks[taskData.dateKey] = [];
-                        }
+                    // Görevler
+                    userTasks = {};
+                    tasksSnap.forEach(d => {
+                        const taskData = d.data();
+                        if (!userTasks[taskData.dateKey]) userTasks[taskData.dateKey] = [];
                         userTasks[taskData.dateKey].push(taskData);
                     });
-                    
-                    // Görevler yüklendiğinde takvimi ve ekranı güncelle
+
                     window.updateWeeklyPlannerView?.();
                     window.renderTodayTasks?.();
                     window.refreshCalendar?.();
-                    // 5. AYARLARI ÇEK (Hedefler, Renkler, Görünüm)
+
+                    // Ayarlar (renk/hedef bağımlı, en son)
                     await window.loadGlobalSettings();
 
                 } catch (error) {
+                    console.error('Veri yükleme hatası:', error);
                 }
 
-                // Tüm veriler (Görevler dahil) dizildikten sonra perde kalkar
+                clearTimeout(safetyTimeout);
                 await minLoadTime;
                 hideLoader();
 
             } else {
-                // Giriş yapmamış kullanıcı (Görevler temizlendi)
                 currentUserUid = null;
 
-                // YAN MENÜ KONTROLÜ (ÇIKIŞ YAPILDI)
                 if(document.getElementById('sideMenuProfileBtn')) document.getElementById('sideMenuProfileBtn').style.display = 'none';
                 if(document.getElementById('sideMenuLoginBtn')) document.getElementById('sideMenuLoginBtn').style.display = '';
                 if(document.getElementById('sideMenuRegisterBtn')) document.getElementById('sideMenuRegisterBtn').style.display = '';
@@ -6067,9 +6465,10 @@
                 `;
 
                 savedNotes = [];
-                userTasks = {}; // Çıkış yapıldığında görevleri de sıfırla
+                userTasks = {};
                 notesList.innerHTML = '<div class="placeholder-text">Notlarınızı görmek için giriş yapın...</div>';
-                
+
+                clearTimeout(safetyTimeout);
                 await minLoadTime;
                 hideLoader();
             }
@@ -7554,6 +7953,80 @@
             window.renderTodayTasks();
         });
 
+        document.getElementById('resetDashDayBtn')?.addEventListener('click', () => {
+            currentDashboardDate = new Date();
+            window.renderTodayTasks();
+        });
+
+        // --- MİNİ TAKVİM BALONU ---
+        (function() {
+            const popup    = document.getElementById('dashMiniCalPopup');
+            const iconBtn  = document.getElementById('dashCalIconBtn');
+            const grid     = document.getElementById('dashMiniCalGrid');
+            const title    = document.getElementById('dashMiniCalTitle');
+            const prevBtn  = document.getElementById('dashMiniCalPrev');
+            const nextBtn  = document.getElementById('dashMiniCalNext');
+            const todayBtn = document.getElementById('dashMiniCalTodayBtn');
+            if (!popup || !iconBtn) return;
+
+            let miniCalDate = new Date(); // balonun gösterdiği ay
+
+            function renderMiniCal() {
+                const year  = miniCalDate.getFullYear();
+                const month = miniCalDate.getMonth();
+                const trM   = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+                title.innerText = `${trM[month]} ${year}`;
+
+                const firstDay = new Date(year, month, 1).getDay(); // 0=Pazar
+                const offset   = (firstDay === 0) ? 6 : firstDay - 1; // Pazartesi başlangıç
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                const today = new Date();
+                const selD  = currentDashboardDate;
+
+                let html = '';
+                for (let i = 0; i < offset; i++) html += '<div></div>';
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const isToday   = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                    const isSelected = d === selD.getDate() && month === selD.getMonth() && year === selD.getFullYear();
+                    const bg = isSelected ? 'background:var(--color-primary);color:#fff;'
+                             : isToday    ? 'background:var(--color-primary-light);color:var(--color-primary);font-weight:800;'
+                             : '';
+                    html += `<div onclick="window._dashMiniCalSelect(${year},${month},${d})" style="display:flex;justify-content:center;align-items:center;height:26px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;cursor:pointer;${bg}" onmouseover="if(!this.style.background||this.style.background==='')this.style.background='var(--color-bg-hover)'" onmouseout="if(this.style.background==='var(--color-bg-hover)')this.style.background=''">${d}</div>`;
+                }
+                grid.innerHTML = html;
+            }
+
+            window._dashMiniCalSelect = function(y, m, d) {
+                currentDashboardDate = new Date(y, m, d);
+                miniCalDate = new Date(y, m, d);
+                renderMiniCal();
+                window.renderTodayTasks();
+                popup.style.display = 'none';
+            };
+
+            iconBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = popup.style.display !== 'none';
+                popup.style.display = isOpen ? 'none' : 'block';
+                if (!isOpen) {
+                    miniCalDate = new Date(currentDashboardDate);
+                    renderMiniCal();
+                }
+            });
+
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); miniCalDate.setMonth(miniCalDate.getMonth() - 1); renderMiniCal(); });
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); miniCalDate.setMonth(miniCalDate.getMonth() + 1); renderMiniCal(); });
+            todayBtn.addEventListener('click', (e) => { e.stopPropagation(); window._dashMiniCalSelect(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()); });
+
+            // Dışarı tıklayınca kapat
+            document.addEventListener('click', (e) => {
+                if (!popup.contains(e.target) && e.target !== iconBtn) {
+                    popup.style.display = 'none';
+                }
+            });
+        })();
+
         // --- ANA EKRAN: GÖREVLERİ ÇİZME MOTORU ---
         // Asıl render fonksiyonu - doğrudan çağrılmaz
         function _renderTodayTasksNow() {
@@ -7625,12 +8098,20 @@
             }
 
             if (window.filteredSubjects && window.filteredSubjects.length > 0) {
+                // YENİ AKILLI SIRALAMA: Önce tamamlananları alta atar, sonra filtreyi uygular
                 filteredTasks.sort((a, b) => {
-                    const aActive = window.filteredSubjects.includes(a.subject);
-                    const bActive = window.filteredSubjects.includes(b.subject);
-                    if (aActive && !bActive) return -1;
-                    if (!aActive && bActive) return 1;
-                    return 0; // İkisi de aynıysa olduğu yerde kalsın
+                    // 1. Kural: Tamamlanan görevler her zaman en alta gider
+                    if (a.isCompleted && !b.isCompleted) return 1;
+                    if (!a.isCompleted && b.isCompleted) return -1;
+                    
+                    // 2. Kural: Tamamlanma durumları aynıysa ve ders filtresi aktifse, seçili dersleri üste al
+                    if (window.filteredSubjects && window.filteredSubjects.length > 0) {
+                        const aActive = window.filteredSubjects.includes(a.subject);
+                        const bActive = window.filteredSubjects.includes(b.subject);
+                        if (aActive && !bActive) return -1;
+                        if (!aActive && bActive) return 1;
+                    }
+                    return 0;
                 });
             }
 
@@ -7763,6 +8244,15 @@
             
             const currentLayout = localStorage.getItem('plannerLayout') || 'column';
             
+            // Rebuild öncesi her gün sütununun scroll pozisyonunu kaydet
+            const savedScrollPositions = {};
+            weeklyGrid.querySelectorAll('.weekly-day-content[data-date]').forEach(el => {
+                savedScrollPositions[el.dataset.date] = el.scrollTop;
+            });
+            weeklyGrid.querySelectorAll('.weekly-row-content[data-date]').forEach(el => {
+                savedScrollPositions['row_' + el.dataset.date] = el.scrollLeft;
+            });
+
             weeklyGrid.innerHTML = '';
             
             if (currentLayout === 'row') {
@@ -7783,15 +8273,21 @@
                     return taskProfileId === currentProfileId;
                 });
                 
-                if (window.filteredSubjects && window.filteredSubjects.length > 0) {
-                    dayTasks.sort((a, b) => {
+                // YENİ AKILLI SIRALAMA: Önce tamamlananları alta atar, sonra filtreyi uygular
+                dayTasks.sort((a, b) => {
+                    // 1. Kural: Tamamlanan görevler her zaman en alta gider
+                    if (a.isCompleted && !b.isCompleted) return 1;
+                    if (!a.isCompleted && b.isCompleted) return -1;
+                    
+                    // 2. Kural: Tamamlanma durumları aynıysa ve ders filtresi aktifse, seçili dersleri üste al
+                    if (window.filteredSubjects && window.filteredSubjects.length > 0) {
                         const aActive = window.filteredSubjects.includes(a.subject);
                         const bActive = window.filteredSubjects.includes(b.subject);
                         if (aActive && !bActive) return -1;
                         if (!aActive && bActive) return 1;
-                        return 0;
-                    });
-                }
+                    }
+                    return 0;
+                });
 
                 let totalDayMinutes = 0;
                 let tasksHtml = '';
@@ -7870,13 +8366,13 @@
                         : `<div style="margin-top: 5px; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: var(--radius-sm); background: ${isToday ? 'rgba(255,255,255,0.2)' : '#f1f3f5'}; color: ${isToday ? 'var(--color-bg-hover)' : '#aaa'};"><i class="fa-solid fa-mug-hot"></i> Boş Gün</div>`;
 
                     weeklyGrid.innerHTML += `
-                        <div class="weekly-row${colExtraClass}" ${colOnClick} style="display: flex; background: var(--color-bg-card); border-radius: var(--radius-lg); box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; border: 1px solid #eef2f5; flex-shrink: 0; width: 100%;">
+                        <div class="weekly-row${colExtraClass}" data-date="${dateKey}" ${colOnClick} style="display: flex; background: var(--color-bg-card); border-radius: var(--radius-lg); box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; border: 1px solid #eef2f5; flex-shrink: 0; width: 100%;">
                             <div class="weekly-row-header" style="${headerBgRow} width: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-right: 1px solid #eef2f5; flex-shrink: 0; transition: var(--transition-fast);">
                                 <span class="weekly-day-name" style="font-size: 14px; font-weight: 800; ${nameColorRow}">${trDaysNames[i]}</span>
                                 <span class="weekly-day-date" style="font-size: 11px; font-weight: bold; margin-top: 3px; ${dateColor}">${currentDay.getDate()} ${trMonthsNames[currentDay.getMonth()]}</span>
                                 ${rowTotalTimeHtml}
                             </div>
-                            <div class="weekly-row-content" style="flex: 1; display: flex; align-items: stretch; padding: 10px; gap: 10px; overflow-x: auto;" ondragover="window.handleTaskDragOver(event)" ondragleave="window.handleTaskDragLeave(event)" ondrop="window.dropTask(event, '${dateKey}')">
+                            <div class="weekly-row-content" data-date="${dateKey}" style="flex: 1; display: flex; align-items: stretch; padding: 10px; gap: 10px; overflow-x: auto;" ondragover="window.handleTaskDragOver(event)" ondragleave="window.handleTaskDragLeave(event)" ondrop="window.dropTask(event, '${dateKey}')">
                                 <div class="add-task-btn-ghost" onclick="window.openTaskModalForDate('${dateKey}')" style="display: flex; flex-direction: column; justify-content: center;">
                                     <i class="fa-solid fa-plus" style="margin-bottom: 5px;"></i> Görev Ekle
                                 </div>
@@ -7895,7 +8391,7 @@
                     }
 
                     weeklyGrid.innerHTML += `
-                        <div class="weekly-column${colExtraClass}" ${colOnClick}>
+                        <div class="weekly-column${colExtraClass}" data-date="${dateKey}" ${colOnClick}>
                             <div style="display: flex; flex-direction: column; height: 100%;">
                                 <div class="weekly-day-header" style="${headerBgCol}">
                                     <span class="weekly-day-name">${trDaysNames[i]}</span>
@@ -7906,7 +8402,7 @@
                                         <i class="fa-solid fa-plus"></i> Görev Ekle
                                     </div>
                                 </div>
-                                <div class="weekly-day-content" style="padding-top: 10px; min-height: 100px; transition: background-color 0.2s;" ondragover="window.handleTaskDragOver(event)" ondragleave="window.handleTaskDragLeave(event)" ondrop="window.dropTask(event, '${dateKey}')">
+                                <div class="weekly-day-content" data-date="${dateKey}" style="padding-top: 10px; min-height: 100px; transition: background-color 0.2s;" ondragover="window.handleTaskDragOver(event)" ondragleave="window.handleTaskDragLeave(event)" ondrop="window.dropTask(event, '${dateKey}')">
                                     ${tasksHtml}
                                 </div>
                                 ${totalTimeHtml}
@@ -7915,6 +8411,19 @@
                     `;
                 }
             }
+
+            // Rebuild sonrası scroll pozisyonlarını geri yükle
+            requestAnimationFrame(() => {
+                weeklyGrid.querySelectorAll('.weekly-day-content[data-date]').forEach(el => {
+                    const saved = savedScrollPositions[el.dataset.date];
+                    if (saved) el.scrollTop = saved;
+                });
+                weeklyGrid.querySelectorAll('.weekly-row-content[data-date]').forEach(el => {
+                    const saved = savedScrollPositions['row_' + el.dataset.date];
+                    if (saved) el.scrollLeft = saved;
+                });
+            });
+
             window.renderTodayTasks?.();
         }
 
@@ -8786,7 +9295,15 @@
             // İptal butonunu sıfırlanınca geri gizle
             if(cancelActionModeBtn) cancelActionModeBtn.style.display = 'none';
 
-            window.updateWeeklyPlannerView?.();
+            // Seçim class'larını ve cursor'ları DOM'da direkt temizle (scroll sıfırlanmaz)
+            document.querySelectorAll('.task-card-selected-delete, .task-card-selected-duplicate, .task-card-selected-complete').forEach(el => {
+                el.classList.remove('task-card-selected-delete', 'task-card-selected-duplicate', 'task-card-selected-complete');
+                el.style.borderLeftWidth = '4px';
+            });
+            document.querySelectorAll('.weekly-task-card').forEach(c => c.style.cursor = 'grab');
+            document.querySelectorAll('.weekly-column.selectable, .weekly-row.selectable').forEach(col => {
+                col.classList.remove('selectable', 'selected-for-dup');
+            });
         }
 
         // İPTAL BUTONU DİNLEYİCİSİ
@@ -8823,25 +9340,57 @@
                         cancelActionModeBtn.style.display = 'flex';
                     }
                     
-                    window.updateWeeklyPlannerView?.();
+                    // Tüm kart cursor'larını DOM'da direkt güncelle (scroll sıfırlanmaz)
+                    document.querySelectorAll('.weekly-task-card').forEach(c => c.style.cursor = 'pointer');
                 } else if (appMode === 'COMPLETE_SELECT_TASKS') {
                     if (tasksToComplete.size === 0) {
                         resetAppModes(); 
                     } else {
-                        let allCompleted = true;
+                        let completedCount = 0, uncompletedCount = 0;
                         tasksToComplete.forEach(taskKey => {
                             const [dKey, tIdStr] = taskKey.split('||');
                             const tObj = userTasks[dKey].find(t => t.id === parseInt(tIdStr));
-                            if(tObj && !tObj.isCompleted) allCompleted = false;
+                            if (tObj) tObj.isCompleted ? completedCount++ : uncompletedCount++;
                         });
 
-                        document.getElementById('multiCompleteTitle').innerText = allCompleted ? "Tamamlanmayı İptal Et" : "Seçili Görevleri Tamamla";
-                        document.getElementById('multiCompleteConfirmMsg').innerText = allCompleted ? `Seçilen ${tasksToComplete.size} görevin tamamlandı durumunu kaldırmak istediğinize emin misiniz?` : `Seçilen ${tasksToComplete.size} görevi tamamlandı olarak işaretlemek istediğinize emin misiniz?`;
-                        DOM.yesTaskMultiCompleteBtn.innerText = allCompleted ? "Evet, Kaldır" : "Evet, Tamamla";
-                        DOM.yesTaskMultiCompleteBtn.style.backgroundColor = allCompleted ? "#ffc107" : "#28a745";
-                        document.getElementById('multiCompleteIcon').className = allCompleted ? "fa-solid fa-arrow-rotate-left" : "fa-solid fa-check-double";
-                        document.getElementById('multiCompleteIcon').style.color = allCompleted ? "#ffc107" : "#28a745";
-                        DOM.yesTaskMultiCompleteBtn.setAttribute('data-action', allCompleted ? 'uncomplete' : 'complete');
+                        const allCompleted = uncompletedCount === 0;
+                        const allUncompleted = completedCount === 0;
+
+                        let titleText, msgText, btnText, btnColor, iconClass, iconColor, actionAttr;
+
+                        if (allCompleted) {
+                            titleText  = "Tamamlanmayı İptal Et";
+                            msgText    = `Seçilen ${tasksToComplete.size} görevin tamamlandı durumunu kaldırmak istediğinize emin misiniz?`;
+                            btnText    = "Evet, Kaldır";
+                            btnColor   = "#ffc107";
+                            iconClass  = "fa-solid fa-arrow-rotate-left";
+                            iconColor  = "#ffc107";
+                            actionAttr = "uncomplete";
+                        } else if (allUncompleted) {
+                            titleText  = "Seçili Görevleri Tamamla";
+                            msgText    = `Seçilen ${tasksToComplete.size} görevi tamamlandı olarak işaretlemek istediğinize emin misiniz?`;
+                            btnText    = "Evet, Tamamla";
+                            btnColor   = "#28a745";
+                            iconClass  = "fa-solid fa-check-double";
+                            iconColor  = "#28a745";
+                            actionAttr = "complete";
+                        } else {
+                            titleText  = "Karma Seçim";
+                            msgText    = `Seçilen ${uncompletedCount} görevi tamamlandı olarak işaretlemek, ${completedCount} görevin tamamlandı durumunu kaldırmak istediğinize emin misiniz?`;
+                            btnText    = "Evet, Uygula";
+                            btnColor   = "#007bff";
+                            iconClass  = "fa-solid fa-shuffle";
+                            iconColor  = "#007bff";
+                            actionAttr = "toggle";
+                        }
+
+                        document.getElementById('multiCompleteTitle').innerText = titleText;
+                        document.getElementById('multiCompleteConfirmMsg').innerText = msgText;
+                        DOM.yesTaskMultiCompleteBtn.innerText = btnText;
+                        DOM.yesTaskMultiCompleteBtn.style.backgroundColor = btnColor;
+                        document.getElementById('multiCompleteIcon').className = iconClass;
+                        document.getElementById('multiCompleteIcon').style.color = iconColor;
+                        DOM.yesTaskMultiCompleteBtn.setAttribute('data-action', actionAttr);
                         document.getElementById('taskMultiCompleteConfirmModal').style.display = 'flex';
                     }
                 } else {
@@ -8885,7 +9434,8 @@
                         cancelActionModeBtn.style.display = 'flex';
                     }
                     
-                    window.updateWeeklyPlannerView?.();
+                    // Tüm kart cursor'larını DOM'da direkt güncelle (scroll sıfırlanmaz)
+                    document.querySelectorAll('.weekly-task-card').forEach(c => c.style.cursor = 'pointer');
                 } else if (appMode === 'DUP_SELECT_TASK') {
                     resetAppModes(); 
                 } else if (appMode === 'DUP_SELECT_DAYS') {
@@ -8919,7 +9469,10 @@
                 }
 
                 draggedTaskInfo = null;
-                window.updateWeeklyPlannerView?.();
+                // Tüm kart cursor'larını DOM'da direkt güncelle (scroll sıfırlanmaz)
+                document.querySelectorAll('.weekly-task-card').forEach(c => c.style.cursor = 'pointer');
+                // Gün sütunlarını seçilebilir yap
+                document.querySelectorAll('.weekly-column, .weekly-row').forEach(col => col.classList.add('selectable'));
             });
         }
 
@@ -8937,7 +9490,8 @@
                         cancelActionModeBtn.style.display = 'flex';
                     }
                     
-                    window.updateWeeklyPlannerView?.();
+                    // Tüm kart cursor'larını DOM'da direkt güncelle (scroll sıfırlanmaz)
+                    document.querySelectorAll('.weekly-task-card').forEach(c => c.style.cursor = 'pointer');
                 } else if (appMode === 'DELETE_SELECT_TASKS') {
                     if (tasksToDelete.size === 0) {
                         resetAppModes(); 
@@ -8966,23 +9520,52 @@
             
             if (appMode === 'NORMAL') {
                 if(typeof window.viewTaskDetails === 'function') window.viewTaskDetails(dateKey, taskId);
-            } else if (appMode === 'DUP_SELECT_TASK' || appMode === 'DUP_SELECT_DAYS') {
+                return;
+            }
+
+            // Seçim modlarında: tüm grid'i yeniden render etmek yerine
+            // sadece tıklanan kartın class'ını DOM'da direkt değiştir (scroll sıfırlanmaz)
+            const clickedCard = e.currentTarget;
+
+            if (appMode === 'DUP_SELECT_TASK' || appMode === 'DUP_SELECT_DAYS') {
+                // Önceden seçili varsa onu temizle
+                document.querySelectorAll('.task-card-selected-duplicate').forEach(el => {
+                    el.classList.remove('task-card-selected-duplicate');
+                    el.style.borderLeftWidth = '4px';
+                });
                 taskToDuplicate = { dateKey, taskId };
                 appMode = 'DUP_SELECT_DAYS';
+                clickedCard.classList.add('task-card-selected-duplicate');
+                clickedCard.style.borderLeftWidth = '6px';
                 DOM.duplicateZoneText.innerText = `Çoğalt (${selectedDatesForDuplicate.size})`;
-                window.updateWeeklyPlannerView?.();
+                // Gün sütunlarını seçilebilir hale getir
+                document.querySelectorAll('.weekly-column, .weekly-row').forEach(col => col.classList.add('selectable'));
+
             } else if (appMode === 'DELETE_SELECT_TASKS') {
                 const taskKey = `${dateKey}||${taskId}`;
-                if (tasksToDelete.has(taskKey)) tasksToDelete.delete(taskKey);
-                else tasksToDelete.add(taskKey);
+                if (tasksToDelete.has(taskKey)) {
+                    tasksToDelete.delete(taskKey);
+                    clickedCard.classList.remove('task-card-selected-delete');
+                    clickedCard.style.borderLeftWidth = '4px';
+                } else {
+                    tasksToDelete.add(taskKey);
+                    clickedCard.classList.add('task-card-selected-delete');
+                    clickedCard.style.borderLeftWidth = '6px';
+                }
                 document.getElementById('removeZoneText').innerText = `Sil (${tasksToDelete.size})`;
-                window.updateWeeklyPlannerView?.();
+
             } else if (appMode === 'COMPLETE_SELECT_TASKS') {
                 const taskKey = `${dateKey}||${taskId}`;
-                if (tasksToComplete.has(taskKey)) tasksToComplete.delete(taskKey);
-                else tasksToComplete.add(taskKey);
+                if (tasksToComplete.has(taskKey)) {
+                    tasksToComplete.delete(taskKey);
+                    clickedCard.classList.remove('task-card-selected-complete');
+                    clickedCard.style.borderLeftWidth = '4px';
+                } else {
+                    tasksToComplete.add(taskKey);
+                    clickedCard.classList.add('task-card-selected-complete');
+                    clickedCard.style.borderLeftWidth = '6px';
+                }
                 document.getElementById('completeZoneText').innerText = `Tamamla (${tasksToComplete.size})`;
-                window.updateWeeklyPlannerView?.();
             }
         };
 
@@ -8991,7 +9574,16 @@
                 if (selectedDatesForDuplicate.has(dateKey)) selectedDatesForDuplicate.delete(dateKey);
                 else selectedDatesForDuplicate.add(dateKey);
                 DOM.duplicateZoneText.innerText = `Çoğalt (${selectedDatesForDuplicate.size})`;
-                window.updateWeeklyPlannerView?.(); 
+                // Sadece ilgili sütunun class'ını toggle et, grid'i yeniden render etme
+                document.querySelectorAll('.weekly-column.selectable, .weekly-row.selectable').forEach(col => {
+                    const colDate = col.dataset.date;
+                    if (!colDate) return;
+                    if (selectedDatesForDuplicate.has(colDate)) {
+                        col.classList.add('selected-for-dup');
+                    } else {
+                        col.classList.remove('selected-for-dup');
+                    }
+                });
             }
         };
 
@@ -9072,7 +9664,9 @@
                 const cmpBtn = document.getElementById('completeDropZone');
                 if(cmpBtn) cmpBtn.style.pointerEvents = 'none';
                 const action = btnMultiComplete.getAttribute('data-action');
-                const targetStatus = action === 'uncomplete' ? false : true;
+                // 'toggle' modunda her görev kendi durumunun tersine döner
+                // 'complete'/'uncomplete' modunda hepsi sabit bir duruma gider
+                const fixedStatus = action === 'uncomplete' ? false : action === 'complete' ? true : null;
                 
                 try {
                     let playlistsToUpdate = new Set();
@@ -9083,6 +9677,7 @@
                         const idx = userTasks[dKey].findIndex(t => t.id === tId);
                         
                         if(idx !== -1) {
+                            const targetStatus = fixedStatus !== null ? fixedStatus : !userTasks[dKey][idx].isCompleted;
                             const updated = { ...userTasks[dKey][idx], isCompleted: targetStatus };
                             
                             if (updated.taskVideos && updated.taskVideos.length > 0) {
@@ -9106,8 +9701,9 @@
                     }
 
                     window.renderPlaylists?.();
-                    resetAppModes(); 
-                } catch (error) { console.error(error); resetAppModes(); } finally { if(cmpBtn) cmpBtn.style.pointerEvents = 'auto'; }
+                    resetAppModes();
+                    window.updateWeeklyPlannerView?.();
+                } catch (error) { console.error(error); resetAppModes(); window.updateWeeklyPlannerView?.(); } finally { if(cmpBtn) cmpBtn.style.pointerEvents = 'auto'; }
             });
         }
 
@@ -9130,8 +9726,9 @@
                         if (!userTasks[targetDate]) userTasks[targetDate] = [];
                         userTasks[targetDate].push(newTaskClone);
                     }
-                    resetAppModes(); 
-                } catch(error) { console.error(error); resetAppModes(); } finally { if(dupBtn) dupBtn.style.pointerEvents = 'auto'; }
+                    resetAppModes();
+                    window.updateWeeklyPlannerView?.();
+                } catch(error) { console.error(error); resetAppModes(); window.updateWeeklyPlannerView?.(); } finally { if(dupBtn) dupBtn.style.pointerEvents = 'auto'; }
             });
         }
 
@@ -9171,8 +9768,9 @@
                         await setDoc(doc(db, "users", currentUserUid, "userPlaylists", pl.id.toString()), pl, { merge: true });
                     }
 
-                    resetAppModes(); 
-                } catch (error) { console.error(error); resetAppModes(); } finally { if(rmvBtn) rmvBtn.style.pointerEvents = 'auto'; }
+                    resetAppModes();
+                    window.updateWeeklyPlannerView?.();
+                } catch (error) { console.error(error); resetAppModes(); window.updateWeeklyPlannerView?.(); } finally { if(rmvBtn) rmvBtn.style.pointerEvents = 'auto'; }
             });
         }
 
@@ -10265,7 +10863,44 @@
             if (tvpSum) tvpSum.style.display = 'none';
             if (tvPanelConfirm2) tvPanelConfirm2.innerText = `Seçilenleri Ekle (${selectedVideosForTaskIndices.size})`;
 
-            // Video listesi zaten tvBody'ye yazıldı, ek işlem yok
+            // Video listesi zaten tvBody'ye yazıldı.
+            // SCROLL MANTIĞI:
+            // - Düzenleme modunda ve bu playlistten video eklenmişse → o görevin ilk videosuna git
+            // - Yeni ekleme modunda → tüm görevlerdeki son eklenen videonun bir sonrakine git
+            requestAnimationFrame(() => {
+                if (!tvBody) return;
+
+                const isEditingThisPlaylist = editingTaskId !== null &&
+                    currentTaskVideos.some(v => v.plId && v.plId.toString() === plId.toString());
+
+                if (isEditingThisPlaylist) {
+                    // Düzenleme: bu görevdeki en küçük index → kullanıcı kendi eklediği videoları görsün
+                    const ownIndices = currentTaskVideos
+                        .filter(v => v.plId && v.plId.toString() === plId.toString())
+                        .map(v => v.index);
+                    const firstOwn = Math.min(...ownIndices);
+                    const targetRow = tvBody.querySelector(`[data-vidindex="${firstOwn}"]`);
+                    if (targetRow) targetRow.scrollIntoView({ block: 'start' });
+                } else {
+                    // Yeni ekleme: tüm görevlerdeki bu playlistten eklenen en yüksek index + 1'e git
+                    let lastPlannedIndex = -1;
+                    Object.values(userTasks).forEach(dayTasks => {
+                        dayTasks.forEach(task => {
+                            if (!task.taskVideos) return;
+                            task.taskVideos.forEach(v => {
+                                if (v.plId && v.plId.toString() === plId.toString()) {
+                                    if (v.index > lastPlannedIndex) lastPlannedIndex = v.index;
+                                }
+                            });
+                        });
+                    });
+
+                    if (lastPlannedIndex >= 0) {
+                        const targetRow = tvBody.querySelector(`[data-vidindex="${lastPlannedIndex}"]`);
+                        if (targetRow) targetRow.scrollIntoView({ block: 'start' });
+                    }
+                }
+            });
         };
 
         window.toggleVideoSelection = function(index, element) {
@@ -12901,11 +13536,19 @@
                     
                     // SENİN KENDİ DERS FİLTRESİ (Silikleştirme) MANTIĞIN AYNEN KORUNDU
                     if (window.filteredSubjects && window.filteredSubjects.length > 0) {
+                        // YENİ AKILLI SIRALAMA (İndirme Ekranı İçin)
                         dayTasks.sort((a, b) => {
-                            const aActive = window.filteredSubjects.includes(a.subject);
-                            const bActive = window.filteredSubjects.includes(b.subject);
-                            if (aActive && !bActive) return -1;
-                            if (!aActive && bActive) return 1;
+                            // 1. Kural: Tamamlanan görevler her zaman en alta gider
+                            if (a.isCompleted && !b.isCompleted) return 1;
+                            if (!a.isCompleted && b.isCompleted) return -1;
+                            
+                            // 2. Kural: Tamamlanma durumları aynıysa ve ders filtresi aktifse, seçili dersleri üste al
+                            if (window.filteredSubjects && window.filteredSubjects.length > 0) {
+                                const aActive = window.filteredSubjects.includes(a.subject);
+                                const bActive = window.filteredSubjects.includes(b.subject);
+                                if (aActive && !bActive) return -1;
+                                if (!aActive && bActive) return 1;
+                            }
                             return 0;
                         });
                     }
@@ -14378,15 +15021,17 @@
             if (document.getElementById('calSummaryHeader')?.style.display === 'flex') { document.getElementById('calBackBtn')?.click(); }
         });
 
-        // --- TAMAMLANMA İKONU (TİK) SEÇİM MOTORU ---
+        // === TAMAMLANMA İKONU (TİK) SEÇİM VE KAYDETME MOTORU ===
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Hafızadan yükle ve CSS değişkenine anında uygula
+            
+            // 1. AŞAMA: Sayfa açıldığında hafızadaki tiki bul ve sisteme yükle. (Yoksa ince tiki seç)
             const savedIcon = localStorage.getItem('plannerCompletedIcon') || "'\\f00c'";
             document.documentElement.style.setProperty('--completed-icon-content', savedIcon);
             
-            // 2. Ayarlar menüsü açıldığında doğru kutuyu yeşil (seçili) yap
+            // 2. AŞAMA: Ayarlar menüsündeki butonların tıklanma ve renk değiştirme ayarı
             const iconLabels = document.querySelectorAll('.settings-icon-option');
             iconLabels.forEach(label => {
+                // Önceden seçili olanı yeşil yak
                 if (label.getAttribute('data-icon-value') === savedIcon) {
                     label.classList.add('active');
                     label.querySelector('input').checked = true;
@@ -14394,7 +15039,7 @@
                     label.classList.remove('active');
                 }
 
-                // Tıklama animasyonu ve seçimi
+                // Tıklandığında diğerlerini söndür, tıklananı yeşil yap
                 label.addEventListener('click', function() {
                     iconLabels.forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
@@ -14402,12 +15047,14 @@
                 });
             });
 
-            // 3. Ayarları Kaydet butonuna dinleyici ekle
-            const saveSettingsBtn = document.getElementById('saveSettingsModalBtn');
-            if (saveSettingsBtn) {
-                saveSettingsBtn.addEventListener('click', () => {
+            // 3. AŞAMA: "Ayarları Kaydet" butonuna basıldığında yeni tiki hafızaya al ve ekrana uygula
+            const savePlannerSettingsBtn = document.getElementById('savePlannerSettingsBtn'); 
+            if (savePlannerSettingsBtn) {
+                savePlannerSettingsBtn.addEventListener('click', () => {
                     const selectedIcon = document.querySelector('input[name="iconChoice"]:checked').value;
+                    // Tarayıcı hafızasına kaydet (Sayfa yenilense de gitmez)
                     localStorage.setItem('plannerCompletedIcon', selectedIcon);
+                    // CSS değişkenini anında değiştirerek tüm ekranı güncelle
                     document.documentElement.style.setProperty('--completed-icon-content', selectedIcon);
                 });
             }
@@ -14480,35 +15127,6 @@
         <div class="prof-alert-box" id="profAlertBox">
             </div>
     </div>
-
-    <div style="margin-bottom: 24px;">
-                        <p style="font-weight: 700; font-size: 13px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;">
-                            <i class="fa-solid fa-check-double" style="margin-right: 6px;"></i> Tamamlanma Sembolü
-                        </p>
-                        <div id="iconOptions" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                            
-                            <label class="settings-icon-option active" data-icon-value="'\f00c'">
-                                <input type="radio" name="iconChoice" value="'\f00c'" style="display:none;" checked>
-                                <i class="fa-solid fa-check"></i>
-                            </label>
-
-                            <label class="settings-icon-option" data-icon-value="'\f058'">
-                                <input type="radio" name="iconChoice" value="'\f058'" style="display:none;">
-                                <i class="fa-solid fa-circle-check"></i>
-                            </label>
-
-                            <label class="settings-icon-option" data-icon-value="'\f14a'">
-                                <input type="radio" name="iconChoice" value="'\f14a'" style="display:none;">
-                                <i class="fa-solid fa-square-check"></i>
-                            </label>
-
-                            <label class="settings-icon-option" data-icon-value="'\f560'">
-                                <input type="radio" name="iconChoice" value="'\f560'" style="display:none;">
-                                <i class="fa-solid fa-check-double"></i>
-                            </label>
-
-                        </div>
-                    </div>
 
     <!-- ============================================================
          AYARLAR MODALI
@@ -14863,6 +15481,75 @@
         .premium-check-label input:checked ~ .premium-check-mark::after {
             opacity: 1;
             transform: scale(1) rotate(0deg);
+        }
+
+        /* =========================================================================
+           EVRENSEL GÖREV SEÇİM TASARIMI (Sol Ders Rengi KESİN KORUNMUŞ - FİNAL)
+           ========================================================================= */
+        
+        /* 1. SİLME MODU SEÇİMİ */
+        .planner-task-card.task-card-selected-delete {
+            opacity: 1 !important; 
+            border-top: 2px solid var(--color-danger) !important; 
+            border-right: 2px solid var(--color-danger) !important; 
+            border-bottom: 2px solid var(--color-danger) !important; 
+            /* Sol çizgiyi ders renginde tut ve kalınlaştır */
+            border-left-style: solid !important;
+            border-left-width: 6px !important;
+            /* border-left-color intentionally NOT overridden — inline style (JS'den gelen ders rengi) kazanır */
+            
+            background-color: rgba(220, 53, 69, 0.08) !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25) !important; 
+            transform: scale(1.02) !important; 
+            z-index: 20 !important;
+        }
+        
+        /* 2. ÇOĞALTMA MODU SEÇİMİ */
+        .planner-task-card.task-card-selected-duplicate {
+            opacity: 1 !important;
+            border-top: 2px solid var(--color-primary) !important;
+            border-right: 2px solid var(--color-primary) !important;
+            border-bottom: 2px solid var(--color-primary) !important;
+            
+            border-left-style: solid !important;
+            border-left-width: 6px !important;
+            /* border-left-color intentionally NOT overridden — inline style (JS'den gelen ders rengi) kazanır */
+
+            background-color: rgba(0, 123, 255, 0.08) !important;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25) !important;
+            transform: scale(1.02) !important;
+            z-index: 20 !important;
+        }
+
+        /* 3. TAMAMLAMA / GERİ ALMA SEÇİMİ */
+        .planner-task-card.task-card-selected-complete {
+            opacity: 1 !important;
+            border-top: 2px solid #ffc107 !important; 
+            border-right: 2px solid #ffc107 !important; 
+            border-bottom: 2px solid #ffc107 !important; 
+            
+            border-left-style: solid !important;
+            border-left-width: 6px !important;
+            /* border-left-color intentionally NOT overridden — inline style (JS'den gelen ders rengi) kazanır */
+
+            background-color: rgba(255, 193, 7, 0.08) !important;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25) !important;
+            transform: scale(1.02) !important;
+            z-index: 20 !important;
+        }
+
+        /* --- TAMAMLANMIŞ GÖREVLERDE TİK VE PERDE GİZLEME --- */
+        .planner-task-card.task-completed.task-card-selected-delete::after,
+        .planner-task-card.task-completed.task-card-selected-duplicate::after,
+        .planner-task-card.task-completed.task-card-selected-complete::after {
+            opacity: 0.10 !important; 
+            transform: translate(-50%, -50%) scale(0.8) !important; 
+        }
+        
+        .planner-task-card.task-completed.task-card-selected-delete::before,
+        .planner-task-card.task-completed.task-card-selected-duplicate::before,
+        .planner-task-card.task-completed.task-card-selected-complete::before {
+            opacity: 0.10 !important; 
         }
 
     </style>
