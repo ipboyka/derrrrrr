@@ -3471,11 +3471,11 @@
                             <i class="fa-solid fa-download"></i>
                         </button>
                         
-                        <div style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
                             <button id="openPlannerFilterBtn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid #e2e6ea; background-color: var(--color-bg-input); color: #495057; cursor: pointer; transition: var(--transition-fast);" data-custom-title="Dersleri Filtrele">
                                 <i class="fa-solid fa-filter"></i>
                             </button>
-                            <button id="clearPlannerFilterBtn" onclick="window.clearFilters()" style="display: none; align-items: center; justify-content: center; width: 30px; height: 36px; border-radius: 0 8px 8px 0; border: 1px solid #dc3545; border-left: none; background-color: #dc3545; color: white; cursor: pointer; transition: var(--transition-fast);" data-custom-title="Filtreyi Kapat">
+                            <button id="clearPlannerFilterBtn" onclick="window.clearFilters()" style="display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid #dc3545; background-color: #dc3545; color: white; cursor: pointer; transition: var(--transition-fast);" data-custom-title="Filtreyi Kapat">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                         </div>
@@ -3545,195 +3545,194 @@
 
     <div id="addTaskModal" class="custom-modal" style="z-index: 2500;">
         <div class="custom-modal-content" id="addTaskModalContent" style="max-width: 520px; display: flex; flex-direction: row; gap: 0; padding: 0; overflow: hidden; transition: max-width 0.3s ease;">
-            <div id="addTaskMainPanel" style="width: 520px; flex-shrink: 0; display: flex; flex-direction: column; padding: 22px;">
-            <div class="modal-header" style="padding: 0 0 15px 0; margin-bottom: 0;">
-                <h3><i class="fa-solid fa-list-check" class="icon-btn-primary"></i> Yeni Görev Ekle</h3>
-                <span class="close-modal-btn" id="closeAddTaskModalBtn">&times;</span>
-            </div>
-            
-            <div class="modal-body" style="gap: 15px;">
+            <div id="addTaskMainPanel" style="width: 520px; flex-shrink: 0; display: flex; flex-direction: column;">
                 
-                <div class="flex-gap-15">
-                    <div class="input-group" style="flex: 1.2;">
-                        <label>Sınav Türü</label>
-                        <div class="task-custom-select" id="tcs-examType">
-                            <div class="tcs-trigger"><span class="tcs-text">TYT</span> <i class="fa-solid fa-chevron-down"></i></div>
-                            <div class="tcs-options">
-                                <div class="tcs-option selected" data-value="tyt">TYT</div>
-                                <div class="tcs-option" data-value="ayt">AYT</div>
-                            </div>
-                            <input type="hidden" id="taskExamType" value="tyt">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group" id="taskTrackGroup" style="flex: 1; display: none;">
-                        <label>Alan</label>
-                        <div class="task-custom-select" id="tcs-track">
-                            <div class="tcs-trigger"><span class="tcs-text">Sayısal</span> <i class="fa-solid fa-chevron-down"></i></div>
-                            <div class="tcs-options">
-                                <div class="tcs-option selected" data-value="sayisal">Sayısal</div>
-                                <div class="tcs-option" data-value="ea">Eşit Ağırlık</div>
-                                <div class="tcs-option" data-value="sozel">Sözel</div>
-                                <div class="tcs-option" data-value="dil">Yabancı Dil</div>
-                            </div>
-                            <input type="hidden" id="taskTrack" value="sayisal">
-                        </div>
-                    </div>
-
-                    <div class="input-group" style="flex: 1.5;">
-                        <label>Ders Seçimi</label>
-                        <div class="task-custom-select" id="tcs-subject">
-                            <div class="tcs-trigger"><span class="tcs-text">Türkçe</span> <i class="fa-solid fa-chevron-down"></i></div>
-                            <div class="tcs-options" id="dynamicSubjectOptions">
-                            </div>
-                            <input type="hidden" id="taskSubject" value="Türkçe">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Görev Türü</label>
-                    <div style="display: flex; gap: 10px; align-items: stretch;">
-                        <div class="task-custom-select" id="tcs-taskType" class="flex-1">
-                            <div class="tcs-trigger" id="tcs-taskTypeTrigger" style="background-color: var(--color-primary-lighter); color: var(--color-primary);"><span class="tcs-text">Konu Anlatımı</span> <i class="fa-solid fa-chevron-down"></i></div>
-                            <div class="tcs-options" id="taskTypeOptions">
-                                <div class="tcs-option selected" data-value="Konu Anlatımı">Konu Anlatımı</div>
-                                <div class="tcs-option" data-value="Test Çözümü">Test Çözümü</div>
-                                <div class="tcs-option" data-value="Deneme Çözümü">Deneme Çözümü</div>
-                                <div class="tcs-option" data-value="Genel Tekrar">Genel Tekrar</div>
-                                <div class="tcs-option" data-value="Genel Deneme" style="display: none;">Genel Deneme</div>
-                            </div>
-                            <input type="hidden" id="taskType" value="Konu Anlatımı">
-                        </div>
-                        
-                        <button type="button" id="selectFromPlaylistBtn" class="save-note-btn" style="display: flex; gap: 8px; align-items: center; justify-content: center; background-color: #ff0000; padding: 0 15px; font-size: 13px; border-radius: 10px;">
-                            <i class="fa-brands fa-youtube" style="font-size: 18px;"></i> Seç
-                        </button>
-                    </div>
-                </div>
-
-                <div id="playlistSelectionSummary" style="display: none; background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-lg); padding: 15px; margin-top: 5px; transition: var(--transition-base); box-shadow: 0 4px 10px rgba(0,123,255,0.05); position: relative; overflow: hidden;">
-                    
-                    <div id="videoWarningOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(217, 83, 79, 0.9); z-index: 10; flex-direction: column; justify-content: center; align-items: center; color: white; backdrop-filter: blur(2px);">
-                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; margin-bottom: 5px;"></i>
-                        <span style="font-size: 12px; font-weight: 800; text-align: center; padding: 0 10px;">Görev kaydedilince videolar görevden kaldırılacak!</span>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--color-primary-border); padding-bottom: 10px; margin-bottom: 10px;">
-                        <div style="font-weight: 800; color: var(--color-primary-hover); font-size: 13px;" id="pss-text"><i class="fa-solid fa-list-check"></i> 0 Video Eklendi</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: var(--color-text-muted); font-weight: 800; font-size: 11px;">Hız:</span>
-                            <div id="customSpeedSelector" style="display: flex; gap: 2px; background: var(--color-bg-card); padding: 3px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); align-items: center;">
-                                <div class="speed-opt active" data-val="1">1x</div>
-                                <div class="speed-opt" data-val="1.25">1.25x</div>
-                                <div class="speed-opt" data-val="1.5">1.5x</div>
-                                <div class="speed-opt" data-val="1.75">1.75x</div>
-                                <div class="speed-opt" data-val="2">2x</div>
-                                <input type="text" id="customSpeedInput" placeholder="Özel" style="width: 45px; padding: 3px; border: 1px solid var(--color-primary-border); border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; color: var(--color-primary); text-align: center; outline: none; margin-left: 2px; background: var(--color-primary-lighter); cursor: pointer; transition: 0.2s;">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="pss-video-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; margin-bottom: 10px; padding-right: 5px;">
-                        </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-hover); padding: 8px 12px; border-radius: var(--radius-md);">
-                        <span style="font-weight: 800; color: var(--color-primary); font-size: 12px;"><i class="fa-solid fa-stopwatch"></i> Videoların Süresi:</span>
-                        <span id="pss-duration" style="font-weight: 900; font-size: 14px; color: var(--color-primary-hover);">0 Dk</span>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Açıklama / Hedef <span class="required-star">*</span></label>
-                    <textarea id="taskDesc" class="modal-textarea" placeholder="Hangi konu çalışılacak veya kaç soru çözülecek?" style="min-height: 70px;"></textarea>
-                </div>
-
-                <div class="flex-gap-15" id="taskDurationRow" style="flex-wrap: wrap;">
-                    <div class="input-group" id="taskDurationGroup" style="flex: 1 1 100%;">
-                        <label>Tahmini Süre <span class="required-star">*</span></label>
-                        <div class="custom-number-input">
-                            <input type="number" id="taskDuration" class="modal-input no-spinner" placeholder="Örn: 45" min="1">
-                            <span class="cni-label">Dakika</span>
-                            <div class="cni-controls">
-                                <button type="button" class="cni-btn" id="durDownBtn"><i class="fa-solid fa-minus"></i></button>
-                                <button type="button" class="cni-btn" id="durUpBtn"><i class="fa-solid fa-plus"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                        
-                    <div class="input-group" id="taskQuestionCountGroup" style="flex: 1; display: none;">
-                        <label>Soru Sayısı</label>
-                        <div class="custom-number-input">
-                            <input type="number" id="taskQuestionCount" class="modal-input no-spinner" placeholder="Örn: 40" min="1" style="padding-right: 85px; transition: all 0.3s;">
-                            <span class="cni-label" style="right: 75px; pointer-events: none;">Soru</span>
-                            <div class="cni-controls">
-                                <button type="button" class="cni-btn" id="qcDownBtn"><i class="fa-solid fa-minus"></i></button>
-                                <button type="button" class="cni-btn" id="qcUpBtn"><i class="fa-solid fa-plus"></i></button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-list-check" class="icon-btn-primary"></i> Yeni Görev Ekle</h3>
+                    <span class="close-modal-btn" id="closeAddTaskModalBtn">&times;</span>
                 </div>
                 
-                <p id="taskErrorMsg" class="error-msg">Lütfen Açıklama ve Tahmini Süre alanlarını doldurun!</p>
-            </div>
-            
-            <div class="modal-footer" class="flex-between" style="padding: 0; margin-top: 15px;">
-                <button class="cancel-note-btn" id="deleteTaskBtn" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; display: none;"><i class="fa-solid fa-trash"></i> Sil</button>
-                <div style="display: flex; gap: 12px;">
-                    <button class="cancel-note-btn" id="cancelTaskBtn">İptal Et</button>
-                    <button class="save-note-btn" id="saveTaskBtn">Görevi Kaydet</button>
+                <div class="modal-body" style="gap: 15px;">
+                    
+                    <div class="flex-gap-15">
+                        <div class="input-group" style="flex: 1.2;">
+                            <label>Sınav Türü</label>
+                            <div class="task-custom-select" id="tcs-examType">
+                                <div class="tcs-trigger"><span class="tcs-text">TYT</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options">
+                                    <div class="tcs-option selected" data-value="tyt">TYT</div>
+                                    <div class="tcs-option" data-value="ayt">AYT</div>
+                                </div>
+                                <input type="hidden" id="taskExamType" value="tyt">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group" id="taskTrackGroup" style="flex: 1; display: none;">
+                            <label>Alan</label>
+                            <div class="task-custom-select" id="tcs-track">
+                                <div class="tcs-trigger"><span class="tcs-text">Sayısal</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options">
+                                    <div class="tcs-option selected" data-value="sayisal">Sayısal</div>
+                                    <div class="tcs-option" data-value="ea">Eşit Ağırlık</div>
+                                    <div class="tcs-option" data-value="sozel">Sözel</div>
+                                    <div class="tcs-option" data-value="dil">Yabancı Dil</div>
+                                </div>
+                                <input type="hidden" id="taskTrack" value="sayisal">
+                            </div>
+                        </div>
+
+                        <div class="input-group" style="flex: 1.5;">
+                            <label>Ders Seçimi</label>
+                            <div class="task-custom-select" id="tcs-subject">
+                                <div class="tcs-trigger"><span class="tcs-text">Türkçe</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options" id="dynamicSubjectOptions">
+                                </div>
+                                <input type="hidden" id="taskSubject" value="Türkçe">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Görev Türü</label>
+                        <div style="display: flex; gap: 10px; align-items: stretch;">
+                            <div class="task-custom-select" id="tcs-taskType" class="flex-1">
+                                <div class="tcs-trigger" id="tcs-taskTypeTrigger" style="background-color: var(--color-primary-lighter); color: var(--color-primary);"><span class="tcs-text">Konu Anlatımı</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options" id="taskTypeOptions">
+                                    <div class="tcs-option selected" data-value="Konu Anlatımı">Konu Anlatımı</div>
+                                    <div class="tcs-option" data-value="Test Çözümü">Test Çözümü</div>
+                                    <div class="tcs-option" data-value="Deneme Çözümü">Deneme Çözümü</div>
+                                    <div class="tcs-option" data-value="Genel Tekrar">Genel Tekrar</div>
+                                    <div class="tcs-option" data-value="Genel Deneme" style="display: none;">Genel Deneme</div>
+                                </div>
+                                <input type="hidden" id="taskType" value="Konu Anlatımı">
+                            </div>
+                            
+                            <button type="button" id="selectFromPlaylistBtn" class="save-note-btn" style="display: flex; gap: 8px; align-items: center; justify-content: center; background-color: #ff0000; padding: 0 15px; font-size: 13px; border-radius: 10px; box-shadow: none;">
+                                <i class="fa-brands fa-youtube" style="font-size: 16px;"></i> Seç
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="playlistSelectionSummary" style="display: none; background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-lg); padding: 15px; margin-top: 5px; transition: var(--transition-base); box-shadow: 0 4px 10px rgba(0,123,255,0.05); position: relative; overflow: hidden;">
+                        
+                        <div id="videoWarningOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(217, 83, 79, 0.9); z-index: 10; flex-direction: column; justify-content: center; align-items: center; color: white; backdrop-filter: blur(2px);">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; margin-bottom: 5px;"></i>
+                            <span style="font-size: 12px; font-weight: 800; text-align: center; padding: 0 10px;">Görev kaydedilince videolar görevden kaldırılacak!</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--color-primary-border); padding-bottom: 10px; margin-bottom: 10px;">
+                            <div style="font-weight: 800; color: var(--color-primary-hover); font-size: 13px;" id="pss-text"><i class="fa-solid fa-list-check"></i> 0 Video Eklendi</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: var(--color-text-muted); font-weight: 800; font-size: 11px;">Hız:</span>
+                                <div id="customSpeedSelector" style="display: flex; gap: 2px; background: var(--color-bg-card); padding: 3px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); align-items: center;">
+                                    <div class="speed-opt active" data-val="1">1x</div>
+                                    <div class="speed-opt" data-val="1.25">1.25x</div>
+                                    <div class="speed-opt" data-val="1.5">1.5x</div>
+                                    <div class="speed-opt" data-val="1.75">1.75x</div>
+                                    <div class="speed-opt" data-val="2">2x</div>
+                                    <input type="text" id="customSpeedInput" placeholder="Özel" style="width: 45px; padding: 3px; border: 1px solid var(--color-primary-border); border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; color: var(--color-primary); text-align: center; outline: none; margin-left: 2px; background: var(--color-primary-lighter); cursor: pointer; transition: 0.2s;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="pss-video-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; margin-bottom: 10px; padding-right: 5px;">
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-hover); padding: 8px 12px; border-radius: var(--radius-md);">
+                            <span style="font-weight: 800; color: var(--color-primary); font-size: 12px;"><i class="fa-solid fa-stopwatch"></i> Videoların Süresi:</span>
+                            <span id="pss-duration" style="font-weight: 900; font-size: 14px; color: var(--color-primary-hover);">0 Dk</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Açıklama / Hedef <span class="required-star">*</span></label>
+                        <textarea id="taskDesc" class="modal-textarea" placeholder="Hangi konu çalışılacak veya kaç soru çözülecek?" style="min-height: 70px;"></textarea>
+                    </div>
+
+                    <div class="flex-gap-15" id="taskDurationRow" style="flex-wrap: wrap;">
+                        <div class="input-group" id="taskDurationGroup" style="flex: 1 1 100%;">
+                            <label>Tahmini Süre <span class="required-star">*</span></label>
+                            <div class="custom-number-input">
+                                <input type="number" id="taskDuration" class="modal-input no-spinner" placeholder="Örn: 45" min="1">
+                                <span class="cni-label">Dakika</span>
+                                <div class="cni-controls">
+                                    <button type="button" class="cni-btn" id="durDownBtn"><i class="fa-solid fa-minus"></i></button>
+                                    <button type="button" class="cni-btn" id="durUpBtn"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                            
+                        <div class="input-group" id="taskQuestionCountGroup" style="flex: 1; display: none;">
+                            <label>Soru Sayısı</label>
+                            <div class="custom-number-input">
+                                <input type="number" id="taskQuestionCount" class="modal-input no-spinner" placeholder="Örn: 40" min="1" style="padding-right: 85px; transition: all 0.3s;">
+                                <span class="cni-label" style="right: 75px; pointer-events: none;">Soru</span>
+                                <div class="cni-controls">
+                                    <button type="button" class="cni-btn" id="qcDownBtn"><i class="fa-solid fa-minus"></i></button>
+                                    <button type="button" class="cni-btn" id="qcUpBtn"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p id="taskErrorMsg" class="error-msg">Lütfen Açıklama ve Tahmini Süre alanlarını doldurun!</p>
                 </div>
-            </div>
+                
+                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                    <button class="cancel-note-btn" id="deleteTaskBtn" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; display: none; padding: 8px 16px;"><i class="fa-solid fa-trash"></i> Sil</button>
+                    <div style="display: flex; gap: 10px; margin-left: auto;">
+                        <button class="cancel-note-btn" id="cancelTaskBtn" style="padding: 8px 16px;">İptal</button>
+                        <button class="save-note-btn" id="saveTaskBtn" style="padding: 8px 20px;">Görevi Kaydet</button>
+                    </div>
+                </div>
             </div><!-- /addTaskMainPanel -->
 
             <!-- SAĞ VİDEO PANELİ -->
             <div id="taskVideoPanel" style="display: none; width: 480px; flex-shrink: 0; border-left: 1px solid var(--color-border); flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
-                <!-- Panel Header -->
-                <div id="taskVideoPanelHeader" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 14px 16px 14px; border-bottom: 1px solid var(--color-border); flex-shrink: 0;">
+                <div id="taskVideoPanelHeader" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 14px; border-bottom: 1px solid var(--color-border); flex-shrink: 0;">
                     <div id="taskVideoPanelTitle" style="font-size: 15px; font-weight: 800; color: var(--color-text-main); display: flex; align-items: center; gap: 8px;">
                         <i class="fa-brands fa-youtube" style="color:#ff0000; font-size:18px;"></i>
                         <span>Playlist Seç</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;" id="taskVideoPanelActions"></div>
                 </div>
-                <!-- Panel Body -->
+                
                 <div id="taskVideoPanelBody" style="flex: 1; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 0; min-height: 60px;"></div>
-                <!-- Panel Alt Kısım: Video özeti — altta sabit, baloncuk tasarımı -->
+                
                 <div id="taskVideoPanelSummary" style="display: none; flex-shrink: 0; padding: 10px 14px 12px 14px; background: var(--color-bg-card);">
                     <div style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-lg); padding: 12px 14px; position: relative; overflow: hidden; box-shadow: 0 4px 10px rgba(0,123,255,0.05);">
-                        <!-- Kırmızı uyarı overlay (sağ panel) -->
                         <div id="tvpWarningOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(217, 83, 79, 0.9); z-index: 10; flex-direction: column; justify-content: center; align-items: center; color: white; backdrop-filter: blur(2px);">
                             <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px; margin-bottom: 5px;"></i>
                             <span style="font-size: 11px; font-weight: 800; text-align: center; padding: 0 10px;">Görev kaydedilince videolar görevden kaldırılacak!</span>
                         </div>
-                        <!-- Başlık + Hız -->
+                        
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--color-primary-border); padding-bottom: 8px; margin-bottom: 8px;">
                             <div style="font-weight: 800; color: var(--color-primary-hover); font-size: 12px; white-space: nowrap;" id="tvp-text"><i class="fa-solid fa-list-check"></i> 0 Video Eklendi</div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="display: flex; align-items: center; gap: 4px;">
                                 <span style="color: var(--color-text-muted); font-weight: 800; font-size: 11px;">Hız:</span>
-                                <div id="tvp-speedSelector" style="display: flex; gap: 2px; background: var(--color-bg-card); padding: 3px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); align-items: center;">
-                                    <div class="speed-opt active" data-val="1">1x</div>
-                                    <div class="speed-opt" data-val="1.25">1.25x</div>
-                                    <div class="speed-opt" data-val="1.5">1.5x</div>
-                                    <div class="speed-opt" data-val="1.75">1.75x</div>
-                                    <div class="speed-opt" data-val="2">2x</div>
-                                    <input type="text" id="tvp-customSpeedInput" placeholder="Özel" style="width: 40px; padding: 3px; border: 1px solid var(--color-primary-border); border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; color: var(--color-primary); text-align: center; outline: none; margin-left: 2px; background: var(--color-primary-lighter); cursor: pointer; transition: 0.2s;">
+                                <div id="tvp-speedSelector" style="display: flex; gap: 1px; background: var(--color-bg-card); padding: 2px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); align-items: center;">
+                                    <div class="speed-opt active" data-val="1" style="padding: 3px 5px;">1x</div>
+                                    <div class="speed-opt" data-val="1.25" style="padding: 3px 5px;">1.25x</div>
+                                    <div class="speed-opt" data-val="1.5" style="padding: 3px 5px;">1.5x</div>
+                                    <div class="speed-opt" data-val="1.75" style="padding: 3px 5px;">1.75x</div>
+                                    <div class="speed-opt" data-val="2" style="padding: 3px 5px;">2x</div>
+                                    <input type="text" id="tvp-customSpeedInput" placeholder="Özel" style="width: 34px; padding: 3px; border: 1px solid var(--color-primary-border); border-radius: var(--radius-sm); font-size: 10px; font-weight: 700; color: var(--color-primary); text-align: center; outline: none; margin-left: 2px; background: var(--color-primary-lighter); cursor: pointer; transition: 0.2s;">
                                 </div>
                             </div>
                         </div>
-                        <!-- Video listesi (scroll'lu) -->
+                        
                         <div id="tvp-video-list" style="max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;"></div>
-                        <!-- Toplam süre -->
+                        
                         <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-hover); padding: 5px 10px; border-radius: var(--radius-md);">
                             <span style="font-weight: 800; color: var(--color-primary); font-size: 11px;"><i class="fa-solid fa-stopwatch"></i> Toplam Süre:</span>
                             <span id="tvp-duration" style="font-weight: 900; font-size: 13px; color: var(--color-primary-hover);">0 Dk</span>
                         </div>
                     </div>
                 </div>
-                <!-- Panel Footer (video seçimi için) -->
+                
                 <div id="taskVideoPanelFooter" style="display: none; padding: 10px 16px; border-top: 1px solid var(--color-border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;">
-                    <button class="cancel-note-btn" id="taskVideoPanelBackBtn" style="font-size: 13px; padding: 8px 14px;"><i class="fa-solid fa-arrow-left"></i> Geri</button>
-                    <button class="save-note-btn" id="taskVideoPanelConfirmBtn" style="font-size: 13px; padding: 8px 16px;">Seçilenleri Ekle (0)</button>
+                    <button class="cancel-note-btn" id="taskVideoPanelBackBtn" style="font-size: 12px; padding: 6px 12px;"><i class="fa-solid fa-arrow-left"></i> Geri</button>
+                    <button class="save-note-btn" id="taskVideoPanelConfirmBtn" style="font-size: 12px; padding: 6px 14px;">Seçilenleri Ekle (0)</button>
                 </div>
             </div><!-- /taskVideoPanel -->
 
@@ -3760,7 +3759,7 @@
     </div>
 
     <div id="viewTaskModal" class="custom-modal" style="z-index: 2600;">
-        <div class="custom-modal-content" style="max-width: 650px;">
+        <div class="custom-modal-content" style="max-width: 550px;">
             <div class="modal-header">
                 <h3><i class="fa-solid fa-clipboard-list" class="icon-btn-primary"></i> Görev Detayı</h3>
                 <span class="close-modal-btn" id="closeViewTaskModalBtn">&times;</span>
@@ -3786,51 +3785,57 @@
                 </div>
             </div>
             
-            <div class="modal-footer" class="flex-between">
-                <div class="flex-gap-10">
-                    <button class="save-note-btn" id="completeTaskBtn" style="background-color: var(--color-success); color: white; box-shadow: none;"><i class="fa-solid fa-check"></i> Tamamlandı</button>
-                    <button class="save-note-btn" id="editTaskBtn" style="background-color: #ffc107; color: var(--color-text-main); box-shadow: none;"><i class="fa-solid fa-pen"></i> Düzenle</button>
-                    <button onclick="window.playTaskYoutubeVideos()" style="background: #ff0000; color: white; border: none; border-radius: var(--radius-md); padding: 8px 16px; font-size: 14px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; box-shadow: 0 4px 10px rgba(255,0,0,0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        <i class="fa-brands fa-youtube" style="font-size: 18px;"></i> YouTube'da Aç
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="save-note-btn" id="completeTaskBtn" style="padding: 8px 16px; box-shadow: none; border: 1px solid transparent;"><i class="fa-solid fa-check"></i> Tamamla</button>
+                    <button class="cancel-note-btn" id="editTaskBtn" style="background-color: #fff9e6; color: #b58900; border: 1px solid #ffeeba; padding: 8px 16px; font-weight: 800; transition: 0.2s;" onmouseover="this.style.background='#ffedb3'" onmouseout="this.style.background='#fff9e6'"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                    <button id="openYoutubeTaskBtn" onclick="window.playTaskYoutubeVideos()" style="background: #fff0f0; color: #ff0000; border: 1px solid #ffcccc; border-radius: var(--radius-md); padding: 8px 16px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#ff0000'; this.style.color='#fff';" onmouseout="this.style.background='#fff0f0'; this.style.color='#ff0000';">
+                        <i class="fa-brands fa-youtube" style="font-size: 16px;"></i> YouTube
                     </button>
                 </div>
-                <button class="cancel-note-btn" id="closeViewTaskBtn">Kapat</button>
+                <button class="cancel-note-btn" id="closeViewTaskBtn" style="padding: 8px 16px;">Kapat</button>
             </div>
         </div>
     </div>
 
     <div id="taskSaveConfirmModal" class="custom-modal" style="z-index: 2700;">
-        <div class="custom-modal-content modal-centered">
-            <i class="fa-solid fa-circle-question" class="modal-icon-primary"></i>
-            <h3 class="modal-title">Değişiklikleri Kaydet</h3>
-            <p class="modal-desc">Görevdeki değişiklikleri kaydetmek istediğinize emin misiniz?</p>
-            <div class="modal-actions">
-                <button class="cancel-note-btn" onclick="document.getElementById('taskSaveConfirmModal').style.display='none'">Hayır, Dön</button>
-                <button class="save-note-btn" id="yesTaskSaveBtn">Evet, Kaydet</button>
+        <div class="custom-modal-content" style="max-width: 360px; width: 90%; padding: 30px 25px 25px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: none;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background-color: var(--color-primary-lighter); color: var(--color-primary); display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 32px; box-shadow: 0 0 0 8px rgba(0,123,255,0.05);">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--color-text-main); margin-bottom: 10px;">Değişiklikleri Kaydet</h3>
+            <p style="font-size: 14px; font-weight: 600; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 25px;">Görevdeki değişiklikleri kaydetmek istediğinize emin misiniz?</p>
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button onclick="document.getElementById('taskSaveConfirmModal').style.display='none'" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: #f1f3f5; color: #6c757d; border: none; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e6ea'; this.style.color='#495057';" onmouseout="this.style.background='#f1f3f5'; this.style.color='#6c757d';">Hayır, Dön</button>
+                <button id="yesTaskSaveBtn" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: var(--color-primary); color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">Evet, Kaydet</button>
             </div>
         </div>
     </div>
 
     <div id="taskCancelConfirmModal" class="custom-modal" style="z-index: 2700;">
-        <div class="custom-modal-content modal-centered">
-            <i class="fa-solid fa-triangle-exclamation" class="modal-icon-danger"></i>
-            <h3 class="modal-title">Kaydedilmemiş Değişiklikler</h3>
-            <p class="modal-desc">Kaydetmediğiniz veriler var. Çıkmak istediğinize emin misiniz?</p>
-            <div class="modal-actions">
-                <button class="cancel-note-btn" onclick="document.getElementById('taskCancelConfirmModal').style.display='none'">Hayır, Kal</button>
-                <button class="save-note-btn" id="yesTaskCancelBtn" class="bg-danger">Evet, Çık</button>
+        <div class="custom-modal-content" style="max-width: 360px; width: 90%; padding: 30px 25px 25px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: none;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background-color: #fff8e6; color: #ffc107; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 32px; box-shadow: 0 0 0 8px rgba(255, 193, 7, 0.1);">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--color-text-main); margin-bottom: 10px;">Kaydedilmemiş Değişiklikler</h3>
+            <p style="font-size: 14px; font-weight: 600; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 25px;">Kaydetmediğiniz veriler var. Çıkmak istediğinize emin misiniz?</p>
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button onclick="document.getElementById('taskCancelConfirmModal').style.display='none'" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: #f1f3f5; color: #6c757d; border: none; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e6ea'; this.style.color='#495057';" onmouseout="this.style.background='#f1f3f5'; this.style.color='#6c757d';">Hayır, Kal</button>
+                <button id="yesTaskCancelBtn" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: var(--color-danger); color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">Evet, Çık</button>
             </div>
         </div>
     </div>
 
     <div id="taskDeleteConfirmModal" class="custom-modal" style="z-index: 2700;">
-        <div class="custom-modal-content modal-centered">
-            <i class="fa-solid fa-trash-can" class="modal-icon-danger"></i>
-            <h3 class="modal-title">Görevi Sil</h3>
-            <p class="modal-desc">Bu görevi kalıcı olarak silmek istediğinize emin misiniz?</p>
-            <div class="modal-actions">
-                <button class="cancel-note-btn" onclick="document.getElementById('taskDeleteConfirmModal').style.display='none'">İptal</button>
-                <button class="save-note-btn" id="yesTaskDeleteBtn" class="bg-danger">Evet, Sil</button>
+        <div class="custom-modal-content" style="max-width: 360px; width: 90%; padding: 30px 25px 25px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: none;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background-color: var(--color-danger-light); color: var(--color-danger); display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 32px; box-shadow: 0 0 0 8px rgba(217, 83, 79, 0.05);">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--color-text-main); margin-bottom: 10px;">Görevi Sil</h3>
+            <p style="font-size: 14px; font-weight: 600; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 25px;">Bu görevi kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button onclick="document.getElementById('taskDeleteConfirmModal').style.display='none'" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: #f1f3f5; color: #6c757d; border: none; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e6ea'; this.style.color='#495057';" onmouseout="this.style.background='#f1f3f5'; this.style.color='#6c757d';">İptal</button>
+                <button id="yesTaskDeleteBtn" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: var(--color-danger); color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">Evet, Sil</button>
             </div>
         </div>
     </div>
@@ -7626,82 +7631,78 @@
         };
 
         // --- TAKVİMİ VE GÖREVLERİ ÇİZME (AKILLI MODLAR VE DÜZENLER İLE UYUMLU) ---
-        function updateWeeklyPlannerView() {
-            if (!document.getElementById('rowLayoutStyles')) {
-                document.head.insertAdjacentHTML('beforeend', `
-                    <style id="rowLayoutStyles">
-                        .weekly-grid.row-layout {
-                            display: flex !important; 
-                            flex-direction: column !important;
-                            min-width: 100% !important;
-                            height: auto !important;
-                            overflow-y: auto !important;
-                            overflow-x: hidden !important;
-                            gap: 8px !important; 
-                            padding-right: 5px;
-                        }
-                        /* Satır yüksekliği 95px'den 105px'e çıkarıldı ki açıklama sığsın */
-                        .weekly-grid.row-layout .weekly-row {
-                            height: 115px !important;
-                            min-height: 115px !important;
-                            max-height: 115px !important;
-                        }
-                        .weekly-grid.row-layout .weekly-row-content {
-                            scroll-behavior: smooth;
-                            align-items: center !important; 
-                        }
-                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar {
-                            height: 6px;
-                        }
-                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-track {
-                            background: transparent;
-                        }
-                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb {
-                            background: rgba(0,123,255,0.2);
-                            border-radius: 10px;
-                        }
-                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb:hover {
-                            background: rgba(0,123,255,0.4);
-                        }
-                        /* Görev kartı yüksekliği 70px'den 80px'e çıkarıldı */
-                        .weekly-grid.row-layout .weekly-row-content .planner-task-card {
-                            flex: 0 0 230px !important; 
-                            height: 85px !important; 
-                            margin-bottom: 0 !important;
-                            padding: 8px 10px !important; 
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: space-between;
-                        }
-                        /* YENİ: Açıklamayı zorla tek satır yap ve taşanı (...) ile gizle */
-                        .weekly-grid.row-layout .weekly-row-content .task-card-desc {
-                            white-space: nowrap !important;
-                            overflow: hidden !important;
-                            text-overflow: ellipsis !important;
-                            margin: 3px 0 !important; 
-                            font-size: 11px !important;
-                            color: #666 !important;
-                            display: block !important;
-                            line-height: 1.2 !important;
-                        }
-                        .weekly-grid.row-layout .weekly-row-content .task-card-header {
-                            margin-bottom: 0 !important;
-                        }
-                        /* Alt kısmın çizgisi ve boşluğu düzeltildi */
-                        .weekly-grid.row-layout .weekly-row-content .planner-task-card > div:last-child {
-                            padding-top: 5px !important;
-                            border-top: 1px dashed #eef2f5 !important;
-                            margin-top: auto !important;
-                        }
-                        .weekly-grid.row-layout .weekly-row-content .add-task-btn-ghost {
-                            flex: 0 0 120px !important;
-                            margin: 0 !important;
-                            height: 85px !important; /* Kartla eşit boy */
-                            align-self: center !important; 
-                        }
-                    </style>
-                `);
-            }
+        // --- TAKVİMİ VE GÖREVLERİ ÇİZME (AKILLI MODLAR VE DÜZENLER İLE UYUMLU) ---
+                function updateWeeklyPlannerView() {
+                    if (!document.getElementById('rowLayoutStyles')) {
+                        document.head.insertAdjacentHTML('beforeend', `
+                            <style id="rowLayoutStyles">
+                                .weekly-grid.row-layout {
+                                    display: flex !important;
+                                    flex-direction: column !important;
+                                    min-width: 100% !important;
+                                    height: auto !important;
+                                    overflow-y: auto !important;
+                                    overflow-x: hidden !important;
+                                    gap: 8px !important;
+                                    padding-right: 5px;
+                                }
+                                /* Satır yüksekliği senin ayarladığın (125px) seviyede */
+                                .weekly-grid.row-layout .weekly-row {
+                                    height: 125px !important;
+                                    min-height: 125px !important;
+                                    max-height: 125px !important;
+                                }
+                                .weekly-grid.row-layout .weekly-row-content {
+                                    scroll-behavior: smooth;
+                                    align-items: center !important;
+                                }
+                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar { height: 6px; }
+                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-track { background: transparent; }
+                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb { background: rgba(0,123,255,0.2); border-radius: 10px; }
+                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb:hover { background: rgba(0,123,255,0.4); }
+                                
+                                /* Görev kartı yüksekliği senin ayarladığın (95px) seviyede */
+                                .weekly-grid.row-layout .weekly-row-content .planner-task-card {
+                                    flex: 0 0 250px !important;
+                                    max-width: 250px !important; /* YENİ: Kartın genişlemesini bıçak gibi keser! */
+                                    overflow: hidden !important; /* YENİ: Taşan içeriği tamamen hapseder */
+                                    height: 95px !important;
+                                    margin-bottom: 0 !important;
+                                    padding: 10px 12px !important;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: space-between;
+                                }
+                                /* YENİ: Açıklama 250px'i doldurduğu an anında "..." eklenecek */
+                                .weekly-grid.row-layout .weekly-row-content .task-card-desc {
+                                    white-space: nowrap !important;
+                                    overflow: hidden !important;
+                                    text-overflow: ellipsis !important;
+                                    display: block !important;
+                                    width: 100% !important; /* YENİ: Kart sınırlarına sadık kalmaya zorlar */
+                                    margin: 4px 0 !important;
+                                    font-size: 11px !important;
+                                    color: #666 !important;
+                                    line-height: 1.2 !important;
+                                }
+                                .weekly-grid.row-layout .weekly-row-content .task-card-header {
+                                    margin-bottom: 0 !important;
+                                }
+                                /* Alt kısmın çizgisi ve boşluğu orantılandı */
+                                .weekly-grid.row-layout .weekly-row-content .planner-task-card > div:last-child {
+                                    padding-top: 6px !important;
+                                    border-top: 1px dashed #eef2f5 !important;
+                                    margin-top: auto !important;
+                                }
+                                .weekly-grid.row-layout .weekly-row-content .add-task-btn-ghost {
+                                    flex: 0 0 120px !important;
+                                    margin: 0 !important;
+                                    height: 95px !important; /* Kartla eşit boy */
+                                    align-self: center !important;
+                                }
+                            </style>
+                        `);
+                    }
 
             const weekEnd = new Date(currentWeekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
@@ -8268,101 +8269,96 @@
         document.getElementById('closeViewTaskBtn').addEventListener('click', () => viewTaskModal.style.display = 'none');
 
         document.getElementById('editTaskBtn').addEventListener('click', () => {
-        if (!currentViewingTask) return;
-        editingTaskId = currentViewingTask.id;
-        viewTaskModal.style.display = 'none';
-        document.querySelector('#addTaskModal h3').innerHTML = `<i class="fa-solid fa-pen" class="icon-btn-primary"></i> Görevi Düzenle`;
-        document.getElementById('deleteTaskBtn').style.display = 'block';
+            if (!currentViewingTask) return;
+            editingTaskId = currentViewingTask.id;
+            viewTaskModal.style.display = 'none';
+            document.querySelector('#addTaskModal h3').innerHTML = `<i class="fa-solid fa-pen" class="icon-btn-primary"></i> Görevi Düzenle`;
+            document.getElementById('deleteTaskBtn').style.display = 'block';
 
-        setTaskCustomSelectValue('tcs-examType', currentViewingTask.examType);
-        if(currentViewingTask.examType === 'ayt') {
-            document.getElementById('taskTrackGroup').style.display = 'flex';
-            if(currentViewingTask.track) setTaskCustomSelectValue('tcs-track', currentViewingTask.track);
-        } else {
-            document.getElementById('taskTrackGroup').style.display = 'none';
-        }
-        updateTaskSubjectDropdown();
-        taskDesc.value = currentViewingTask.desc;
-        taskDuration.value = currentViewingTask.duration;
-        
-        currentTaskSpeed = currentViewingTask.taskSpeed || 1;
-        document.querySelectorAll('.speed-opt').forEach(btn => btn.classList.remove('active'));
-        const customInput    = DOM.customSpeedInput;
-        const tvpCustomInput = document.getElementById('tvp-customSpeedInput');
-        const defaultBtn = document.querySelector(`.speed-opt[data-val="${currentTaskSpeed}"]`);
-        if(defaultBtn) {
-            defaultBtn.classList.add('active');
-            [customInput, tvpCustomInput].forEach(inp => {
-                if (!inp) return;
-                inp.value = '';
-                inp.style.background = '#f8fbff';
-                inp.style.color = 'var(--color-primary)';
-            });
-        } else {
-            [customInput, tvpCustomInput].forEach(inp => {
-                if (!inp) return;
-                inp.value = currentTaskSpeed + 'x';
-                inp.style.background = 'var(--color-primary)';
-                inp.style.color = '#fff';
-            });
-        }
-        window.renderTaskVideoSummary(); // Görseli hemen güncelle
-        
-        setTimeout(() => {
-            setTaskCustomSelectValue('tcs-subject', currentViewingTask.subject);
-            checkGenelDenemeLock();
-            if(currentViewingTask.subject !== 'Genel Deneme') {
-                setTaskCustomSelectValue('tcs-taskType', currentViewingTask.taskType);
-            }
-            
-            // Soru sayısını kutuya aktar (İçeri alındı çünkü taskType güncellemesi kutuyu gizleyebiliyordu)
-            const qcGroup = document.getElementById('taskQuestionCountGroup');
-            const _dgView = document.getElementById('taskDurationGroup');
-            if (currentViewingTask.taskType === 'Test Çözümü' || currentViewingTask.taskType === 'Deneme Çözümü' || currentViewingTask.taskType === 'Genel Deneme') {
-                qcGroup.style.display = 'flex';
-                DOM.taskQuestionCount.value = currentViewingTask.questionCount || '';
-                if (_dgView) { _dgView.style.flex = '1 1 0'; }
+            setTaskCustomSelectValue('tcs-examType', currentViewingTask.examType);
+            if(currentViewingTask.examType === 'ayt') {
+                document.getElementById('taskTrackGroup').style.display = 'flex';
+                if(currentViewingTask.track) setTaskCustomSelectValue('tcs-track', currentViewingTask.track);
             } else {
-                qcGroup.style.display = 'none';
-                DOM.taskQuestionCount.value = '';
-                if (_dgView) { _dgView.style.flex = '1 1 100%'; }
+                document.getElementById('taskTrackGroup').style.display = 'none';
             }
-
-            // ÇÖZÜM: Modal'ı her şey yerli yerine oturduktan ve fazlalıklar gizlendikten SONRA açıyoruz!
-            addTaskModal.style.display = 'flex';
-
-            // Görevde video varsa sağ paneli aç, direkt summary göster
-            if (currentTaskVideos && currentTaskVideos.length > 0) {
-                openTaskVideoPanel();
-                const tvBody    = document.getElementById('taskVideoPanelBody');
-                const tvTitle   = document.getElementById('taskVideoPanelTitle')?.querySelector('span');
-                const tvActions = document.getElementById('taskVideoPanelActions');
-                const tvFooter  = document.getElementById('taskVideoPanelFooter');
-                // Body boş — summary zaten altta gösterilecek
-                if (tvBody)   tvBody.innerHTML = '';
-                if (tvTitle)  tvTitle.textContent = 'Videolar';
-                if (tvFooter) tvFooter.style.display = 'none';
-                if (tvActions) tvActions.innerHTML = `
-                    <button onclick="window.renderPlaylistCardsForSelection(false)" style="padding:5px 10px; border:1px dashed var(--color-primary); background:rgba(0,123,255,0.05); color:var(--color-primary); border-radius:var(--radius-md); cursor:pointer; font-weight:bold; font-size:11px;">
-                        <i class="fa-brands fa-youtube"></i> Playlist Seç
-                    </button>`;
-                window.renderTaskVideoSummary(false);
+            updateTaskSubjectDropdown();
+            taskDesc.value = currentViewingTask.desc;
+            taskDuration.value = currentViewingTask.duration;
+            
+            currentTaskSpeed = currentViewingTask.taskSpeed || 1;
+            document.querySelectorAll('.speed-opt').forEach(btn => btn.classList.remove('active'));
+            const customInput    = DOM.customSpeedInput;
+            const tvpCustomInput = document.getElementById('tvp-customSpeedInput');
+            const defaultBtn = document.querySelector(`.speed-opt[data-val="${currentTaskSpeed}"]`);
+            if(defaultBtn) {
+                defaultBtn.classList.add('active');
+                [customInput, tvpCustomInput].forEach(inp => {
+                    if (!inp) return;
+                    inp.value = '';
+                    inp.style.background = '#f8fbff';
+                    inp.style.color = 'var(--color-primary)';
+                });
+            } else {
+                [customInput, tvpCustomInput].forEach(inp => {
+                    if (!inp) return;
+                    inp.value = currentTaskSpeed + 'x';
+                    inp.style.background = 'var(--color-primary)';
+                    inp.style.color = '#fff';
+                });
             }
-        }, 10);
-        
-        originalTaskEditState = { 
-            examType: currentViewingTask.examType,
-            track: currentViewingTask.track || 'sayisal',
-            subject: currentViewingTask.subject,
-            taskType: currentViewingTask.taskType,
-            desc: currentViewingTask.desc,
-            duration: currentViewingTask.duration.toString(),
-            questionCount: currentViewingTask.questionCount ? currentViewingTask.questionCount.toString() : '',
-            taskSpeed: currentViewingTask.taskSpeed || 1 
-        };
-        
-        // En alttaki addTaskModal.style.display = 'flex'; satırını buradan sildik.
-    });
+            window.renderTaskVideoSummary(); // Görseli hemen güncelle
+            
+            setTimeout(() => {
+                setTaskCustomSelectValue('tcs-subject', currentViewingTask.subject);
+                checkGenelDenemeLock();
+                if(currentViewingTask.subject !== 'Genel Deneme') {
+                    setTaskCustomSelectValue('tcs-taskType', currentViewingTask.taskType);
+                }
+                
+                // Soru sayısını kutuya aktar (İçeri alındı çünkü taskType güncellemesi kutuyu gizleyebiliyordu)
+                const qcGroup = document.getElementById('taskQuestionCountGroup');
+                const _dgView = document.getElementById('taskDurationGroup');
+                if (currentViewingTask.taskType === 'Test Çözümü' || currentViewingTask.taskType === 'Deneme Çözümü' || currentViewingTask.taskType === 'Genel Deneme') {
+                    qcGroup.style.display = 'flex';
+                    DOM.taskQuestionCount.value = currentViewingTask.questionCount || '';
+                    if (_dgView) { _dgView.style.flex = '1 1 0'; }
+                } else {
+                    qcGroup.style.display = 'none';
+                    DOM.taskQuestionCount.value = '';
+                    if (_dgView) { _dgView.style.flex = '1 1 100%'; }
+                }
+
+                // ÇÖZÜM: Modal'ı her şey yerli yerine oturduktan ve fazlalıklar gizlendikten SONRA açıyoruz!
+                addTaskModal.style.display = 'flex';
+
+                // YENİ AKILLI DÜZENLEME: Görevde video varsa veya türü uygunsa direkt O DERSİN playlistlerini listele!
+                const isVideoTask = (currentViewingTask.taskType === 'Konu Anlatımı' || currentViewingTask.taskType === 'Genel Tekrar' || (currentTaskVideos && currentTaskVideos.length > 0));
+                
+                if (isVideoTask) {
+                    openTaskVideoPanel();
+                    // O dersin ana playlistlerini anında listeler:
+                    if (typeof window.renderPlaylistCardsForSelection === 'function') {
+                        window.renderPlaylistCardsForSelection(false, currentViewingTask.subject);
+                    }
+                    window.renderTaskVideoSummary(false);
+                } else {
+                    // Test çözümü falansa paneli gizli tutar
+                    if (typeof closeTaskVideoPanel === 'function') closeTaskVideoPanel();
+                }
+            }, 10);
+            
+            originalTaskEditState = { 
+                examType: currentViewingTask.examType,
+                track: currentViewingTask.track || 'sayisal',
+                subject: currentViewingTask.subject,
+                taskType: currentViewingTask.taskType,
+                desc: currentViewingTask.desc,
+                duration: currentViewingTask.duration.toString(),
+                questionCount: currentViewingTask.questionCount ? currentViewingTask.questionCount.toString() : '',
+                taskSpeed: currentViewingTask.taskSpeed || 1 
+            };
+        });
 
         window.openTaskModalForDate = function(dateStr) {
             selectedDateForTask = dateStr;
@@ -8409,6 +8405,8 @@
         }
 
         function closeTaskModalAndClear() {
+            // YENİ: Sağ panel açıksa, görev menüsü tamamen kapanırken onu da kapat!
+            if (typeof closeTaskVideoPanel === 'function') closeTaskVideoPanel();
             // YENİ EKLENEN KISIM: Eğer yeni bir görev eklemekten VAZGEÇİLİRSE (İptal vs)
             // İçine video eklendiyse, o videoları sahipsiz bırakmamak için etiketleri geri alıyoruz!
             // DÜZELTME: "!window.isTaskSaving" eklendi! Eğer görev başarıyla kaydediliyorsa bu temizlik ÇALIŞMAZ.
@@ -8448,11 +8446,10 @@
         }
 
         document.getElementById('closeAddTaskModalBtn').addEventListener('click', () => {
-            if (typeof closeTaskVideoPanel === 'function') closeTaskVideoPanel();
             attemptCloseTaskModal();
         });
+
         document.getElementById('cancelTaskBtn').addEventListener('click', () => {
-            if (typeof closeTaskVideoPanel === 'function') closeTaskVideoPanel();
             attemptCloseTaskModal();
         });
 
@@ -9907,7 +9904,8 @@
         function openTaskVideoPanel() {
             tvPanel.style.display = 'flex';
             tvPanel.style.flexDirection = 'column';
-            modalContent.style.maxWidth = '1000px';
+            modalContent.style.maxWidth = '1000px'; // <-- BURAYI 1000px'e GERİ ALDIK
+            
             // Panel yüksekliğini sol panelle eşitle - summary alta sabit yapışır
             requestAnimationFrame(() => {
                 const mainPanel = document.getElementById('addTaskMainPanel');
@@ -10239,29 +10237,26 @@
             });
         }
 
-        // Ekrana Çizme ve Hız Matematiği
+        // Ekrana Çizme ve Hız Matematiği (Slim/İnce Versiyon)
         window.renderTaskVideoSummary = function(isUserAction = false) {
-            const summaryBox  = document.getElementById('playlistSelectionSummary');
+            const summaryBox = document.getElementById('playlistSelectionSummary');
             const videoListDiv = document.getElementById('pss-video-list');
-            const descInput   = document.getElementById('taskDesc');
-            const durInput    = document.getElementById('taskDuration');
+            const descInput = document.getElementById('taskDesc');
+            const durInput = document.getElementById('taskDuration');
 
             // Sağ panel özet elementleri
-            const tvpSummary  = document.getElementById('taskVideoPanelSummary');
-            const tvpText     = document.getElementById('tvp-text');
+            const tvpSummary = document.getElementById('taskVideoPanelSummary');
+            const tvpText = document.getElementById('tvp-text');
             const tvpDuration = document.getElementById('tvp-duration');
-
             const panelOpen = document.getElementById('taskVideoPanel')?.style.display === 'flex';
 
             if (currentTaskVideos.length === 0) {
-                // Sol panel summary'yi gizle
                 if (summaryBox) summaryBox.style.display = 'none';
-                // Sağ panel summary'yi gizle
                 if (tvpSummary) tvpSummary.style.display = 'none';
                 return;
             }
 
-            // Sol panel summary - panel kapalıysa göster, açıksa gizle
+            // Sol panel summary (İnceltildi)
             if (summaryBox) {
                 if (panelOpen) {
                     summaryBox.style.display = 'none';
@@ -10276,18 +10271,20 @@
                             const mismatch = pl && pl.subject !== currentSubjectLeft;
                             const overlayHtml = mismatch ? `
                                 <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(217,83,79,0.85);z-index:5;display:flex;align-items:center;justify-content:center;border-radius:6px;">
-                                    <span style="font-size:10px;font-weight:800;color:white;text-align:center;padding:0 6px;">Kaydedince kaldırılacak</span>
+                                    <span style="font-size:9px;font-weight:800;color:white;text-align:center;padding:0 6px;">Kaldırılacak</span>
                                 </div>` : '';
+                            
+                            // YENİ: Padding 5px'e, resim 48x27'ye düşürüldü
                             videoListDiv.innerHTML += `
-                                <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--color-bg-card); border-radius:6px; border:1px solid ${mismatch ? '#f5c6cb' : '#eef2f5'}; position:relative; overflow:hidden;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 8px; background:var(--color-bg-card); border-radius:6px; border:1px solid ${mismatch ? '#f5c6cb' : '#eef2f5'}; position:relative; overflow:hidden; flex-shrink: 0;">
                                     ${overlayHtml}
-                                    <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
-                                        <img src="${v.thumb}" style="width:35px; border-radius:4px;">
+                                    <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1;">
+                                        <img src="${v.thumb}" style="width:48px; height:27px; min-width:48px; min-height:27px; object-fit:cover; border-radius:3px; flex-shrink:0;">
                                         <span style="font-size:11px; font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; max-width:200px;">${v.title}</span>
                                     </div>
-                                    <div style="display:flex; align-items:center; gap:10px;">
+                                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
                                         <span style="font-size:10px; font-weight:800; color:#888;">${v.duration}</span>
-                                        <i class="fa-solid fa-xmark" style="color:var(--color-danger); cursor:pointer; font-size:14px; position:relative; z-index:10;" onclick="window.removeVideoFromTask('${v.plId}', ${v.index})"></i>
+                                        <i class="fa-solid fa-xmark" style="color:var(--color-danger); cursor:pointer; font-size:13px; position:relative; z-index:10;" onclick="window.removeVideoFromTask('${v.plId}', ${v.index})"></i>
                                     </div>
                                 </div>`;
                         });
@@ -10295,28 +10292,30 @@
                 }
             }
 
-            // Sağ panel summary - panel açıksa ve video seçim ekranı KAPALI ise göster
+            // Sağ panel summary (Hız Kısmı - Daha da inceltildi 2/3 oranında)
             if (tvpSummary) {
                 const footerVisible = document.getElementById('taskVideoPanelFooter')?.style.display === 'flex';
                 if (panelOpen && !footerVisible) {
                     tvpSummary.style.display = 'block';
-                    // Overlay durumunu güncelle
                     window.checkVideoWarningOverlay?.();
                     if (tvpText) tvpText.innerHTML = `<i class="fa-solid fa-list-check"></i> Toplam <b>${currentTaskVideos.length}</b> Video`;
-                    // Video listesini güncelle
+                    
                     const tvpList = document.getElementById('tvp-video-list');
                     if (tvpList) {
+                        tvpList.style.maxHeight = '110px';
                         tvpList.innerHTML = '';
                         const currentSubjectRight = document.getElementById('taskSubject')?.value;
                         currentTaskVideos.forEach((v) => {
                             const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
                             const mismatch = pl && pl.subject !== currentSubjectRight;
                             const item = document.createElement('div');
-                            item.style.cssText = `display:flex; justify-content:space-between; align-items:center; padding:5px 8px; background:var(--color-bg-card); border-radius:6px; border:1px solid ${mismatch ? '#f5c6cb' : '#eef2f5'}; position:relative; overflow:hidden;`;
+                            
+                            // YENİ: Padding 4px 8px'e düşürüldü (Çok daha ince bir satır)
+                            item.style.cssText = `display:flex; justify-content:space-between; align-items:center; padding:4px 8px; background:var(--color-bg-card); border-radius:6px; border:1px solid ${mismatch ? '#f5c6cb' : '#eef2f5'}; position:relative; overflow:hidden; flex-shrink:0;`;
                             item.innerHTML = `
-                                ${mismatch ? `<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(217,83,79,0.85);z-index:5;display:flex;align-items:center;justify-content:center;border-radius:6px;"><span style="font-size:10px;font-weight:800;color:white;text-align:center;padding:0 6px;">Kaydedince kaldırılacak</span></div>` : ''}
+                                ${mismatch ? `<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(217,83,79,0.85);z-index:5;display:flex;align-items:center;justify-content:center;border-radius:6px;"><span style="font-size:9px;font-weight:800;color:white;text-align:center;padding:0 6px;">Kaldırılacak</span></div>` : ''}
                                 <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; min-width:0;">
-                                    <img src="${v.thumb}" style="width:30px; height:17px; object-fit:cover; border-radius:3px; flex-shrink:0;">
+                                    <img src="${v.thumb}" style="width:42px; height:24px; min-width:42px; min-height:24px; object-fit:cover; border-radius:3px; flex-shrink:0;">
                                     <span style="font-size:11px; font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${v.title}</span>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:6px;">
@@ -10331,31 +10330,34 @@
                 }
             }
 
-            // Hız Matematiği (ortak)
-            let totalBaseSeconds = 0;
-            currentTaskVideos.forEach(v => { totalBaseSeconds += v.durationSec; });
-            const adjustedSeconds = totalBaseSeconds / currentTaskSpeed;
-            let minutes = Math.ceil(adjustedSeconds / 60);
-            if (minutes === 0 && totalBaseSeconds > 0) minutes = 1;
-
-            const hours = Math.floor(minutes / 60);
-            const remainingMins = minutes % 60;
-            const timeStr = hours > 0 ? (remainingMins > 0 ? `${hours} Saat ${remainingMins} Dk` : `${hours} Saat`) : `${remainingMins} Dk`;
-
-            // Her iki panel'deki süre göstergelerini güncelle
-            const pssDuration = document.getElementById('pss-duration');
-            if (pssDuration) pssDuration.innerHTML = timeStr;
-            if (tvpDuration) tvpDuration.innerHTML = timeStr;
-
-            if (isUserAction) {
-                if (descInput) {
-                    const plNames = [...new Set(currentTaskVideos.map(v => v.plTitle || "Playlist"))];
-                    const autoText = `"${plNames.join(', ')}" listesinden ${currentTaskVideos.length} adet video eklendi.`;
-                    if (descInput.value.trim() === '' || descInput.value.includes('adet video eklendi.')) {
-                        descInput.value = autoText;
-                    }
+            // Hız Matematiği
+            let totalRawSec = 0;
+            currentTaskVideos.forEach(v => {
+                if (v.duration) {
+                    const parts = v.duration.split(':').map(Number).reverse();
+                    if (parts[0]) totalRawSec += parts[0];
+                    if (parts[1]) totalRawSec += parts[1] * 60;
+                    if (parts[2]) totalRawSec += parts[2] * 3600;
                 }
-                if (durInput) durInput.value = minutes;
+            });
+
+            const adjustedSec = Math.round(totalRawSec / currentTaskSpeed);
+            const formatSec = (sec) => {
+                const h = Math.floor(sec / 3600);
+                const m = Math.floor((sec % 3600) / 60);
+                if (h > 0) return `${h}s ${m}dk`;
+                return `${m} Dk`;
+            };
+
+            const totalMins = Math.ceil(adjustedSec / 60);
+            if (document.getElementById('pss-duration')) document.getElementById('pss-duration').textContent = formatSec(adjustedSec);
+            if (tvpDuration) tvpDuration.textContent = formatSec(adjustedSec);
+
+            if (isUserAction && durInput) {
+                durInput.value = totalMins;
+                if (descInput && !descInput.value.trim()) {
+                    descInput.value = `${currentTaskVideos.length} Video İzlenecek`;
+                }
             }
         };
 
@@ -11843,18 +11845,21 @@
 
         window.pfApply = async function() {
             document.getElementById('plannerFilterModal').style.display = 'none';
+
             // Filtre butonu görünümünü güncelle
             const btn = document.getElementById('openPlannerFilterBtn');
             const clearBtn = document.getElementById('clearPlannerFilterBtn');
             const active = window.filteredSubjects.length > 0;
+
             if (btn) {
                 btn.style.backgroundColor = active ? 'var(--color-primary)' : '';
                 btn.style.color = active ? '#fff' : '';
                 btn.style.borderColor = active ? 'var(--color-primary)' : '';
-                btn.style.borderTopRightRadius = active ? '0' : '';
-                btn.style.borderBottomRightRadius = active ? '0' : '';
+                // KÖŞELERİ SIFIRLAYAN KODLAR BURADAN SİLİNDİ! Artık kavisli kalacak.
             }
+
             if (clearBtn) clearBtn.style.display = active ? 'flex' : 'none';
+
             // Kaydet ve görünümü güncelle
             if (typeof window.saveGlobalSettings === 'function') await window.saveGlobalSettings();
             window.updateWeeklyPlannerView?.();
@@ -14052,8 +14057,8 @@
             return isCompleted;
         };
 
-        // --- TAKVİM AYARLARI SEKME DEĞİŞTİRİCİLERİ ---
-        window.switchSettingsTab = function(tabId) {
+        // --- TAKVİM AYARLARI SEKME DEĞİŞTİRİCİSİ ---
+        window.switchCalSettingsTab = function(tabId) {
             const tabs = ['Color', 'General'];
             tabs.forEach(t => {
                 const btn = document.getElementById('tabBtn' + t);
@@ -14066,6 +14071,18 @@
                     if (content) content.style.display = 'none';
                 }
             });
+        };
+
+        // --- PLANLAYICI AYARLARI SEKME DEĞİŞTİRİCİSİ (Çakışma Düzeltildi) ---
+        window.switchSettingsTab = function() {
+            const selectedTab = document.querySelector('input[name="settingsTab"]:checked')?.value;
+            if (selectedTab === 'color') {
+                document.getElementById('settingsColorContent').style.display = 'block';
+                document.getElementById('settingsViewContent').style.display = 'none';
+            } else {
+                document.getElementById('settingsColorContent').style.display = 'none';
+                document.getElementById('settingsViewContent').style.display = 'block';
+            }
         };
 
         window.switchColorSubTab = function(subTabId) {
@@ -14605,8 +14622,8 @@
             <div class="modal-body" style="gap: 15px;">
                 
                 <div style="display: flex; gap: 5px; background: var(--color-bg-input); padding: 6px; border-radius: 12px; border: 1px solid var(--color-border);">
-                    <button id="tabBtnColor" onclick="switchSettingsTab('Color')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-palette" style="margin-right: 6px;"></i> Görünüm & Renk</button>
-                    <button id="tabBtnGeneral" onclick="switchSettingsTab('General')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: transparent; color: var(--color-text-muted); font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-sliders" style="margin-right: 6px;"></i> Genel</button>
+                    <button id="tabBtnColor" onclick="switchCalSettingsTab('Color')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-palette" style="margin-right: 6px;"></i> Görünüm & Renk</button>
+                    <button id="tabBtnGeneral" onclick="switchCalSettingsTab('General')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: transparent; color: var(--color-text-muted); font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-sliders" style="margin-right: 6px;"></i> Genel</button>
                 </div>
 
                 <div id="tabContentColor" style="display: flex; flex-direction: column; gap: 10px;">
