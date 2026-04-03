@@ -1924,22 +1924,61 @@
         .today-tasks-list::-webkit-scrollbar { width: 4px; }
         .today-tasks-list::-webkit-scrollbar-thumb { background-color: var(--color-primary-border); border-radius: var(--radius-xs); }
         
-        /* Biten görevlerin ana ekranda köşesine gelen tik */
+        /* --- ESKİ KÜÇÜK YUVARLAK ROZETİ TAMAMEN GİZLE --- */
         .task-completed-badge {
-            position: absolute;
-            right: -6px;
-            top: -6px;
-            background: #28a745;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: var(--radius-full);
+            display: none !important;
+        }
+
+        /* --- GÜNLÜK VE HAFTALIK PLANLAYICI: Ortak Transparanlık ve Elit Minimal Tik --- */
+        .planner-task-card.task-completed {
+            opacity: 0.50 !important;
+            background-color: var(--color-bg-card) !important;
+            border-color: #d4edda !important;
+            position: relative !important;
+            overflow: hidden !important; 
+        }
+        
+        .planner-task-card.task-completed::after {
+            content: var(--completed-icon-content, '\f00c') !important; /* YENİ: DİNAMİK YAPI */
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            font-size: 85px !important;
+            color: var(--color-success) !important;
+            z-index: 10 !important;
+            pointer-events: none !important;
+            opacity: 0.85 !important;
+            text-shadow: 0 5px 25px rgba(40, 167, 69, 0.3) !important;
+        }
+
+        /* --- AYARLAR MODALI İKON SEÇİM KUTULARI TASARIMI --- */
+        .settings-icon-option {
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 11px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 5;
+            align-items: center;
+            height: 55px;
+            font-size: 24px;
+            color: var(--color-text-muted);
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .settings-icon-option:hover {
+            border-color: var(--color-primary-border);
+            background: var(--color-primary-lighter);
+            color: var(--color-primary);
+        }
+        .settings-icon-option.active {
+            border-color: var(--color-success);
+            background: var(--color-success-light);
+            color: var(--color-success);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+            transform: scale(1.05);
         }
 
         /* --- HAFTALIK PLANLAYICI ÖZEL TASARIMLARI --- */
@@ -2262,22 +2301,30 @@
             pointer-events: none;
         }
 
-        /* Biten görevin özel tasarımları (Çizgisiz, Tamamen Yeşil Detaylar) */
+        /* Biten görevin özel tasarımları (Tamamen Yeşil Detaylar) */
         .planner-task-card.task-completed {
-            border-color: var(--color-success);
-            background-color: #f4fdf6;
+            border-color: var(--color-success) !important;
+            background-color: #f4fdf6 !important;
             opacity: 0.95;
         }
-        .planner-task-card.task-completed .task-card-subject {
-            color: var(--color-text-main); /* Ders ismine çizgi atılmaz, normal kalır */
+        
+        /* Başlık, Açıklama ve içindeki tüm ekstra detaylar (video, soru, dakika ikonları) yemyeşil olacak */
+        .planner-task-card.task-completed .task-card-subject,
+        .planner-task-card.task-completed .task-card-desc,
+        .planner-task-card.task-completed .task-card-type,
+        .planner-task-card.task-completed .task-card-time,
+        .planner-task-card.task-completed .task-card-type i,
+        .planner-task-card.task-completed .task-card-time i,
+        .planner-task-card.task-completed span:not(.task-card-badge),
+        .planner-task-card.task-completed i:not(.task-card-badge) {
+            color: var(--color-success) !important;
         }
+
+        /* Sağ üstteki rozet (Örn: TYT/AYT) için uyumlu yeşil arka plan */
         .planner-task-card.task-completed .task-card-badge {
             background-color: var(--color-success-light) !important;
             color: #155724 !important;
-        }
-        .planner-task-card.task-completed .task-card-type,
-        .planner-task-card.task-completed .task-card-type i {
-            color: var(--color-success) !important;
+            border: none !important;
         }
 
         /* --- YAN MENÜ (SIDEBAR) TASARIMI --- */
@@ -3522,6 +3569,10 @@
                     <button id="nextWeekBtn" class="week-nav-btn" data-custom-title="Sonraki Hafta"><i class="fa-solid fa-chevron-right"></i></button>
 
                     <div style="position: absolute; right: 0; display: flex; gap: 10px;">
+                        <button id="cancelActionModeBtn" style="display: none; align-items: center; justify-content: center; gap: 6px; background-color: #fff0f0; color: #dc3545; border: 1px solid #ffcccc; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(220,53,69,0.15);" onmouseover="this.style.background='#dc3545'; this.style.color='#ffffff'; this.style.borderColor='#dc3545'; this.style.transform='scale(1.04)';" onmouseout="this.style.background='#fff0f0'; this.style.color='#dc3545'; this.style.borderColor='#ffcccc'; this.style.transform='scale(1)';">
+                            <i class="fa-solid fa-xmark" style="font-size: 15px; transform: translateY(1px);"></i> İptal
+                        </button>
+                        
                         <div id="completeDropZone" class="action-drop-zone complete-zone" data-custom-title="Tamamlamak için sürükle veya mod için tıkla">
                             <i class="fa-solid fa-check-double"></i> <span id="completeZoneText">Tamamla</span>
                         </div>
@@ -7631,78 +7682,73 @@
         };
 
         // --- TAKVİMİ VE GÖREVLERİ ÇİZME (AKILLI MODLAR VE DÜZENLER İLE UYUMLU) ---
-        // --- TAKVİMİ VE GÖREVLERİ ÇİZME (AKILLI MODLAR VE DÜZENLER İLE UYUMLU) ---
-                function updateWeeklyPlannerView() {
-                    if (!document.getElementById('rowLayoutStyles')) {
-                        document.head.insertAdjacentHTML('beforeend', `
-                            <style id="rowLayoutStyles">
-                                .weekly-grid.row-layout {
-                                    display: flex !important;
-                                    flex-direction: column !important;
-                                    min-width: 100% !important;
-                                    height: auto !important;
-                                    overflow-y: auto !important;
-                                    overflow-x: hidden !important;
-                                    gap: 8px !important;
-                                    padding-right: 5px;
-                                }
-                                /* Satır yüksekliği senin ayarladığın (125px) seviyede */
-                                .weekly-grid.row-layout .weekly-row {
-                                    height: 125px !important;
-                                    min-height: 125px !important;
-                                    max-height: 125px !important;
-                                }
-                                .weekly-grid.row-layout .weekly-row-content {
-                                    scroll-behavior: smooth;
-                                    align-items: center !important;
-                                }
-                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar { height: 6px; }
-                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-track { background: transparent; }
-                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb { background: rgba(0,123,255,0.2); border-radius: 10px; }
-                                .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb:hover { background: rgba(0,123,255,0.4); }
+        function updateWeeklyPlannerView() {
+            if (!document.getElementById('rowLayoutStyles')) {
+                document.head.insertAdjacentHTML('beforeend', `
+                    <style id="rowLayoutStyles">
+                        .weekly-grid.row-layout {
+                            display: flex !important;
+                            flex-direction: column !important;
+                            min-width: 100% !important;
+                            height: auto !important;
+                            overflow-y: auto !important;
+                            overflow-x: hidden !important;
+                            gap: 8px !important;
+                            padding-right: 5px;
+                        }
+                        .weekly-grid.row-layout .weekly-row {
+                            height: 125px !important;
+                            min-height: 125px !important;
+                            max-height: 125px !important;
+                        }
+                        .weekly-grid.row-layout .weekly-row-content {
+                            scroll-behavior: smooth;
+                            align-items: center !important;
+                        }
+                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar { height: 6px; }
+                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-track { background: transparent; }
+                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb { background: rgba(0,123,255,0.2); border-radius: 10px; }
+                        .weekly-grid.row-layout .weekly-row-content::-webkit-scrollbar-thumb:hover { background: rgba(0,123,255,0.4); }
                                 
-                                /* Görev kartı yüksekliği senin ayarladığın (95px) seviyede */
-                                .weekly-grid.row-layout .weekly-row-content .planner-task-card {
-                                    flex: 0 0 250px !important;
-                                    max-width: 250px !important; /* YENİ: Kartın genişlemesini bıçak gibi keser! */
-                                    overflow: hidden !important; /* YENİ: Taşan içeriği tamamen hapseder */
-                                    height: 95px !important;
-                                    margin-bottom: 0 !important;
-                                    padding: 10px 12px !important;
-                                    display: flex;
-                                    flex-direction: column;
-                                    justify-content: space-between;
-                                }
-                                /* YENİ: Açıklama 250px'i doldurduğu an anında "..." eklenecek */
-                                .weekly-grid.row-layout .weekly-row-content .task-card-desc {
-                                    white-space: nowrap !important;
-                                    overflow: hidden !important;
-                                    text-overflow: ellipsis !important;
-                                    display: block !important;
-                                    width: 100% !important; /* YENİ: Kart sınırlarına sadık kalmaya zorlar */
-                                    margin: 4px 0 !important;
-                                    font-size: 11px !important;
-                                    color: #666 !important;
-                                    line-height: 1.2 !important;
-                                }
-                                .weekly-grid.row-layout .weekly-row-content .task-card-header {
-                                    margin-bottom: 0 !important;
-                                }
-                                /* Alt kısmın çizgisi ve boşluğu orantılandı */
-                                .weekly-grid.row-layout .weekly-row-content .planner-task-card > div:last-child {
-                                    padding-top: 6px !important;
-                                    border-top: 1px dashed #eef2f5 !important;
-                                    margin-top: auto !important;
-                                }
-                                .weekly-grid.row-layout .weekly-row-content .add-task-btn-ghost {
-                                    flex: 0 0 120px !important;
-                                    margin: 0 !important;
-                                    height: 95px !important; /* Kartla eşit boy */
-                                    align-self: center !important;
-                                }
-                            </style>
-                        `);
-                    }
+                        .weekly-grid.row-layout .weekly-row-content .planner-task-card {
+                            flex: 0 0 250px !important;
+                            max-width: 250px !important;
+                            overflow: hidden !important;
+                            height: 95px !important;
+                            margin-bottom: 0 !important;
+                            padding: 10px 12px !important;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                        }
+                        .weekly-grid.row-layout .weekly-row-content .task-card-desc {
+                            white-space: nowrap !important;
+                            overflow: hidden !important;
+                            text-overflow: ellipsis !important;
+                            display: block !important;
+                            width: 100% !important;
+                            margin: 4px 0 !important;
+                            font-size: 11px !important;
+                            color: #666 !important;
+                            line-height: 1.2 !important;
+                        }
+                        .weekly-grid.row-layout .weekly-row-content .task-card-header {
+                            margin-bottom: 0 !important;
+                        }
+                        .weekly-grid.row-layout .weekly-row-content .planner-task-card > div:last-child {
+                            padding-top: 6px !important;
+                            border-top: 1px dashed #eef2f5 !important;
+                            margin-top: auto !important;
+                        }
+                        .weekly-grid.row-layout .weekly-row-content .add-task-btn-ghost {
+                            flex: 0 0 120px !important;
+                            margin: 0 !important;
+                            height: 95px !important;
+                            align-self: center !important;
+                        }
+                    </style>
+                `);
+            }
 
             const weekEnd = new Date(currentWeekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
@@ -7733,7 +7779,7 @@
                 const currentProfileId = document.getElementById('currentPlannerProfile') ? document.getElementById('currentPlannerProfile').value : 'main_profile';
                 
                 let dayTasks = [...(userTasks[dateKey] || [])].filter(t => {
-                    const taskProfileId = t.profileId || 'main_profile'; // Eski görevler Ana Programa aittir
+                    const taskProfileId = t.profileId || 'main_profile'; 
                     return taskProfileId === currentProfileId;
                 });
                 
@@ -7763,7 +7809,8 @@
                     else if (task.taskType === 'Deneme Çözümü') shortTaskType = 'Deneme';
                     else if (task.taskType === 'Genel Tekrar') shortTaskType = 'Tekrar';
 
-                    let taskCardExtraClass = "";
+                    // YENİ: weekly-task-card eklendi!
+                    let taskCardExtraClass = " weekly-task-card";
                     if (task.isCompleted) taskCardExtraClass += " task-completed";
                     
                     if (appMode === 'DELETE_SELECT_TASKS' && tasksToDelete.has(`${dateKey}||${task.id}`)) {
@@ -7783,7 +7830,7 @@
                     const filterOpacityStyle = isFilteredOut ? 'opacity: 0.20; filter: grayscale(80%);' : 'opacity: 1; filter: grayscale(0%);';
 
                     tasksHtml += `
-                            <div class="planner-task-card${taskCardExtraClass}" ${draggableAttr} ${dragEvents} onclick="window.handleTaskClick(event, '${dateKey}', ${task.id})" style="cursor: ${appMode === 'NORMAL' ? 'grab' : 'pointer'}; border-left-color: ${sColor}; ${filterOpacityStyle}" data-custom-title="Görev">
+                            <div class="planner-task-card${taskCardExtraClass}" ${draggableAttr} ${dragEvents} onclick="window.handleTaskClick(event, '${dateKey}', ${task.id})" style="position: relative; cursor: ${appMode === 'NORMAL' ? 'grab' : 'pointer'}; border-left-color: ${sColor}; ${filterOpacityStyle}" data-custom-title="Görev">
                                 <div class="task-card-header" style="align-items: flex-start;">
                                     <span class="task-card-subject" class="flex-1">${task.subject}</span>
                                     <span class="task-card-badge ${badgeClass}" style="margin-left: 5px;">${displayExamType}</span>
@@ -8711,6 +8758,43 @@
         const duplicateDropZone = document.getElementById('duplicateDropZone');
         const removeDropZone = document.getElementById('removeDropZone');
         const completeDropZone = document.getElementById('completeDropZone');
+        const cancelActionModeBtn = document.getElementById('cancelActionModeBtn'); // YENİ EKLENDİ
+
+        // GÜNCEL MOD SIFIRLAMA FONKSİYONU (Her şeyi temize çeker ve İptal'i gizler)
+        function resetAppModes() {
+            appMode = 'NORMAL';
+            taskToDuplicate = null;
+            if(typeof selectedDatesForDuplicate !== 'undefined') selectedDatesForDuplicate.clear();
+            if(typeof tasksToDelete !== 'undefined') tasksToDelete.clear();
+            if(typeof tasksToComplete !== 'undefined') tasksToComplete.clear();
+
+            if(duplicateDropZone) {
+                duplicateDropZone.classList.remove('duplicate-mode');
+                if(typeof DOM !== 'undefined' && DOM.duplicateZoneText) DOM.duplicateZoneText.innerText = "Çoğalt";
+            }
+            if(removeDropZone) {
+                removeDropZone.classList.remove('delete-mode');
+                const rText = document.getElementById('removeZoneText');
+                if(rText) rText.innerText = "Kaldır";
+            }
+            if(completeDropZone) {
+                completeDropZone.classList.remove('complete-mode');
+                const cText = document.getElementById('completeZoneText');
+                if(cText) cText.innerText = "Tamamla";
+            }
+            
+            // İptal butonunu sıfırlanınca geri gizle
+            if(cancelActionModeBtn) cancelActionModeBtn.style.display = 'none';
+
+            window.updateWeeklyPlannerView?.();
+        }
+
+        // İPTAL BUTONU DİNLEYİCİSİ
+        if (cancelActionModeBtn) {
+            cancelActionModeBtn.addEventListener('click', () => {
+                resetAppModes();
+            });
+        }
 
         [duplicateDropZone, removeDropZone, completeDropZone].forEach(zone => {
             if(!zone) return;
@@ -8732,6 +8816,13 @@
                     appMode = 'COMPLETE_SELECT_TASKS';
                     completeDropZone.classList.add('complete-mode');
                     document.getElementById('completeZoneText').innerText = "Tamamla (0)";
+                    
+                    // İptal butonunu Tamamla'nın yanına taşı ve göster
+                    if (cancelActionModeBtn) {
+                        completeDropZone.insertAdjacentElement('beforebegin', cancelActionModeBtn);
+                        cancelActionModeBtn.style.display = 'flex';
+                    }
+                    
                     window.updateWeeklyPlannerView?.();
                 } else if (appMode === 'COMPLETE_SELECT_TASKS') {
                     if (tasksToComplete.size === 0) {
@@ -8787,6 +8878,13 @@
                     appMode = 'DUP_SELECT_TASK';
                     duplicateDropZone.classList.add('duplicate-mode');
                     DOM.duplicateZoneText.innerText = "Görev Seç...";
+                    
+                    // İptal butonunu Çoğalt'ın yanına taşı ve göster
+                    if (cancelActionModeBtn) {
+                        duplicateDropZone.insertAdjacentElement('beforebegin', cancelActionModeBtn);
+                        cancelActionModeBtn.style.display = 'flex';
+                    }
+                    
                     window.updateWeeklyPlannerView?.();
                 } else if (appMode === 'DUP_SELECT_TASK') {
                     resetAppModes(); 
@@ -8813,6 +8911,13 @@
                 appMode = 'DUP_SELECT_DAYS';
                 duplicateDropZone.classList.add('duplicate-mode');
                 DOM.duplicateZoneText.innerText = "Çoğalt (0)";
+                
+                // İptal butonunu sürükle/bırak sonrası da Çoğalt'ın yanına taşı ve göster
+                if (cancelActionModeBtn) {
+                    duplicateDropZone.insertAdjacentElement('beforebegin', cancelActionModeBtn);
+                    cancelActionModeBtn.style.display = 'flex';
+                }
+
                 draggedTaskInfo = null;
                 window.updateWeeklyPlannerView?.();
             });
@@ -8825,6 +8930,13 @@
                     appMode = 'DELETE_SELECT_TASKS';
                     removeDropZone.classList.add('delete-mode');
                     document.getElementById('removeZoneText').innerText = "Sil (0)";
+                    
+                    // İptal butonunu Kaldır'ın yanına taşı ve göster
+                    if (cancelActionModeBtn) {
+                        removeDropZone.insertAdjacentElement('beforebegin', cancelActionModeBtn);
+                        cancelActionModeBtn.style.display = 'flex';
+                    }
+                    
                     window.updateWeeklyPlannerView?.();
                 } else if (appMode === 'DELETE_SELECT_TASKS') {
                     if (tasksToDelete.size === 0) {
@@ -12814,30 +12926,43 @@
                         else if (task.taskType === 'Deneme Çözümü') shortTaskType = 'Deneme';
                         else if (task.taskType === 'Genel Tekrar') shortTaskType = 'Tekrar';
 
-                        let taskCardExtraClass = task.isCompleted ? " task-completed" : "";
+                        let taskCardExtraClass = "";
+                        if (task.isCompleted) taskCardExtraClass += " task-completed";
+                        
+                        if (appMode === 'DELETE_SELECT_TASKS' && tasksToDelete.has(`${dateKey}||${task.id}`)) {
+                            taskCardExtraClass += " task-card-selected-delete";
+                        } else if (appMode === 'COMPLETE_SELECT_TASKS' && tasksToComplete.has(`${dateKey}||${task.id}`)) {
+                            taskCardExtraClass += " task-card-selected-complete";
+                        } else if ((appMode === 'DUP_SELECT_TASK' || appMode === 'DUP_SELECT_DAYS') && taskToDuplicate && taskToDuplicate.taskId === task.id) {
+                            taskCardExtraClass += " task-card-selected-duplicate";
+                        }
+
+                        const draggableAttr = appMode === 'NORMAL' ? 'draggable="true"' : '';
+                        const dragEvents = appMode === 'NORMAL' ? `ondragstart="window.startTaskDrag(event, '${dateKey}', ${task.id})" ondragend="window.endTaskDrag(event)"` : '';
+                        
                         const sColor = window.subjectColors ? (window.subjectColors[task.subject] || 'var(--color-primary)') : getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
                         
                         const isFilteredOut = window.filteredSubjects && window.filteredSubjects.length > 0 && !window.filteredSubjects.includes(task.subject);
                         const filterOpacityStyle = isFilteredOut ? 'opacity: 0.20; filter: grayscale(80%);' : 'opacity: 1; filter: grayscale(0%);';
 
+                        // Haftalık planlayıcıda yeşil yuvarlak iptal edildi, HTML çok daha temiz bırakıldı.
                         tasksHtml += `
-                            <div class="planner-task-card${taskCardExtraClass}" style="border-left-color: ${sColor}; ${filterOpacityStyle}">
-                                <div class="task-card-header" style="align-items: flex-start; margin-bottom: 4px;">
-                                    <span class="task-card-subject" class="flex-1">${task.subject}</span>
-                                    <span class="task-card-badge ${badgeClass}" style="margin-left: 5px;">${displayExamType}</span>
-                                </div>
-                                <div class="task-card-desc" style="margin-bottom: 6px;">${task.desc || ''}</div>
-                                
-                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #eef2f5; padding-top: 6px; font-size: 10.5px; font-weight: 800; flex-wrap: wrap; gap: 5px;">
-                                    <div style="display: flex; gap: 8px;">
-                                        <span class="task-card-type" class="icon-primary"><i class="fa-solid fa-layer-group"></i> ${shortTaskType}</span>
-                                        ${task.questionCount ? `<span style="color: #fd7e14;"><i class="fa-solid fa-clipboard-question"></i> ${task.questionCount} Soru</span>` : ''}
-                                        ${(task.taskVideos && task.taskVideos.length > 0) ? `<span style="color: #dc3545; font-weight: 800; font-size: 11px;"><i class="fa-brands fa-youtube"></i> ${task.taskVideos.length}</span>` : ''}
+                                <div class="planner-task-card${taskCardExtraClass}" ${draggableAttr} ${dragEvents} onclick="window.handleTaskClick(event, '${dateKey}', ${task.id})" style="position: relative; cursor: ${appMode === 'NORMAL' ? 'grab' : 'pointer'}; border-left-color: ${sColor}; ${filterOpacityStyle}" data-custom-title="Görev">
+                                    <div class="task-card-header" style="align-items: flex-start;">
+                                        <span class="task-card-subject" class="flex-1">${task.subject}</span>
+                                        <span class="task-card-badge ${badgeClass}" style="margin-left: 5px;">${displayExamType}</span>
                                     </div>
-                                    <span style="color: var(--color-text-muted);"><i class="fa-solid fa-clock"></i> ${task.duration} dk</span>
+                                    <div class="task-card-desc">${task.desc || ''}</div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; font-weight: 800; flex-wrap: wrap; gap: 5px;">
+                                        <div style="display: flex; gap: 8px;">
+                                            <span class="task-card-type" class="icon-primary"><i class="fa-solid fa-layer-group"></i> ${shortTaskType}</span>
+                                            ${task.questionCount ? `<span style="color: #fd7e14;"><i class="fa-solid fa-clipboard-question"></i> ${task.questionCount} Soru</span>` : ''}
+                                            ${(task.taskVideos && task.taskVideos.length > 0) ? `<span style="color: #dc3545; font-weight: 800; font-size: 11px;"><i class="fa-brands fa-youtube"></i> ${task.taskVideos.length}</span>` : ''}
+                                        </div>
+                                        <span style="color: var(--color-text-muted);"><i class="fa-solid fa-clock"></i> ${task.duration} dk</span>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
                     });
 
                     const isToday = currentDay.toDateString() === new Date().toDateString();
@@ -14253,6 +14378,41 @@
             if (document.getElementById('calSummaryHeader')?.style.display === 'flex') { document.getElementById('calBackBtn')?.click(); }
         });
 
+        // --- TAMAMLANMA İKONU (TİK) SEÇİM MOTORU ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Hafızadan yükle ve CSS değişkenine anında uygula
+            const savedIcon = localStorage.getItem('plannerCompletedIcon') || "'\\f00c'";
+            document.documentElement.style.setProperty('--completed-icon-content', savedIcon);
+            
+            // 2. Ayarlar menüsü açıldığında doğru kutuyu yeşil (seçili) yap
+            const iconLabels = document.querySelectorAll('.settings-icon-option');
+            iconLabels.forEach(label => {
+                if (label.getAttribute('data-icon-value') === savedIcon) {
+                    label.classList.add('active');
+                    label.querySelector('input').checked = true;
+                } else {
+                    label.classList.remove('active');
+                }
+
+                // Tıklama animasyonu ve seçimi
+                label.addEventListener('click', function() {
+                    iconLabels.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    this.querySelector('input').checked = true;
+                });
+            });
+
+            // 3. Ayarları Kaydet butonuna dinleyici ekle
+            const saveSettingsBtn = document.getElementById('saveSettingsModalBtn');
+            if (saveSettingsBtn) {
+                saveSettingsBtn.addEventListener('click', () => {
+                    const selectedIcon = document.querySelector('input[name="iconChoice"]:checked').value;
+                    localStorage.setItem('plannerCompletedIcon', selectedIcon);
+                    document.documentElement.style.setProperty('--completed-icon-content', selectedIcon);
+                });
+            }
+        });
+
     </script>
 
     <div class="menu-overlay" id="menuOverlay"></div>
@@ -14320,6 +14480,35 @@
         <div class="prof-alert-box" id="profAlertBox">
             </div>
     </div>
+
+    <div style="margin-bottom: 24px;">
+                        <p style="font-weight: 700; font-size: 13px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;">
+                            <i class="fa-solid fa-check-double" style="margin-right: 6px;"></i> Tamamlanma Sembolü
+                        </p>
+                        <div id="iconOptions" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                            
+                            <label class="settings-icon-option active" data-icon-value="'\f00c'">
+                                <input type="radio" name="iconChoice" value="'\f00c'" style="display:none;" checked>
+                                <i class="fa-solid fa-check"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f058'">
+                                <input type="radio" name="iconChoice" value="'\f058'" style="display:none;">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f14a'">
+                                <input type="radio" name="iconChoice" value="'\f14a'" style="display:none;">
+                                <i class="fa-solid fa-square-check"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f560'">
+                                <input type="radio" name="iconChoice" value="'\f560'" style="display:none;">
+                                <i class="fa-solid fa-check-double"></i>
+                            </label>
+
+                        </div>
+                    </div>
 
     <!-- ============================================================
          AYARLAR MODALI
