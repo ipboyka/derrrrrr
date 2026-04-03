@@ -3329,50 +3329,48 @@
                 <span class="close-modal-btn" id="closeExamModalBtn" style="position: absolute; right: 25px;">&times;</span>
             </div>
             
-            <div class="modal-body" style="gap: 20px; padding: 25px;">
-                <div class="flex-gap-15" style="display: flex; gap: 15px; align-items: flex-start;">
+            <div class="modal-body" style="gap: 15px; padding: 0; margin: 0;">
+                <div class="flex-gap-15">
                     <div class="input-group" style="flex: 2;">
                         <label>Deneme Adı <span class="required-star">*</span></label>
                         <input type="text" id="examTitleInput" class="modal-input" placeholder="Örn: 3D Yayınları Türkiye Geneli">
                     </div>
-                    <div class="input-group" style="flex: 1;">
-                        <label>Tarih <span class="required-star">*</span></label>
-                        <input type="date" id="examDateInput" class="modal-input" data-custom-title="Tarih seçiciyi göster">
-                    </div>
+                    <div class="input-group" class="flex-1">
+                    <label>Tarih <span class="required-star">*</span></label>
+                    <input type="date" id="examDateInput" class="modal-input" data-custom-title="Tarih seçiciyi göster">
+                </div>
                 </div>
 
                 <div id="tyt-section" class="exam-section active-section">
-                    <div class="subject-inputs-container" id="tyt-subjects-container" style="max-height: 280px; overflow-y: auto; padding-right: 10px;"></div>
+                    <div class="subject-inputs-container" id="tyt-subjects-container"></div>
                 </div>
 
                 <div id="ayt-section" class="exam-section" style="display: none;">
                     <div class="input-group" style="margin-bottom: 15px;">
                         <label>Alan Seçimi</label>
-                        <select id="aytTrackSelect" class="modal-input" style="cursor: pointer; background-color: var(--color-primary-lighter); color: var(--color-primary); font-weight: 700; border-color: var(--color-primary-border);">
+                        <select id="aytTrackSelect" class="modal-input" style="cursor: pointer; background-color: var(--color-primary-lighter); color: var(--color-primary); font-weight: 700;">
                             <option value="sayisal">Sayısal</option>
                             <option value="ea">Eşit Ağırlık</option>
                             <option value="sozel">Sözel</option>
                             <option value="dil">Yabancı Dil</option>
                         </select>
                     </div>
-                    <div class="subject-inputs-container" id="ayt-subjects-container" style="max-height: 280px; overflow-y: auto; padding-right: 10px;"></div>
+                    <div class="subject-inputs-container" id="ayt-subjects-container"></div>
                 </div>
 
-                <div id="totalNetBox" style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); padding: 15px 20px; border-radius: var(--radius-lg); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.08);">
-                    <span style="font-weight: 800; color: var(--color-text-main); font-size: 15px;">
-                        <i class="fa-solid fa-calculator" style="margin-right: 8px; color: var(--color-primary);"></i> Toplam Net
+                <div id="totalNetBox" style="background: #fdfefe; border: 1px solid #e1e9f0; padding: 10px 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                    <span style="font-weight: 600; color: #5ea8b9; font-size: 14px; letter-spacing: 0.3px;">
+                        <i class="fa-solid fa-calculator" style="margin-right: 5px; opacity: 0.8;"></i> Toplam Net
                     </span>
-                    <span id="totalNetValue" style="font-weight: 900; color: var(--color-primary); font-size: 26px;">0.00</span>
+                    <span id="totalNetValue" style="font-weight: 700; color: #4a5568; font-size: 19px; letter-spacing: 0.5px;">0.00</span>
                 </div>
                 
                 <p id="examErrorMsg" class="error-msg">Lütfen Deneme Adı ve Tarihini girin!</p>
             </div>
             
-            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
-                <button class="cancel-note-btn" id="deleteExamBtn" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; display: none; padding: 10px 15px;">
-                    <i class="fa-solid fa-trash"></i> Sil
-                </button>
-                <div style="display: flex; gap: 12px; margin-left: auto;">
+            <div class="modal-footer" class="flex-between">
+                <button class="cancel-note-btn" id="deleteExamBtn" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; display: none;"><i class="fa-solid fa-trash"></i> Sil</button>
+                <div style="display: flex; gap: 12px;">
                     <button class="cancel-note-btn" id="cancelExamBtn">İptal Et</button>
                     <button class="save-note-btn" id="saveExamBtn">Denemeyi Ekle</button>
                 </div>
