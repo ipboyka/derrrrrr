@@ -353,15 +353,142 @@
 
         /* --- ANA İÇERİK ALANI (ALT KISIM) --- */
         .main-content {
-            width: calc(100% - 40px); /* Sabit sağ-sol boşluk */
+            width: calc(100% - 40px);
             max-width: 1400px;
-            margin: 20px auto 0 auto; 
-            flex: 3; /* YENİ: Ekranın dikeyde kalan kısmının %40'ını burası alır */
-            min-height: 0; /* ALTIN KURAL: İçerik taşsa bile dış kutuyu büyütüp ekranı patlatmaz! */
+            margin: 20px auto 0 auto;
+            flex: 3;
+            min-height: 0;
             display: grid;
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            position: relative; /* Ayar butonu için */
         }
+
+
+        /* ── Saat Widget Tab Butonları (küçük widget) ── */
+        .clk-tab {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: var(--color-text-secondary);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+            width: 100%;
+            text-align: left;
+        }
+        .clk-tab:hover {
+            background: var(--color-primary-lighter);
+            color: var(--color-primary);
+        }
+        .clk-tab.active {
+            background: var(--color-primary-lighter);
+            color: var(--color-primary);
+            font-weight: 800;
+        }
+
+        /* ── Fullscreen modal tab butonları ── */
+        .clk-tab-fs {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 18px;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            background: var(--color-bg-input);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+        .clk-tab-fs:hover {
+            border-color: var(--color-primary-border);
+            color: var(--color-primary);
+            background: var(--color-primary-lighter);
+        }
+        .clk-tab-fs.active {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+            color: #fff;
+        }
+
+        /* Sol/Sağ Widget Container'lar grid hücrelerini tam kaplar */
+        #leftWidgetContainer,
+        #rightWidgetContainer {
+            height: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Container içindeki tek widget tüm alanı kaplar */
+        #leftWidgetContainer > .widget-box,
+        #rightWidgetContainer > .widget-box {
+            flex: 1;
+            min-height: 0;
+            height: 100%;
+        }
+
+        /* Widget Layout Ayar Paneli */
+        #widgetLayoutPanel {
+            position: fixed;
+            inset: 0;
+            z-index: 4800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        #widgetLayoutPanel.show { opacity: 1; visibility: visible; }
+        #widgetLayoutPanel .wlp-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(4px);
+        }
+        #widgetLayoutPanel .wlp-box {
+            position: relative;
+            z-index: 1;
+            background: var(--color-bg-card);
+            border-radius: 20px;
+            padding: 28px 30px 24px;
+            width: 90%;
+            max-width: 520px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            transform: scale(0.92) translateY(12px);
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #widgetLayoutPanel.show .wlp-box { transform: scale(1) translateY(0); }
+        .wlp-title { font-size:17px; font-weight:800; color:var(--color-text-main); margin-bottom:5px; display:flex; align-items:center; gap:10px; }
+        .wlp-subtitle { font-size:12px; color:var(--color-text-muted); font-weight:600; margin-bottom:22px; }
+        .wlp-sides { display:grid; grid-template-columns:1fr 28px 1fr; gap:10px; align-items:start; }
+        .wlp-side-label { font-size:11px; font-weight:800; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+        .wlp-option {
+            display:flex; align-items:center; gap:10px;
+            padding:11px 13px; border-radius:10px;
+            border:2px solid var(--color-border);
+            background:var(--color-bg-input);
+            cursor:pointer; transition:var(--transition-fast);
+            font-size:13px; font-weight:700; color:var(--color-text-secondary);
+            margin-bottom:7px; user-select:none;
+        }
+        .wlp-option:last-child { margin-bottom:0; }
+        .wlp-option:hover { border-color:var(--color-primary-border); background:var(--color-primary-lighter); color:var(--color-primary); }
+        .wlp-option.wlp-active { border-color:var(--color-primary); background:var(--color-primary-lighter); color:var(--color-primary); }
+        .wlp-option.wlp-active .wlp-check { opacity:1; }
+        .wlp-option.wlp-disabled { opacity:0.35; cursor:not-allowed; pointer-events:none; }
+        .wlp-check { margin-left:auto; color:var(--color-primary); opacity:0; transition:opacity 0.15s; font-size:14px; }
+        .wlp-divider-col { display:flex; align-items:center; justify-content:center; padding-top:32px; color:var(--color-text-light); font-size:18px; }
+        .wlp-footer { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--color-border); padding-top:16px; }
 
         /* --- ORTAK MODÜL (BALON) TASARIMI --- */
         .widget-box {
@@ -3129,72 +3256,322 @@
 
     </section>
 
-    <main class="main-content">
-        
-        <div class="widget-box calendar-widget">
-
-            <!-- HEADER: takvim modunda normal, özet modunda geri butonu -->
-            <div id="calMainHeader" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 15px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="cal-btn" id="calPrevMonthBtn" data-custom-title="Önceki Ay"><i class="fa-solid fa-chevron-left"></i></button>
-                    <h2 id="month-year" style="margin: 0; min-width: 85px; text-align: center;">Yükleniyor...</h2>
-                    <button class="cal-btn" id="calNextMonthBtn" data-custom-title="Sonraki Ay"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-                <button id="calSettingsBtn" style="position: absolute; right: 0; background: none; border: none; color: var(--color-text-light); cursor: pointer; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-light)'" data-custom-title="Takvim Ayarları">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-            </div>
-
-            <!-- ÖZET HEADER: geri butonu + seçili tarih -->
-            <div id="calSummaryHeader" style="display:none; align-items:center; gap:8px; margin-bottom:12px; flex-shrink:0;">
-                <button id="calBackBtn" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; font-weight:800; display:flex; align-items:center; gap:5px; padding:4px 8px; border-radius:var(--radius-sm); transition:background 0.15s;" onmouseover="this.style.background='var(--color-primary-light)'" onmouseout="this.style.background='none'">
-                    <i class="fa-solid fa-arrow-left"></i> Takvim
-                </button>
-                <span id="calSummaryDate" style="font-size:13px; font-weight:800; color:var(--color-text-main);"></span>
-            </div>
-
-            <!-- TAKVİM GÖRÜNÜMÜ -->
-            <div id="calCalendarView" style="display:flex; flex-direction:column; gap:0; flex-shrink:0;">
-                <div class="calendar-weekdays">
-                    <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
-                </div>
-                <div class="calendar-days" id="calendar-days"></div>
-                <div style="flex-shrink:0; height:12px;"></div>
-            </div>
-
-            <!-- GÜN ÖZETİ GÖRÜNÜMÜ -->
-            <div id="calDaySummary"></div>
-
-        </div>
-
-        <div class="widget-box subject-widget">
-            <div class="subject-header">
-                <div class="custom-select" id="examTypeSelect">
-                    <div class="select-selected" data-val="tyt">TYT <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div>
-                    <div class="select-items select-hide">
-                        <div data-val="tyt">TYT</div>
-                        <div data-val="ayt">AYT</div>
-                    </div>
-                </div>
-                
-                <h2 class="subject-title">Konu Çalışması</h2>
-                
-                <div class="custom-select" id="trackSelect">
-                    <div class="select-selected" data-val="sayisal">Sayısal <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div>
-                    <div class="select-items select-hide">
-                        <div data-val="sayisal">Sayısal</div>
-                        <div data-val="ea">Eşit Ağırlık</div>
-                        <div data-val="sozel">Sözel</div>
-                        <div data-val="dil">Dil</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="subject-content" id="subject-container">
-                </div>
-        </div>
-
+    <main class="main-content" id="mainContent">
+        <div id="leftWidgetContainer"></div>
+        <div id="rightWidgetContainer"></div>
     </main>
+
+    <!-- WIDGET'LAR — body'de gizli tutulur, JS appendChild ile container'a taşınır -->
+    <!-- Not: appendChild ile taşınan node önceki parent'tan otomatik çıkar. innerHTML kullanılmaz. -->
+
+    <div id="widget-calendar" class="widget-box calendar-widget" style="display:none; height:100%; min-height:0;">
+        <div id="calMainHeader" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 15px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="cal-btn" id="calPrevMonthBtn" data-custom-title="Önceki Ay"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 id="month-year" style="margin: 0; min-width: 85px; text-align: center;">Yükleniyor...</h2>
+                <button class="cal-btn" id="calNextMonthBtn" data-custom-title="Sonraki Ay"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <button id="calSettingsBtn" style="position: absolute; right: 0; background: none; border: none; color: var(--color-text-light); cursor: pointer; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-light)'" data-custom-title="Takvim Ayarları">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </div>
+        <div id="calSummaryHeader" style="display:none; align-items:center; gap:8px; margin-bottom:12px; flex-shrink:0;">
+            <button id="calBackBtn" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; font-weight:800; display:flex; align-items:center; gap:5px; padding:4px 8px; border-radius:var(--radius-sm); transition:background 0.15s;" onmouseover="this.style.background='var(--color-primary-light)'" onmouseout="this.style.background='none'">
+                <i class="fa-solid fa-arrow-left"></i> Takvim
+            </button>
+            <span id="calSummaryDate" style="font-size:13px; font-weight:800; color:var(--color-text-main);"></span>
+        </div>
+        <div id="calCalendarView" style="display:flex; flex-direction:column; gap:0; flex-shrink:0;">
+            <div class="calendar-weekdays">
+                <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+            </div>
+            <div class="calendar-days" id="calendar-days"></div>
+            <div style="flex-shrink:0; height:12px;"></div>
+        </div>
+        <div id="calDaySummary"></div>
+    </div>
+
+    <div id="widget-subject" class="widget-box subject-widget" style="display:none; height:100%; min-height:0;">
+        <div class="subject-header">
+            <div class="custom-select" id="examTypeSelect">
+                <div class="select-selected" data-val="tyt">TYT <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div>
+                <div class="select-items select-hide">
+                    <div data-val="tyt">TYT</div>
+                    <div data-val="ayt">AYT</div>
+                </div>
+            </div>
+            <h2 class="subject-title">Konu Çalışması</h2>
+            <div class="custom-select" id="trackSelect">
+                <div class="select-selected" data-val="sayisal">Sayısal <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div>
+                <div class="select-items select-hide">
+                    <div data-val="sayisal">Sayısal</div>
+                    <div data-val="ea">Eşit Ağırlık</div>
+                    <div data-val="sozel">Sözel</div>
+                    <div data-val="dil">Dil</div>
+                </div>
+            </div>
+        </div>
+        <div class="subject-content" id="subject-container"></div>
+    </div>
+
+    <!-- ── SAAT WİDGET'I ── -->
+    <div id="widget-clock" class="widget-box" style="display:none; height:100%; min-height:0; flex-direction:column; overflow:hidden; position:relative;">
+
+        <!-- Üst başlık çubuğu -->
+        <div id="clkTopBar" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px 6px; flex-shrink:0; position:relative;">
+
+            <!-- Sol: Mod butonu + aşağı açılan dropdown -->
+            <div style="position:relative;">
+                <button id="clkModeBtn" onclick="window.clkToggleModeBar()"
+                    style="display:flex; align-items:center; gap:6px; padding:5px 11px; border-radius:var(--radius-md);
+                           border:1px solid var(--color-border); background:var(--color-bg-input);
+                           color:var(--color-text-secondary); font-size:12px; font-weight:700; cursor:pointer; transition:var(--transition-fast);"
+                    onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)'"
+                    onmouseout="this.style.borderColor='var(--color-border)';this.style.color='var(--color-text-secondary)'">
+                    <i class="fa-solid fa-sliders" style="font-size:11px;"></i>
+                    <span id="clkActiveLabel">Saat</span>
+                    <i id="clkModeCaret" class="fa-solid fa-chevron-down" style="font-size:9px; transition:transform 0.2s;"></i>
+                </button>
+
+                <!-- Aşağı açılan mod menüsü -->
+                <div id="clkModeBar" style="display:none; position:absolute; top:calc(100% + 6px); left:0; z-index:500;
+                     background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-lg);
+                     box-shadow:var(--shadow-md); padding:4px; min-width:150px; flex-direction:column; gap:2px;">
+                    <button class="clk-tab active" data-mode="clock"      onclick="window.clkSetMode('clock')">
+                        <i class="fa-regular fa-clock"></i> Saat
+                    </button>
+                    <button class="clk-tab"        data-mode="stopwatch"  onclick="window.clkSetMode('stopwatch')">
+                        <i class="fa-solid fa-stopwatch"></i> Kronometre
+                    </button>
+                    <button class="clk-tab"        data-mode="timer"      onclick="window.clkSetMode('timer')">
+                        <i class="fa-solid fa-hourglass-half"></i> Zamanlayıcı
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sağ: Tam ekran butonu -->
+            <button onclick="window.clkOpenFullscreen()"
+                style="display:flex; align-items:center; justify-content:center; width:30px; height:30px;
+                       border-radius:var(--radius-md); border:1px solid var(--color-border);
+                       background:var(--color-bg-input); color:var(--color-text-secondary);
+                       cursor:pointer; transition:var(--transition-fast); font-size:13px;"
+                onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)';this.style.background='var(--color-primary-lighter)'"
+                onmouseout="this.style.borderColor='var(--color-border)';this.style.color='var(--color-text-secondary)';this.style.background='var(--color-bg-input)'"
+                title="Tam Ekran">
+                <i class="fa-solid fa-expand"></i>
+            </button>
+        </div>
+
+        <!-- ── SAAT MODU ── -->
+        <div id="clkFaceClock" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:0; padding:0 10px 14px;">
+            <div id="clkTime" style="font-size:clamp(38px,6vw,68px); font-weight:800; color:var(--color-text-main); letter-spacing:2px; font-variant-numeric:tabular-nums; line-height:1;"></div>
+            <div id="clkSeconds" style="font-size:clamp(14px,2.2vw,20px); font-weight:600; color:var(--color-primary); letter-spacing:1px; font-variant-numeric:tabular-nums;"></div>
+            <div id="clkDate" style="font-size:13px; font-weight:700; color:var(--color-text-muted); margin-top:4px; text-align:center;"></div>
+            <div id="clkDay" style="font-size:12px; font-weight:600; color:var(--color-text-light);"></div>
+        </div>
+
+        <!-- ── KRONOMETRE MODU ── -->
+        <div id="clkFaceStopwatch" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; padding:0 10px 12px;">
+            <!-- Görev etiketi -->
+            <div id="swTaskLabel" style="display:none; font-size:11px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:3px 10px; max-width:90%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+            <!-- Süre göstergesi: XX:XX.xx / YY dk -->
+            <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; justify-content:center;">
+                <div id="swDisplay" style="font-size:clamp(30px,5.5vw,54px); font-weight:800; color:var(--color-text-main); letter-spacing:2px; font-variant-numeric:tabular-nums; line-height:1;">00:00.00</div>
+                <div id="swTaskTarget" style="display:none; font-size:clamp(12px,1.8vw,16px); font-weight:700; color:var(--color-text-muted); font-variant-numeric:tabular-nums; white-space:nowrap;"></div>
+            </div>
+            <!-- Butonlar -->
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+                <button id="swStartBtn" onclick="window.swToggle()"
+                    style="padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:82px;">
+                    <i class="fa-solid fa-play"></i> Başlat
+                </button>
+                <button id="swResetBtn" onclick="window.swReset()"
+                    style="padding:8px 14px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                <button id="swPickTaskBtn" onclick="window.clkPickTask('sw')"
+                    style="padding:8px 14px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    <i class="fa-solid fa-list-check"></i>
+                </button>
+            </div>
+            <!-- Tamamla butonu (durdurulunca görünür) -->
+            <button id="swCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
+                <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
+            </button>
+        </div>
+
+        <!-- ── ZAMANLAYıCı MODU ── -->
+        <div id="clkFaceTimer" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; padding:0 10px 12px;">
+            <!-- Görev etiketi -->
+            <div id="tmTaskLabel" style="display:none; font-size:11px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:3px 10px; max-width:90%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+            <div id="timerInputRow" style="display:flex; align-items:center; gap:8px;">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                    <input id="timerH" type="number" min="0" max="99" value="0"
+                        style="width:52px; text-align:center; font-size:22px; font-weight:800; border:2px solid var(--color-border); border-radius:var(--radius-md); padding:6px 4px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
+                        onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                    <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">SAAT</span>
+                </div>
+                <span style="font-size:24px; font-weight:800; color:var(--color-text-muted); margin-bottom:12px;">:</span>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                    <input id="timerM" type="number" min="0" max="59" value="0"
+                        style="width:52px; text-align:center; font-size:22px; font-weight:800; border:2px solid var(--color-border); border-radius:var(--radius-md); padding:6px 4px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
+                        onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                    <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">DAKİKA</span>
+                </div>
+                <span style="font-size:24px; font-weight:800; color:var(--color-text-muted); margin-bottom:12px;">:</span>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                    <input id="timerS" type="number" min="0" max="59" value="0"
+                        style="width:52px; text-align:center; font-size:22px; font-weight:800; border:2px solid var(--color-border); border-radius:var(--radius-md); padding:6px 4px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
+                        onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                    <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">SANİYE</span>
+                </div>
+            </div>
+            <div id="timerDisplay" style="display:none; font-size:clamp(34px,6vw,60px); font-weight:800; color:var(--color-text-main); letter-spacing:2px; font-variant-numeric:tabular-nums; line-height:1;">00:00:00</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+                <button id="timerStartBtn" onclick="window.timerToggle()"
+                    style="padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-primary); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:82px;">
+                    <i class="fa-solid fa-play"></i> Başlat
+                </button>
+                <button id="timerResetBtn" onclick="window.timerReset()"
+                    style="padding:8px 14px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                <button id="tmPickTaskBtn" onclick="window.clkPickTask('tm')"
+                    style="padding:8px 14px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    <i class="fa-solid fa-list-check"></i>
+                </button>
+            </div>
+            <div id="timerDoneMsg" style="display:none; font-size:15px; font-weight:800; color:var(--color-success); ">
+                <i class="fa-solid fa-bell"></i> Süre doldu!
+            </div>
+            <!-- Tamamla butonu (durdurulunca görünür) -->
+            <button id="tmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
+                <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ── TAM EKRAN SAAT MODALi ── -->
+    <div id="clkFullscreenModal" class="custom-modal" style="z-index:2000;">
+        <div class="custom-modal-content" style="max-width:95%; width:1500px; height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+
+            <!-- Modal Başlık -->
+            <div class="modal-header" style="padding:16px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <!-- Mod tabları (modal içinde yatay) -->
+                    <button class="clk-tab-fs active" data-mode="clock"     onclick="window.clkFsSetMode('clock')">
+                        <i class="fa-regular fa-clock"></i> Saat
+                    </button>
+                    <button class="clk-tab-fs"        data-mode="stopwatch" onclick="window.clkFsSetMode('stopwatch')">
+                        <i class="fa-solid fa-stopwatch"></i> Kronometre
+                    </button>
+                    <button class="clk-tab-fs"        data-mode="timer"     onclick="window.clkFsSetMode('timer')">
+                        <i class="fa-solid fa-hourglass-half"></i> Zamanlayıcı
+                    </button>
+                </div>
+                <span class="close-modal-btn" id="clkFsCloseBtn" style="font-size:28px;">&times;</span>
+            </div>
+
+            <!-- Modal İçerik -->
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; min-height:0; padding:20px;">
+
+                <!-- SAAT (fullscreen) -->
+                <div id="clkFsModeClock" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center;">
+                    <div id="clkFsTime"    style="font-size:clamp(80px,14vw,160px); font-weight:900; color:var(--color-text-main); letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1;"></div>
+                    <div id="clkFsSeconds" style="font-size:clamp(28px,5vw,56px); font-weight:600; color:var(--color-primary); letter-spacing:2px; font-variant-numeric:tabular-nums;"></div>
+                    <div id="clkFsDate"    style="font-size:clamp(16px,2.5vw,28px); font-weight:700; color:var(--color-text-muted); margin-top:8px;"></div>
+                    <div id="clkFsDay"     style="font-size:clamp(14px,2vw,22px); font-weight:600; color:var(--color-text-light);"></div>
+                </div>
+
+                <!-- KRONOMETRE (fullscreen) -->
+                <div id="clkFsModeStopwatch" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:20px; text-align:center;">
+                    <div id="fswTaskLabel" style="display:none; font-size:14px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:5px 16px; max-width:80%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+                    <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; justify-content:center;">
+                        <div id="clkFsSwDisplay" style="font-size:clamp(60px,10vw,120px); font-weight:900; color:var(--color-text-main); letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1;">00:00.00</div>
+                        <div id="fswTaskTarget" style="display:none; font-size:clamp(18px,3vw,32px); font-weight:700; color:var(--color-text-muted); font-variant-numeric:tabular-nums;"></div>
+                    </div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                        <button id="clkFsSwStartBtn" onclick="window.swFsToggle()"
+                            style="padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:130px;">
+                            <i class="fa-solid fa-play"></i> Başlat
+                        </button>
+                        <button onclick="window.swFsReset()"
+                            style="padding:14px 22px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button onclick="window.clkPickTask('sw')"
+                            style="padding:14px 22px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);" title="Görev Seç">
+                            <i class="fa-solid fa-list-check"></i>
+                        </button>
+                    </div>
+                    <button id="fswCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
+                        <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
+                    </button>
+                </div>
+
+                <!-- ZAMANLAYıCı (fullscreen) -->
+                <div id="clkFsModeTimer" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:24px; text-align:center;">
+                    <div id="clkFsTimerInputRow" style="display:flex; align-items:center; gap:14px;">
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                            <input id="clkFsTimerH" type="number" min="0" max="99" value="0"
+                                style="width:80px; text-align:center; font-size:38px; font-weight:800; border:3px solid var(--color-border); border-radius:var(--radius-lg); padding:10px 6px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
+                                onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                            <span style="font-size:13px; font-weight:800; color:var(--color-text-muted); letter-spacing:1px;">SAAT</span>
+                        </div>
+                        <span style="font-size:42px; font-weight:800; color:var(--color-text-muted); margin-bottom:18px;">:</span>
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                            <input id="clkFsTimerM" type="number" min="0" max="59" value="0"
+                                style="width:80px; text-align:center; font-size:38px; font-weight:800; border:3px solid var(--color-border); border-radius:var(--radius-lg); padding:10px 6px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
+                                onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                            <span style="font-size:13px; font-weight:800; color:var(--color-text-muted); letter-spacing:1px;">DAKİKA</span>
+                        </div>
+                        <span style="font-size:42px; font-weight:800; color:var(--color-text-muted); margin-bottom:18px;">:</span>
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                            <input id="clkFsTimerS" type="number" min="0" max="59" value="0"
+                                style="width:80px; text-align:center; font-size:38px; font-weight:800; border:3px solid var(--color-border); border-radius:var(--radius-lg); padding:10px 6px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
+                                onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                            <span style="font-size:13px; font-weight:800; color:var(--color-text-muted); letter-spacing:1px;">SANİYE</span>
+                        </div>
+                    </div>
+                    <div id="fstmTaskLabel" style="display:none; font-size:14px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:5px 16px; max-width:80%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:4px;"></div>
+                    <div id="clkFsTimerDisplay" style="display:none; font-size:clamp(60px,10vw,120px); font-weight:900; color:var(--color-text-main); letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1;">00:00:00</div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                        <button id="clkFsTimerStartBtn" onclick="window.tmFsToggle()"
+                            style="padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-primary); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:130px;">
+                            <i class="fa-solid fa-play"></i> Başlat
+                        </button>
+                        <button onclick="window.tmFsReset()"
+                            style="padding:14px 22px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button onclick="window.clkPickTask('tm')"
+                            style="padding:14px 22px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);" title="Görev Seç">
+                            <i class="fa-solid fa-list-check"></i>
+                        </button>
+                    </div>
+                    <div id="clkFsTimerDone" style="display:none; font-size:22px; font-weight:800; color:var(--color-success); ">
+                        <i class="fa-solid fa-bell"></i> Süre doldu!
+                    </div>
+                    <button id="fstmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
+                        <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- WIDGET DÜZEN AYAR BUTONU -->
+    <button id="widgetLayoutBtn" onclick="window.openWidgetLayoutPanel()" title="Widget Düzenini Ayarla"
+        style="position:fixed; z-index:200; display:none; align-items:center; justify-content:center;
+               width:34px; height:34px; border-radius:50%; border:2px solid var(--color-primary-border);
+               background:var(--color-bg-card); color:var(--color-primary); cursor:pointer;
+               font-size:13px; box-shadow:var(--shadow-md); transition:var(--transition-fast);"
+        onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff';this.style.borderColor='var(--color-primary)';this.style.boxShadow='0 6px 16px rgba(0,123,255,0.35)'"
+        onmouseout="this.style.background='var(--color-bg-card)';this.style.color='var(--color-primary)';this.style.borderColor='var(--color-primary-border)';this.style.boxShadow='var(--shadow-md)'">
+        <i class="fa-solid fa-sliders"></i>
+    </button>
 
     <div id="noteModal" class="custom-modal">
         <div class="custom-modal-content">
@@ -3838,6 +4215,18 @@
         </div><!-- /custom-modal-content -->
     </div><!-- /addTaskModal -->
 
+    <div id="expandedExamMultiDeleteConfirmModal" class="custom-modal" style="z-index: 3800;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-trash-can" style="font-size: 52px; color: var(--color-danger); margin-bottom: 15px;"></i>
+            <h3 class="modal-title" style="color: var(--color-danger);">Seçili Denemeleri Sil</h3>
+            <p id="expandedMultiDeleteConfirmMsg" class="modal-desc">Seçilen denemeleri kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('expandedExamMultiDeleteConfirmModal').style.display='none'">İptal</button>
+                <button class="save-note-btn bg-danger" id="yesExpandedExamMultiDeleteBtn">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
     <div id="addProfileModal" class="custom-modal" style="z-index: 3000;">
         <div class="custom-modal-content" style="max-width: 400px;">
             <div class="modal-header">
@@ -3964,13 +4353,27 @@
     </div>
 
     <div id="taskCompleteConfirmModal" class="custom-modal" style="z-index: 2700;">
-        <div class="custom-modal-content modal-centered">
+        <div class="custom-modal-content modal-centered" style="max-width:400px;">
             <i id="singleCompleteIcon" class="fa-solid fa-check-circle" style="font-size: 50px; color: var(--color-success); margin-bottom: 15px;"></i>
             <h3 id="singleCompleteTitle" class="modal-title">Görevi Tamamla</h3>
             <p id="singleCompleteMsg" class="modal-desc">Bu görevi tamamlandı olarak işaretlemek istediğinize emin misiniz?</p>
-            <div class="modal-actions">
-                <button class="cancel-note-btn" onclick="document.getElementById('taskCompleteConfirmModal').style.display='none'">İptal</button>
-                <button class="save-note-btn" id="yesTaskCompleteBtn" class="bg-success">Evet, Tamamlandı</button>
+            <!-- Süre güncelleme alanı -->
+            <div id="completeUpdateDurRow" style="display:none; align-items:center; gap:10px; justify-content:center; margin-bottom:18px; background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); padding:10px 16px;">
+                <i class="fa-solid fa-clock" style="color:var(--color-primary); font-size:14px;"></i>
+                <span style="font-size:13px; font-weight:700; color:var(--color-text-secondary); white-space:nowrap;">Gerçek süre:</span>
+                <input id="completeNewDuration" type="number" min="1" max="600" placeholder="dk"
+                    style="width:64px; text-align:center; font-size:16px; font-weight:800; border:2px solid var(--color-primary-border); border-radius:var(--radius-md); padding:5px 4px; color:var(--color-text-main); background:var(--color-bg-card); outline:none;"
+                    onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-primary-border)'">
+                <span style="font-size:13px; font-weight:700; color:var(--color-text-secondary);">dk</span>
+            </div>
+            <div class="modal-actions" style="flex-direction:column; gap:8px;">
+                <div style="display:flex; gap:10px; width:100%;">
+                    <button class="cancel-note-btn" onclick="document.getElementById('taskCompleteConfirmModal').style.display='none'" style="flex:1;">İptal</button>
+                    <button class="save-note-btn" id="yesTaskCompleteBtn" class="bg-success" style="flex:1;">Evet, Tamamlandı</button>
+                </div>
+                <button id="yesTaskCompleteUpdateBtn" style="display:none; width:100%; padding:10px; border:none; border-radius:var(--radius-lg); background:var(--color-primary); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    <i class="fa-solid fa-floppy-disk"></i> Süreyi Güncelle ve Tamamla
+                </button>
             </div>
         </div>
     </div>
@@ -8162,7 +8565,17 @@
         // Throttled public API — tüm kod buraya çağırmalı
         window.renderTodayTasks = function() {
             scheduleRender('todayTasks', _renderTodayTasksNow);
+            // Saat widget'ının görev listesine erişebilmesi için window'a aç
+            window._clkUserTasksLive = userTasks;
+            window._clkDashDateLive  = currentDashboardDate;
         };
+
+        // userTasks ilk yüklendiğinde de expose et
+        const _origClkExposeInterval = setInterval(() => {
+            window._clkUserTasksLive = userTasks;
+            window._clkDashDateLive  = currentDashboardDate;
+        }, 500);
+        setTimeout(() => clearInterval(_origClkExposeInterval), 30000);
 
         // --- TAKVİMİ VE GÖREVLERİ ÇİZME (AKILLI MODLAR VE DÜZENLER İLE UYUMLU) ---
         function updateWeeklyPlannerView() {
@@ -9416,6 +9829,14 @@
                     document.getElementById('singleCompleteIcon').className = isComp ? "fa-solid fa-arrow-rotate-left" : "fa-solid fa-check-circle";
                     document.getElementById('singleCompleteIcon').style.color = isComp ? "#ffc107" : "#28a745";
                     taskToCompleteFromDrag = draggedTaskInfo;
+                    // Süre alanını hazırla
+                    const _dRc2 = document.getElementById('completeUpdateDurRow');
+                    const _dRi2 = document.getElementById('completeNewDuration');
+                    const _dRb2 = document.getElementById('yesTaskCompleteUpdateBtn');
+                    const _isC2 = taskObj.isCompleted;
+                    if (_dRc2) _dRc2.style.display = !_isC2 ? 'flex' : 'none';
+                    if (_dRi2 && !_isC2) _dRi2.value = taskObj.duration || '';
+                    if (_dRb2) _dRb2.style.display = !_isC2 ? 'block' : 'none';
                     document.getElementById('taskCompleteConfirmModal').style.display = 'flex';
                 }
                 draggedTaskInfo = null; 
@@ -9603,56 +10024,78 @@
                 document.getElementById('singleCompleteIcon').style.color = isComp ? "#ffc107" : "#28a745";
                 taskToCompleteFromDrag = { dateKey: selectedDateForTask, taskId: currentViewingTask.id };
                 document.getElementById('viewTaskModal').style.display = 'none';
+                // Süre alanını hazırla (sadece tamamlama işleminde göster)
+                const isAlreadyComp = currentViewingTask.isCompleted;
+                const durRow = document.getElementById('completeUpdateDurRow');
+                const durInput = document.getElementById('completeNewDuration');
+                const updateBtn = document.getElementById('yesTaskCompleteUpdateBtn');
+                if (durRow) durRow.style.display = !isAlreadyComp ? 'flex' : 'none';
+                if (durInput && !isAlreadyComp) durInput.value = currentViewingTask.duration || '';
+                if (updateBtn) updateBtn.style.display = !isAlreadyComp ? 'block' : 'none';
                 document.getElementById('taskCompleteConfirmModal').style.display = 'flex';
             });
         }
 
         // --- FIREBASE İŞLEMLERİ (ÇOĞALTMA, SİLME, TAMAMLAMA) ---
         
-        // 1. TEKLİ TAMAMLAMA
+        // 1. TEKLİ TAMAMLAMA — yardımcı fonksiyon
+        async function _execSingleComplete(newDurationOverride) {
+            if (!taskToCompleteFromDrag || !currentUserUid) return;
+            const { dateKey, taskId } = taskToCompleteFromDrag;
+            const btnYC = DOM.yesTaskCompleteBtn;
+            const btnYCU = document.getElementById('yesTaskCompleteUpdateBtn');
+            const origTextYC  = btnYC  ? btnYC.innerHTML  : '';
+            const origTextYCU = btnYCU ? btnYCU.innerHTML : '';
+            if (btnYC)  btnYC.innerHTML  = "İşleniyor...";
+            if (btnYCU) btnYCU.innerHTML = "İşleniyor...";
+            document.getElementById('taskCompleteConfirmModal').style.display = 'none';
+            try {
+                const taskIndex = userTasks[dateKey].findIndex(t => t.id === taskId);
+                if(taskIndex !== -1) {
+                    const currentStatus = userTasks[dateKey][taskIndex].isCompleted || false;
+                    const newStatus = !currentStatus;
+                    const updatedTask = { ...userTasks[dateKey][taskIndex], isCompleted: newStatus };
+                    // Süre güncelleme
+                    if (newDurationOverride && newStatus === true) {
+                        updatedTask.duration = newDurationOverride;
+                    }
+                    let playlistsToUpdate = new Set();
+                    if (updatedTask.taskVideos && updatedTask.taskVideos.length > 0) {
+                        updatedTask.taskVideos.forEach(v => {
+                            const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
+                            if (pl && pl.videos && pl.videos[v.index]) {
+                                pl.videos[v.index].isWatched = newStatus;
+                                playlistsToUpdate.add(pl);
+                            }
+                        });
+                    }
+                    await setDoc(doc(db, "users", currentUserUid, "userTasks", taskId.toString()), updatedTask);
+                    userTasks[dateKey][taskIndex] = updatedTask;
+                    for (let pl of playlistsToUpdate) {
+                        await setDoc(doc(db, "users", currentUserUid, "userPlaylists", pl.id.toString()), pl, { merge: true });
+                    }
+                    window.updateWeeklyPlannerView?.();
+                    window.renderPlaylists?.();
+                    window.renderTodayTasks?.();
+                }
+            } catch (error) { console.error(error); } finally {
+                if (btnYC)  btnYC.innerHTML  = origTextYC;
+                if (btnYCU) btnYCU.innerHTML = origTextYCU;
+                taskToCompleteFromDrag = null;
+            }
+        }
+
+        // 1. TEKLİ TAMAMLAMA — buton dinleyicileri
         const btnYesComplete = DOM.yesTaskCompleteBtn;
         if(btnYesComplete) {
-            btnYesComplete.addEventListener('click', async () => {
-                document.getElementById('taskCompleteConfirmModal').style.display = 'none';
-                if (taskToCompleteFromDrag && currentUserUid) {
-                    const { dateKey, taskId } = taskToCompleteFromDrag;
-                    const origText = btnYesComplete.innerHTML;
-                    btnYesComplete.innerHTML = "İşleniyor...";
-                    try {
-                        const taskIndex = userTasks[dateKey].findIndex(t => t.id === taskId);
-                        if(taskIndex !== -1) {
-                            const currentStatus = userTasks[dateKey][taskIndex].isCompleted || false;
-                            const newStatus = !currentStatus; // Tersine çevir
-                            const updatedTask = { ...userTasks[dateKey][taskIndex], isCompleted: newStatus };
-                            
-                            let playlistsToUpdate = new Set();
-                            if (updatedTask.taskVideos && updatedTask.taskVideos.length > 0) {
-                                updatedTask.taskVideos.forEach(v => {
-                                    const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
-                                    if (pl && pl.videos && pl.videos[v.index]) {
-                                        pl.videos[v.index].isWatched = newStatus; // Görev tıklandıysa izlendi, kaldırıldıysa geri alındı
-                                        playlistsToUpdate.add(pl);
-                                    }
-                                });
-                            }
-                            
-                            // Firebase'e Görevi Kaydet
-                            await setDoc(doc(db, "users", currentUserUid, "userTasks", taskId.toString()), updatedTask);
-                            userTasks[dateKey][taskIndex] = updatedTask;
-                            
-                            // Playlistleri Firebase'e ve Arayüze Kaydet
-                            for (let pl of playlistsToUpdate) {
-                                await setDoc(doc(db, "users", currentUserUid, "userPlaylists", pl.id.toString()), pl, { merge: true });
-                            }
-
-                            window.updateWeeklyPlannerView?.();
-                            window.renderPlaylists?.(); // Yüzdelikler hemen güncellensin!
-                        }
-                    } catch (error) { console.error(error); } finally {
-                        btnYesComplete.innerHTML = origText;
-                        taskToCompleteFromDrag = null;
-                    }
-                }
+            btnYesComplete.addEventListener('click', () => _execSingleComplete(null));
+        }
+        // "Süreyi Güncelle ve Tamamla" butonu
+        const btnYesCompleteUpdate = document.getElementById('yesTaskCompleteUpdateBtn');
+        if(btnYesCompleteUpdate) {
+            btnYesCompleteUpdate.addEventListener('click', () => {
+                const val = parseInt(document.getElementById('completeNewDuration')?.value);
+                _execSingleComplete(val > 0 ? val : null);
             });
         }
 
@@ -11598,13 +12041,31 @@
 
             countDisplay.innerText = sortedForList.length;
 
-            // X BUTONLARININ GÖRÜNÜRLÜĞÜ
+            // =================================================================
+            // X BUTONLARININ GÖRÜNÜRLÜĞÜ VE AKILLI KÖŞE YUVARLATMASI
+            // =================================================================
             const btnSortReset = document.getElementById('resetExamSortBtn');
             const btnFilterReset = document.getElementById('resetExamFilterBtn');
-            if(btnSortReset) btnSortReset.style.display = (advExamSort.criteria !== 'date-desc' || advExamSort.subject !== 'total') ? 'flex' : 'none';
-            if(btnFilterReset) btnFilterReset.style.display = (advExamFilter.preset !== 'all' || advExamFilter.min !== '' || advExamFilter.max !== '') ? 'flex' : 'none';
+            const btnSortMain = document.getElementById('openExamSortBtn');
+            const btnFilterMain = document.getElementById('openExamFilterBtn');
 
-            // 4. LİSTEYİ EKRANA ÇİZME
+            if(btnSortReset) {
+                const isSortActive = advExamSort.criteria !== 'date-desc' || advExamSort.subject !== 'total';
+                btnSortReset.style.display = isSortActive ? 'flex' : 'none';
+                // Çarpı butonu yoksa sağ köşeleri tam yuvarlat, varsa sağ tarafı düz (flat) yap
+                if(btnSortMain) btnSortMain.style.borderRadius = isSortActive ? 'var(--radius-md) 0 0 var(--radius-md)' : 'var(--radius-md)';
+            }
+
+            if(btnFilterReset) {
+                const isFilterActive = advExamFilter.preset !== 'all' || advExamFilter.min !== '' || advExamFilter.max !== '';
+                btnFilterReset.style.display = isFilterActive ? 'flex' : 'none';
+                // Çarpı butonu yoksa sağ köşeleri tam yuvarlat, varsa sağ tarafı düz (flat) yap
+                if(btnFilterMain) btnFilterMain.style.borderRadius = isFilterActive ? 'var(--radius-md) 0 0 var(--radius-md)' : 'var(--radius-md)';
+            } 
+
+            // =================================================================
+            // 4. LİSTEYİ EKRANA ÇİZME (Yanlışlıkla silinen motor geri eklendi)
+            // =================================================================
             listContainer.innerHTML = '';
             if(sortedForList.length === 0) {
                 listContainer.innerHTML = `
@@ -11612,7 +12073,9 @@
                         <i class="fa-solid fa-chart-line" style="font-size:40px; color:var(--color-primary-border); margin-bottom:15px; display:block;"></i>
                         <span style="font-weight:700; font-size:13px;">Kriterlere uygun deneme bulunamadı.</span>
                     </div>`;
-            } else {
+            }
+            
+            else {
                 sortedForList.forEach(ex => {
                     const isTargeted = isExpandedExamDeleteMode && expandedExamsToDelete.has(ex.id);
                     const bgStyle = isTargeted ? 'background:#ffeaea; border: 2px solid #d9534f;' : 'background:#fff; border: 1px solid #e1e9f0;';
@@ -11920,22 +12383,38 @@
             });
         };
 
-        // Detaylı analizdeki Lineer Fit şalteri ve Periyot seçiciyi dinleyen kod
-        document.getElementById('expandedTrendlineToggle')?.addEventListener('change', () => {
-            window.renderExpandedExamsView?.();
-        });
+        // =====================================================================
+        // --- HAFIZALI ŞALTER (SWITCH) VE PERİYOT MOTORLARI (ÇAKIŞMA KORUMALI) ---
+        // =====================================================================
+        
+        // 1. Ortalama Değişim Miktarı (Trend/Lineer Fit) Şalteri
+        (function() {
+            var trendToggle = document.getElementById('expandedTrendlineToggle');
+            if (trendToggle) {
+                var savedTrend = localStorage.getItem('trendlineActive');
+                if (savedTrend !== null) {
+                    trendToggle.checked = (savedTrend === 'true');
+                }
+                
+                trendToggle.addEventListener('change', function(e) {
+                    localStorage.setItem('trendlineActive', e.target.checked);
+                    if (window.renderExpandedExamsView) window.renderExpandedExamsView();
+                });
+            }
+        })();
+
+        // 2. Periyot Seçici Motoru (Haftalık / Aylık Butonları)
         window.toggleTrendPeriod = function() {
-            const toggle = document.getElementById('customTrendPeriodToggle');
+            var toggle = document.getElementById('customTrendPeriodToggle');
             if(!toggle) return;
             
-            const current = toggle.getAttribute('data-period');
-            const newPeriod = current === 'week' ? 'month' : 'week';
-            toggle.setAttribute('data-period', newPeriod); // Hafızayı güncelle
+            var current = toggle.getAttribute('data-period');
+            var newPeriod = current === 'week' ? 'month' : 'week';
+            toggle.setAttribute('data-period', newPeriod); 
             
-            const weekBtn = document.getElementById('periodWeekBtn');
-            const monthBtn = document.getElementById('periodMonthBtn');
+            var weekBtn = document.getElementById('periodWeekBtn');
+            var monthBtn = document.getElementById('periodMonthBtn');
             
-            // Renk ve Gölge Animasyonları
             if(newPeriod === 'week') {
                 weekBtn.style.background = 'var(--color-primary)'; weekBtn.style.color = '#fff'; weekBtn.style.boxShadow = 'var(--shadow-primary)';
                 monthBtn.style.background = 'transparent'; monthBtn.style.color = '#6c757d'; monthBtn.style.boxShadow = 'none';
@@ -11944,15 +12423,29 @@
                 weekBtn.style.background = 'transparent'; weekBtn.style.color = '#6c757d'; weekBtn.style.boxShadow = 'none';
             }
             
-            // Tıklandığı an grafikleri yenile
-            window.renderExpandedExamsView?.();
+            if (window.renderExpandedExamsView) window.renderExpandedExamsView();
         };
 
-        // --- ÇOKLU DENEME SİLME MODU ---
+        // 3. Hedef Çizgisi Şalteri
+        (function() {
+            var targetToggle = document.getElementById('expandedTargetToggle');
+            if (targetToggle) {
+                var savedTarget = localStorage.getItem('targetlineActive');
+                if (savedTarget !== null) {
+                    targetToggle.checked = (savedTarget === 'true');
+                }
+                
+                targetToggle.addEventListener('change', function(e) {
+                    localStorage.setItem('targetlineActive', e.target.checked);
+                    if (window.renderExpandedExamsView) window.renderExpandedExamsView();
+                });
+            }
+        })();
+
+        // --- ÇOKLU DENEME SİLME MODU (GÜNCELLENDİ) ---
         window.toggleExpandedExamSelection = function(id) {
             if(expandedExamsToDelete.has(id)) expandedExamsToDelete.delete(id);
             else expandedExamsToDelete.add(id);
-            
             document.getElementById('confirmExamDeleteBtn').innerText = `Sil (${expandedExamsToDelete.size})`;
             window.renderExpandedExamsView();
         };
@@ -11974,25 +12467,49 @@
             window.renderExpandedExamsView();
         });
 
-        document.getElementById('confirmExamDeleteBtn')?.addEventListener('click', async () => {
-            if(expandedExamsToDelete.size === 0) { alert("Lütfen silmek için en az bir deneme seçin kanka."); return; }
-            if(confirm(`Seçilen ${expandedExamsToDelete.size} denemeyi kalıcı olarak silmek istediğinize emin misiniz?`)) {
-                const btn = document.getElementById('confirmExamDeleteBtn');
-                btn.innerText = "Siliniyor...";
-                try {
-                    for(let id of expandedExamsToDelete) {
-                        if(currentUserUid) await deleteDoc(doc(db, "users", currentUserUid, "userExams", id.toString()));
-                        savedExams = savedExams.filter(e => e.id !== id);
-                    }
-                    isExpandedExamDeleteMode = false; expandedExamsToDelete.clear();
-                    document.getElementById('examDeleteActionBtns').style.display = 'none';
-                    document.getElementById('examDefaultActionBtns').style.display = 'flex';
-                    btn.innerText = "Sil (0)";
-                    window.renderExamsToScreen?.(); 
-                } catch(e) {
-                    alert("Sistem Hatası: Denemeler silinirken bir sorun oluştu.");
-                    btn.innerText = `Sil (${expandedExamsToDelete.size})`;
+        // SİL BUTONUNA BASINCA (ARTIK ÖZEL PENCERE AÇAR)
+        document.getElementById('confirmExamDeleteBtn')?.addEventListener('click', () => {
+            if(expandedExamsToDelete.size === 0) {
+                if (window.showCustomToast) {
+                    window.showCustomToast("Eksik Seçim", "Lütfen silmek için en az bir deneme seçin.", "error");
+                } else {
+                    alert("Lütfen silmek için en az bir deneme seçin.");
                 }
+                return;
+            }
+            
+            // Mesajı güncelle ve şık pencereyi aç
+            document.getElementById('expandedMultiDeleteConfirmMsg').innerText = `Seçilen ${expandedExamsToDelete.size} denemeyi kalıcı olarak silmek istediğinize emin misiniz?`;
+            document.getElementById('expandedExamMultiDeleteConfirmModal').style.display = 'flex';
+        });
+
+        // YENİ ŞIK PENCEREDEKİ "EVET, SİL" BUTONUNU DİNLE
+        document.getElementById('yesExpandedExamMultiDeleteBtn')?.addEventListener('click', async () => {
+            document.getElementById('expandedExamMultiDeleteConfirmModal').style.display = 'none';
+            const btn = document.getElementById('confirmExamDeleteBtn');
+            btn.innerText = "Siliniyor...";
+            
+            try {
+                for(let id of expandedExamsToDelete) {
+                    if(typeof currentUserUid !== 'undefined' && currentUserUid) {
+                        await deleteDoc(doc(db, "users", currentUserUid, "userExams", id.toString()));
+                    }
+                    savedExams = savedExams.filter(e => e.id !== id);
+                }
+                isExpandedExamDeleteMode = false;
+                expandedExamsToDelete.clear();
+                document.getElementById('examDeleteActionBtns').style.display = 'none';
+                document.getElementById('examDefaultActionBtns').style.display = 'flex';
+                btn.innerText = "Sil (0)";
+                
+                window.renderExamsToScreen?.();
+                window.renderExpandedExamsView?.(); // Tabloyu da yenilemek için eklendi
+                
+                if (window.showCustomToast) window.showCustomToast("Başarılı", "Denemeler kalıcı olarak silindi.", "success");
+                
+            } catch(e) {
+                if (window.showCustomToast) window.showCustomToast("Hata", "Denemeler silinirken bir sorun oluştu.", "error");
+                btn.innerText = `Sil (${expandedExamsToDelete.size})`;
             }
         });
 
@@ -12173,11 +12690,6 @@
             btn.innerHTML = origHTML;
             
             // Kaydettikten sonra grafikleri anında güncelle
-            window.renderExpandedExamsView?.();
-        });
-
-        // Hedef Çizgisi Şalteri Değiştiğinde Grafiği Yenile
-        document.getElementById('expandedTargetToggle')?.addEventListener('change', () => {
             window.renderExpandedExamsView?.();
         });
 
@@ -15907,6 +16419,812 @@
             <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center;">
                 <button class="cancel-note-btn" onclick="document.getElementById('calColorCancelConfirmModal').style.display='none'" style="flex:1;">Hayır, Kal</button>
                 <button class="save-note-btn" id="yesCalColorCancelBtn" style="flex:1; background: var(--color-danger); border-color: var(--color-danger); box-shadow: 0 4px 10px rgba(220,53,69,0.2);">Evet, Çık</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======= WIDGET DÜZEN AYAR PANELİ ======= -->
+    <div id="widgetLayoutPanel">
+        <div class="wlp-backdrop" onclick="window.closeWidgetLayoutPanel()"></div>
+        <div class="wlp-box">
+            <div class="wlp-title">
+                <i class="fa-solid fa-sliders" style="color:var(--color-primary);"></i>
+                Alt Ekran Düzeni
+            </div>
+            <div class="wlp-subtitle">Sol ve sağ kutularda hangi modülün görüneceğini seçin.</div>
+
+            <div class="wlp-sides">
+                <!-- Sol Sütun -->
+                <div>
+                    <div class="wlp-side-label">
+                        <i class="fa-solid fa-arrow-left" style="font-size:10px;"></i> Sol
+                    </div>
+                    <div id="wlpLeftOptions"></div>
+                </div>
+
+                <!-- Orta ok -->
+                <div class="wlp-divider-col">
+                    <i class="fa-solid fa-right-left"></i>
+                </div>
+
+                <!-- Sağ Sütun -->
+                <div>
+                    <div class="wlp-side-label">
+                        Sağ <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i>
+                    </div>
+                    <div id="wlpRightOptions"></div>
+                </div>
+            </div>
+
+            <div class="wlp-footer">
+                <button class="cancel-note-btn" onclick="window.closeWidgetLayoutPanel()" style="padding:9px 18px; font-size:13px;">İptal</button>
+                <button class="save-note-btn" id="wlpApplyBtn" onclick="window.applyWidgetLayout()" style="padding:9px 20px; font-size:13px;"><i class="fa-solid fa-check"></i> Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ======= SAAT WİDGET'I: GÖREV BAĞLAMA =======
+
+    // Seçili görev state'i
+    let _clkLinkedTask = null; // { task, dateKey, mode: 'sw'|'tm', originalDuration }
+    let _clkCompleteSource = null; // 'sw' | 'tm' — hangi moddan tamamla çağrıldı
+
+    // ── Görev seçici aç ──────────────────────────────────────────────
+    window.clkPickTask = function(mode) {
+        // window._clkUserTasksLive / _clkDashDateLive: module script'ten her yarım saniyede açılan live referans
+        const today = window._clkDashDateLive || new Date();
+        const dateKey = today.getFullYear() + '-' +
+            String(today.getMonth()+1).padStart(2,'0') + '-' +
+            String(today.getDate()).padStart(2,'0');
+
+        const liveUserTasks = window._clkUserTasksLive || {};
+        const rawTasks = liveUserTasks[dateKey] || [];
+
+        // Aktif profile göre filtrele
+        let mainProfileId = 'main_profile';
+        if (window.plannerProfiles) {
+            const mainP = window.plannerProfiles.find(p => p.isMain);
+            if (mainP) mainProfileId = mainP.id;
+        }
+        const allTasks = rawTasks.filter(t => (t.profileId || 'main_profile') === mainProfileId);
+        const tasks = allTasks.filter(t => !t.isCompleted);
+
+        const list  = document.getElementById('clkTaskPickerList');
+        const title = document.getElementById('clkPickerTitle');
+        const sub   = document.getElementById('clkPickerSub');
+        if (!list) return;
+
+        title.textContent = mode === 'sw' ? 'Kronometre için Görev Seç' : 'Zamanlayıcı için Görev Seç';
+        sub.textContent   = `Bugün · ${tasks.length} tamamlanmamış görev`;
+
+        list.innerHTML = '';
+
+        if (tasks.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:30px; color:var(--color-text-muted); font-weight:700;">Bugün tamamlanmamış görev yok.</div>';
+        } else {
+            tasks.forEach(task => {
+                const isLinked = _clkLinkedTask && _clkLinkedTask.task.id === task.id;
+                const badgeColor = task.examType === 'tyt' ? '#17a2b8' : '#856404';
+                const badgeBg    = task.examType === 'tyt' ? '#e0f7fa' : '#fff3cd';
+                const div = document.createElement('div');
+                div.style.cssText = `display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-lg); border:2px solid ${isLinked ? 'var(--color-primary)' : 'var(--color-border)'}; background:${isLinked ? 'var(--color-primary-lighter)' : 'var(--color-bg-input)'}; cursor:pointer; transition:var(--transition-fast);`;
+                div.innerHTML = `
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:13px; font-weight:800; color:var(--color-text-main); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${task.subject}</div>
+                        <div style="font-size:11px; font-weight:600; color:var(--color-text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px;">${task.desc || ''}</div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;">
+                        <span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:4px; background:${badgeBg}; color:${badgeColor};">${(task.examType||'').toUpperCase()}</span>
+                        <span style="font-size:11px; font-weight:700; color:var(--color-text-muted);">${task.duration} dk</span>
+                    </div>
+                    ${isLinked ? '<i class="fa-solid fa-check" style="color:var(--color-primary); font-size:14px; flex-shrink:0;"></i>' : ''}
+                `;
+                div.onmouseover = () => { if (!isLinked) { div.style.borderColor='var(--color-primary-border)'; div.style.background='var(--color-primary-lighter)'; } };
+                div.onmouseout  = () => { if (!isLinked) { div.style.borderColor='var(--color-border)'; div.style.background='var(--color-bg-input)'; } };
+                div.onclick = () => {
+                    _clkLinkTask(task, dateKey, mode);
+                    document.getElementById('clkTaskPickerModal').style.display = 'none';
+                };
+                list.appendChild(div);
+            });
+        }
+
+        // Bağlantıyı kaldır seçeneği
+        if (_clkLinkedTask) {
+            const clearDiv = document.createElement('div');
+            clearDiv.style.cssText = 'text-align:center; padding:8px; font-size:12px; font-weight:700; color:var(--color-danger); cursor:pointer; border-radius:var(--radius-md); transition:var(--transition-fast);';
+            clearDiv.textContent = '✕ Görev bağlantısını kaldır';
+            clearDiv.onclick = () => { _clkUnlinkTask(); document.getElementById('clkTaskPickerModal').style.display='none'; };
+            list.appendChild(clearDiv);
+        }
+
+        document.getElementById('clkTaskPickerModal').style.display = 'flex';
+    };
+
+    // ── Görevi bağla ─────────────────────────────────────────────────
+    function _clkLinkTask(task, dateKey, mode) {
+        const totalMs = parseInt(task.duration) * 60000;
+        _clkLinkedTask = { task, dateKey, mode, originalDuration: task.duration, startMs: totalMs };
+
+        // Zamanlayıcıysa: görevin süresiyle input'ları doldur
+        if (mode === 'tm') {
+            const totalSec = parseInt(task.duration) * 60;
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            ['timerH','clkFsTimerH'].forEach(id => { const el=document.getElementById(id); if(el) el.value=h; });
+            ['timerM','clkFsTimerM'].forEach(id => { const el=document.getElementById(id); if(el) el.value=m; });
+            ['timerS','clkFsTimerS'].forEach(id => { const el=document.getElementById(id); if(el) el.value=s; });
+            // Sıfırla
+            _tmDoReset();
+        }
+
+        _clkUpdateLinkedUI();
+        _clkLockTimerInputs(mode === 'tm'); // zamanlayıcıda input'ları kilitle
+    }
+
+    // ── Bağlantıyı kaldır ────────────────────────────────────────────
+    function _clkUnlinkTask() {
+        _clkLinkedTask = null;
+        _clkUpdateLinkedUI();
+        _clkLockTimerInputs(false); // kilidi aç
+        // Kronometreyi de sıfırla
+        _swDoReset();
+    }
+
+    // ── Zamanlayıcı input'larını kilitle/aç ──────────────────────────
+    function _clkLockTimerInputs(lock) {
+        const ids = ['timerH','timerM','timerS','clkFsTimerH','clkFsTimerM','clkFsTimerS'];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.disabled = lock;
+            el.style.opacity    = lock ? '0.5' : '1';
+            el.style.cursor     = lock ? 'not-allowed' : '';
+            el.style.background = lock ? 'var(--color-bg-input)' : 'var(--color-bg-input)';
+            el.onfocus = lock ? (e) => e.preventDefault() : null;
+        });
+    }
+
+    // ── Bağlı görev UI güncelle ──────────────────────────────────────
+    function _clkUpdateLinkedUI() {
+        const task = _clkLinkedTask ? _clkLinkedTask.task : null;
+        const labelText = task ? task.subject + (task.desc ? ' · ' + task.desc.slice(0,30) : '') : '';
+        const targetText = task ? '/ ' + task.duration + ' dk' : '';
+
+        // Etiket alanları
+        ['swTaskLabel','tmTaskLabel','fswTaskLabel','fstmTaskLabel'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = labelText;
+            el.style.display = task ? 'block' : 'none';
+        });
+
+        // Kronometre hedef süresi
+        ['swTaskTarget','fswTaskTarget'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = targetText;
+            el.style.display = task ? 'block' : 'none';
+        });
+    }
+
+    // ── Tamamla butonu göster/gizle ──────────────────────────────────
+    function _clkUpdateCompleteBtn(show) {
+        // Görev bağlı değilse butonu hiç gösterme
+        const shouldShow = show && !!_clkLinkedTask;
+        ['swCompleteBtn','tmCompleteBtn','fswCompleteBtn','fstmCompleteBtn'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = shouldShow ? 'block' : 'none';
+        });
+    }
+
+    // ── Tamamla dialogunu aç ─────────────────────────────────────────
+    window.clkCompleteTask = function(mode) {
+        if (!_clkLinkedTask) return;
+        _clkCompleteSource = mode;
+
+        const task = _clkLinkedTask.task;
+        const nameEl = document.getElementById('clkCompleteTaskName');
+        const infoEl = document.getElementById('clkCompleteTimeInfo');
+        if (nameEl) nameEl.textContent = task.subject + (task.desc ? ' · ' + task.desc.slice(0,40) : '');
+
+        // Önce durdur — sonra kalan süreyi doğru okuyabilelim
+        if (_swRunning && mode === 'sw') { _swDoToggle(); }
+        if (_tmRunning && mode === 'tm') {
+            // Manuel durdur (toggle kullanmadan, state'i doğrudan güncelle)
+            _tmRemaining = _tmEnd - Date.now();
+            _tmRunning = false;
+            cancelAnimationFrame(_tmRaf);
+            _tmRefreshUI();
+        }
+
+        let newDuration, infoText;
+        if (mode === 'sw') {
+            // Kronometredeki geçen süre (dakika, yukarı yuvarla)
+            const elapsedMs = _swElapsed; // artık durduruldu, _swElapsed güncel
+            newDuration = Math.ceil(elapsedMs / 60000);
+            if (newDuration < 1) newDuration = 1;
+            infoText = `Geçen süre: ${_swFmtMs(elapsedMs)} → Yeni süre: ${newDuration} dk (orijinal: ${task.duration} dk)`;
+        } else {
+            // Zamanlayıcı: başlangıçta kaydedilen süre - kalan = kullanılan
+            // startMs: görev bağlanırken kaydedilen orijinal süre (input değişse de etkilenmez)
+            const startMs = _clkLinkedTask.startMs || (parseInt(_clkLinkedTask.originalDuration) * 60000);
+            // Kalan: durdurulduğu andaki _tmRemaining (az önce hesaplandı)
+            const remainingMs = Math.max(0, _tmRemaining);
+            const usedMs = Math.max(0, startMs - remainingMs);
+            newDuration = Math.ceil(usedMs / 60000);
+            if (newDuration < 1) newDuration = 1;
+            const remainSec = Math.round(remainingMs / 1000);
+            const usedMin = Math.floor(usedMs / 60000);
+            const usedSec = Math.round((usedMs % 60000) / 1000);
+            infoText = `Kullanılan: ${usedMin > 0 ? usedMin + ' dk ' : ''}${usedSec} sn → ${newDuration} dk (orijinal: ${task.duration} dk)`;
+        }
+        if (infoEl) infoEl.textContent = infoText;
+
+        // Yeni süreyi geçici olarak sakla
+        _clkLinkedTask._newDuration = newDuration;
+
+        document.getElementById('clkCompleteDialog').style.display = 'flex';
+    };
+
+    // ── Tamamla eylemi ───────────────────────────────────────────────
+    window.clkDoComplete = async function(action) {
+        document.getElementById('clkCompleteDialog').style.display = 'none';
+        if (!_clkLinkedTask) return;
+
+        const { task, dateKey, _newDuration } = _clkLinkedTask;
+
+        // userTasks içinde bul (window live referansından)
+        const liveUT = window._clkUserTasksLive || {};
+        if (!liveUT[dateKey]) return;
+        const taskIndex = liveUT[dateKey].findIndex(t => t.id === task.id);
+        if (taskIndex === -1) return;
+
+        const updatedTask = { ...liveUT[dateKey][taskIndex], isCompleted: true };
+        if (action === 'update' && _newDuration > 0) {
+            updatedTask.duration = _newDuration;
+        }
+
+        try {
+            if (typeof setDoc !== 'undefined' && typeof db !== 'undefined' && typeof currentUserUid !== 'undefined' && currentUserUid) {
+                await setDoc(doc(db, 'users', currentUserUid, 'userTasks', task.id.toString()), updatedTask);
+            }
+            liveUT[dateKey][taskIndex] = updatedTask;
+            window.updateWeeklyPlannerView?.();
+            window.renderTodayTasks?.();
+            window.renderPlaylists?.();
+        } catch(e) { console.error('Task complete error:', e); }
+
+        // State temizle
+        _clkUnlinkTask();
+        _swDoReset();
+        _tmDoReset();
+        _clkUpdateCompleteBtn(false);
+    };
+
+    
+        // ======= SAAT WİDGET'I — UNIFIED STATE =======
+    // Tek bir state, hem küçük widget hem tam ekran modal bunu kullanır.
+    // Mod değişimi her iki yüzde de senkron yansır.
+
+    const CLK_DAYS   = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+    const CLK_MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+    // ── Paylaşılan aktif mod ─────────────────────────────────────────
+    let _clkMode       = 'clock';
+    let _clkModeBarOpen = false;
+
+    // ── Saat tick (her iki yüze de yazar) ───────────────────────────
+    function _clkTickClock() {
+        if (_clkMode !== 'clock') return;
+        const now = new Date();
+        const h   = String(now.getHours()).padStart(2,'0');
+        const m   = String(now.getMinutes()).padStart(2,'0');
+        const s   = String(now.getSeconds()).padStart(2,'0');
+        const dateStr = now.getDate() + ' ' + CLK_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+        const dayStr  = CLK_DAYS[now.getDay()];
+        // Küçük widget
+        const t=document.getElementById('clkTime');     if(t) t.textContent = h+':'+m;
+        const sc=document.getElementById('clkSeconds'); if(sc) sc.textContent = s;
+        const d=document.getElementById('clkDate');     if(d) d.textContent = dateStr;
+        const w=document.getElementById('clkDay');      if(w) w.textContent = dayStr;
+        // Tam ekran
+        const T=document.getElementById('clkFsTime');     if(T) T.textContent = h+':'+m;
+        const SC=document.getElementById('clkFsSeconds'); if(SC) SC.textContent = s;
+        const D=document.getElementById('clkFsDate');     if(D) D.textContent = dateStr;
+        const W=document.getElementById('clkFsDay');      if(W) W.textContent = dayStr;
+    }
+    setInterval(_clkTickClock, 1000);
+    _clkTickClock();
+
+    // ── Mod uygula — hem küçük hem tam ekrana ────────────────────────
+    function _clkApplyMode(mode) {
+        _clkMode = mode;
+        const labels = { clock:'Saat', stopwatch:'Kronometre', timer:'Zamanlayıcı' };
+
+        // Küçük: dropdown tab + label + yüzler
+        const label = document.getElementById('clkActiveLabel');
+        if (label) label.textContent = labels[mode] || '';
+        document.querySelectorAll('#clkModeBar .clk-tab').forEach(b =>
+            b.classList.toggle('active', b.getAttribute('data-mode') === mode));
+        const faces = { clock:'clkFaceClock', stopwatch:'clkFaceStopwatch', timer:'clkFaceTimer' };
+        Object.entries(faces).forEach(([k,id]) => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = k === mode ? 'flex' : 'none';
+        });
+
+        // Tam ekran: tab + yüzler
+        document.querySelectorAll('.clk-tab-fs').forEach(b =>
+            b.classList.toggle('active', b.getAttribute('data-mode') === mode));
+        const fsPanels = { clock:'clkFsModeClock', stopwatch:'clkFsModeStopwatch', timer:'clkFsModeTimer' };
+        Object.entries(fsPanels).forEach(([k,id]) => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = k === mode ? 'flex' : 'none';
+        });
+
+        if (mode === 'clock') _clkTickClock();
+        // Kronometre / zamanlayıcı moduna geçince UI'yi güncelle
+        if (mode === 'stopwatch') { _swRefreshUI(); }
+        if (mode === 'timer')     { _tmRefreshUI(); }
+    }
+
+    // Küçük widget dropdown
+    window.clkSetMode = function(mode) {
+        _clkModeBarOpen = false;
+        const bar   = document.getElementById('clkModeBar');
+        const caret = document.getElementById('clkModeCaret');
+        if (bar)   bar.style.display    = 'none';
+        if (caret) caret.style.transform = 'rotate(0deg)';
+        _clkApplyMode(mode);
+    };
+
+    // Tam ekran tab
+    window.clkFsSetMode = function(mode) {
+        _clkApplyMode(mode);
+    };
+
+    window.clkToggleModeBar = function() {
+        _clkModeBarOpen = !_clkModeBarOpen;
+        const bar   = document.getElementById('clkModeBar');
+        const caret = document.getElementById('clkModeCaret');
+        if (bar)   bar.style.display    = _clkModeBarOpen ? 'flex' : 'none';
+        if (caret) caret.style.transform = _clkModeBarOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+        if (_clkModeBarOpen) {
+            setTimeout(() => {
+                function outsideClick(e) {
+                    const btn2 = document.getElementById('clkModeBtn');
+                    const bar2 = document.getElementById('clkModeBar');
+                    if (btn2&&!btn2.contains(e.target)&&bar2&&!bar2.contains(e.target)) {
+                        _clkModeBarOpen = false;
+                        bar2.style.display = 'none';
+                        const c = document.getElementById('clkModeCaret');
+                        if (c) c.style.transform = 'rotate(0deg)';
+                        document.removeEventListener('click', outsideClick);
+                    }
+                }
+                document.addEventListener('click', outsideClick);
+            }, 10);
+        }
+    };
+
+    // ── Tam ekran aç/kapat ───────────────────────────────────────────
+    window.clkOpenFullscreen = function() {
+        document.getElementById('clkFullscreenModal').style.display = 'flex';
+        _clkApplyMode(_clkMode); // mevcut modu tam ekrana yansıt
+        // Kronometre/zamanlayıcı devam ediyorsa animasyonu tetikle
+        if (_clkMode === 'stopwatch' && _swRunning) { _swTick(); }
+        if (_clkMode === 'timer'     && _tmRunning) { _tmTick(); }
+    };
+
+    document.getElementById('clkFsCloseBtn').addEventListener('click', function() {
+        document.getElementById('clkFullscreenModal').style.display = 'none';
+    });
+    document.getElementById('clkFullscreenModal').addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
+    });
+
+    // ── PAYLAŞILAN KRONOMETRE STATE ──────────────────────────────────
+    let _swRunning = false, _swStart = 0, _swElapsed = 0, _swRaf = null;
+
+    function _swFmtMs(ms) {
+        const total = Math.floor(ms);
+        const cs   = Math.floor((total % 1000) / 10);
+        const secs = Math.floor(total / 1000) % 60;
+        const mins = Math.floor(total / 60000) % 60;
+        const hrs  = Math.floor(total / 3600000);
+        let str = (mins<10?'0':'')+mins+':'+(secs<10?'0':'')+secs+'.'+(cs<10?'0':'')+cs;
+        if (hrs > 0) str = (hrs<10?'0':'')+hrs+':'+str;
+        return str;
+    }
+
+    function _swDraw(ms) {
+        const str = _swFmtMs(ms);
+        // Küçük widget
+        const el  = document.getElementById('swDisplay');    if (el)  el.textContent  = str;
+        // Tam ekran
+        const el2 = document.getElementById('clkFsSwDisplay'); if (el2) el2.textContent = str;
+    }
+
+    function _swTick() {
+        if (!_swRunning) return;
+        _swDraw(Date.now() - _swStart + _swElapsed);
+        _swRaf = requestAnimationFrame(_swTick);
+    }
+
+    function _swRefreshUI() {
+        const ms  = _swRunning ? (Date.now() - _swStart + _swElapsed) : _swElapsed;
+        _swDraw(ms);
+        const running  = _swRunning;
+        const btnSmall = document.getElementById('swStartBtn');
+        const btnBig   = document.getElementById('clkFsSwStartBtn');
+        [btnSmall, btnBig].forEach(btn => {
+            if (!btn) return;
+            if (running) {
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i> Durdur';
+                btn.style.background = 'var(--color-warning)'; btn.style.color = '#333';
+            } else if (_swElapsed > 0) {
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> Devam';
+                btn.style.background = 'var(--color-success)'; btn.style.color = '#fff';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> Başlat';
+                btn.style.background = 'var(--color-success)'; btn.style.color = '#fff';
+            }
+        });
+        if (running) _swTick();
+        // Tamamla butonu: görev bağlıysa ve durdurulduysa göster
+        if (typeof _clkUpdateCompleteBtn === 'function') {
+            _clkUpdateCompleteBtn(!running && _swElapsed > 0);
+        }
+    }
+
+    function _swDoToggle() {
+        if (_swRunning) {
+            _swRunning  = false;
+            _swElapsed += Date.now() - _swStart;
+            cancelAnimationFrame(_swRaf);
+        } else {
+            _swRunning = true; _swStart = Date.now(); _swTick();
+        }
+        _swRefreshUI();
+    }
+
+    function _swDoReset() {
+        _swRunning = false; _swElapsed = 0;
+        cancelAnimationFrame(_swRaf);
+        _swRefreshUI();
+    }
+
+    // Küçük widget
+    window.swToggle = _swDoToggle;
+    window.swReset  = _swDoReset;
+    // Tam ekran
+    window.swFsToggle = _swDoToggle;
+    window.swFsReset  = _swDoReset;
+
+    // ── PAYLAŞILAN ZAMANLAYıCı STATE ────────────────────────────────
+    let _tmRunning = false, _tmRemaining = 0, _tmEnd = 0, _tmRaf = null;
+
+    function _tmFmtSec(total) {
+        const h = Math.floor(total/3600), m = Math.floor((total%3600)/60), s = total%60;
+        return (h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    }
+
+    function _tmDraw(ms) {
+        const str = _tmFmtSec(Math.max(0, Math.ceil(ms/1000)));
+        const el  = document.getElementById('timerDisplay');      if (el)  el.textContent = str;
+        const el2 = document.getElementById('clkFsTimerDisplay'); if (el2) el2.textContent = str;
+    }
+
+    function _tmTick() {
+        if (!_tmRunning) return;
+        const rem = _tmEnd - Date.now();
+        if (rem <= 0) {
+            _tmRunning = false; _tmRemaining = 0; _tmDraw(0);
+            _tmShowDone(); return;
+        }
+        _tmDraw(rem);
+        _tmRaf = requestAnimationFrame(_tmTick);
+    }
+
+    function _tmShowDone() {
+        ['timerDoneMsg','clkFsTimerDone'].forEach(id => {
+            const el = document.getElementById(id); if(el) el.style.display='block';
+        });
+        ['timerStartBtn','clkFsTimerStartBtn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) { btn.innerHTML='<i class="fa-solid fa-play"></i> Başlat'; btn.style.background='var(--color-primary)'; btn.style.color='#fff'; }
+        });
+        // Süre bitince de tamamla butonu göster (görev bağlıysa)
+        if (typeof _clkUpdateCompleteBtn === 'function') _clkUpdateCompleteBtn(true);
+    }
+
+    function _tmRefreshUI() {
+        // input'lar vs display'i doğru göster
+        const running = _tmRunning;
+        const hasTime = _tmRunning || _tmRemaining > 0;
+
+        ['timerInputRow','clkFsTimerInputRow'].forEach(id => {
+            const el = document.getElementById(id); if(el) el.style.display = hasTime ? 'none' : 'flex';
+        });
+        ['timerDisplay','clkFsTimerDisplay'].forEach(id => {
+            const el = document.getElementById(id); if(el) el.style.display = hasTime ? 'block' : 'none';
+        });
+        ['timerDoneMsg','clkFsTimerDone'].forEach(id => {
+            const el = document.getElementById(id); if(el) el.style.display = 'none';
+        });
+
+        const ms = running ? (_tmEnd - Date.now()) : _tmRemaining;
+        if (hasTime) _tmDraw(ms);
+
+        ['timerStartBtn','clkFsTimerStartBtn'].forEach(id => {
+            const btn = document.getElementById(id); if (!btn) return;
+            if (running) {
+                btn.innerHTML='<i class="fa-solid fa-pause"></i> Durdur'; btn.style.background='var(--color-warning)'; btn.style.color='#333';
+            } else if (_tmRemaining > 0) {
+                btn.innerHTML='<i class="fa-solid fa-play"></i> Devam'; btn.style.background='var(--color-primary)'; btn.style.color='#fff';
+            } else {
+                btn.innerHTML='<i class="fa-solid fa-play"></i> Başlat'; btn.style.background='var(--color-primary)'; btn.style.color='#fff';
+            }
+        });
+
+        if (running) _tmTick();
+        // Tamamla butonu: görev bağlıysa, durdurulduysa VE ilerleme varsa göster
+        if (typeof _clkUpdateCompleteBtn === 'function') {
+            const hasProgress = !running && _tmRemaining > 0;
+            _clkUpdateCompleteBtn(hasProgress);
+        }
+    }
+
+    function _tmGetInputMs(prefix) {
+        // prefix: '' (küçük widget: timerH/M/S) veya 'clkFs' (tam ekran: clkFsTimerH/M/S)
+        const idH = prefix === 'clkFs' ? 'clkFsTimerH' : 'timerH';
+        const idM = prefix === 'clkFs' ? 'clkFsTimerM' : 'timerM';
+        const idS = prefix === 'clkFs' ? 'clkFsTimerS' : 'timerS';
+        const h = parseInt(document.getElementById(idH)?.value)||0;
+        const m = parseInt(document.getElementById(idM)?.value)||0;
+        const s = parseInt(document.getElementById(idS)?.value)||0;
+        return (h*3600+m*60+s)*1000;
+    }
+
+    function _tmDoToggle(prefix) {
+        ['timerDoneMsg','clkFsTimerDone'].forEach(id => {
+            const el=document.getElementById(id); if(el) el.style.display='none';
+        });
+        if (_tmRunning) {
+            _tmRunning = false; _tmRemaining = _tmEnd - Date.now();
+            cancelAnimationFrame(_tmRaf);
+        } else {
+            const totalMs = _tmRemaining > 0 ? _tmRemaining : _tmGetInputMs(prefix);
+            if (totalMs <= 0) return;
+            _tmRemaining = 0; _tmEnd = Date.now() + totalMs; _tmRunning = true;
+        }
+        _tmRefreshUI();
+    }
+
+    function _tmDoReset() {
+        _tmRunning = false; _tmRemaining = 0; _tmEnd = 0; cancelAnimationFrame(_tmRaf);
+        ['timerInputRow','clkFsTimerInputRow'].forEach(id=>{ const e=document.getElementById(id); if(e) e.style.display='flex'; });
+        ['timerDisplay','clkFsTimerDisplay'].forEach(id=>{   const e=document.getElementById(id); if(e) e.style.display='none'; });
+        ['timerDoneMsg','clkFsTimerDone'].forEach(id=>{      const e=document.getElementById(id); if(e) e.style.display='none'; });
+        ['timerStartBtn','clkFsTimerStartBtn'].forEach(id=>{
+            const b=document.getElementById(id);
+            if(b){b.innerHTML='<i class="fa-solid fa-play"></i> Başlat';b.style.background='var(--color-primary)';b.style.color='#fff';}
+        });
+        _tmDraw(0);
+        if (typeof _clkUpdateCompleteBtn === 'function') _clkUpdateCompleteBtn(false);
+        // Görev bağlıysa input'lar kilitli kalır (sıfırlamak bağı kaldırmaz)
+        if (_clkLinkedTask && _clkLinkedTask.mode === 'tm') {
+            if (typeof _clkLockTimerInputs === 'function') _clkLockTimerInputs(true);
+        }
+    }
+
+    // Küçük widget
+    window.timerToggle = () => _tmDoToggle('');
+    window.timerReset  = _tmDoReset;
+    // Tam ekran — prefix 'clkFs' ile input değerlerini okur
+    window.tmFsToggle  = () => _tmDoToggle('clkFs');
+    window.tmFsReset   = _tmDoReset;
+
+
+
+    
+        // ======= WIDGET DÜZEN SİSTEMİ =======
+    //
+    // Çalışma prensibi:
+    //   Her widget tek bir DOM node'dur (widget-calendar, widget-subject, widget-clock).
+    //   mountWidget(), appendChild() ile node'u doğru container'a TAŞIR.
+    //   DOM standardı: appendChild ile taşınan node otomatik olarak eski parent'tan çıkar.
+    //   innerHTML kullanılmaz — bu node'u yok ederdi.
+
+    window.widgetCatalog = [
+        { id: 'calendar', label: 'Takvim',         icon: 'fa-solid fa-calendar-days' },
+        { id: 'subject',  label: 'Konu Çalışması', icon: 'fa-solid fa-book-open-reader' },
+        { id: 'clock',    label: 'Saat',            icon: 'fa-regular fa-clock' },
+    ];
+
+    window.widgetLayout = JSON.parse(
+        localStorage.getItem('widgetLayout') || '{"left":"calendar","right":"subject"}'
+    );
+
+    let _wlpLeft  = window.widgetLayout.left;
+    let _wlpRight = window.widgetLayout.right;
+
+    // Widget'ı container'a taşı + göster
+    function mountWidget(widgetId, containerId) {
+        const w = document.getElementById(widgetId);
+        const c = document.getElementById(containerId);
+        if (!w || !c) return;
+
+        // Hedef container'da başka widget varsa önce body'ye park et (gizle)
+        Array.from(c.children).forEach(child => {
+            if (child.id !== widgetId) {
+                child.style.display = 'none';
+                document.body.appendChild(child);
+            }
+        });
+
+        // Widget'ı container'a taşı ve göster
+        c.appendChild(w);
+        w.style.display   = widgetId === 'widget-clock' ? 'flex' : '';
+        w.style.height    = '100%';
+        w.style.minHeight = '0';
+        w.style.flex      = '1';
+    }
+
+    function applyWidgetVisibility() {
+        const L = window.widgetLayout.left;
+        const R = window.widgetLayout.right;
+
+        // Sol container'ı temizle: içindeki widget doğru değilse body'ye park et
+        Array.from(document.getElementById('leftWidgetContainer')?.children || []).forEach(child => {
+            if (child.id !== 'widget-' + L) {
+                child.style.display = 'none';
+                document.body.appendChild(child);
+            }
+        });
+        // Sağ container'ı temizle
+        Array.from(document.getElementById('rightWidgetContainer')?.children || []).forEach(child => {
+            if (child.id !== 'widget-' + R) {
+                child.style.display = 'none';
+                document.body.appendChild(child);
+            }
+        });
+
+        mountWidget('widget-' + L, 'leftWidgetContainer');
+        mountWidget('widget-' + R, 'rightWidgetContainer');
+
+        if (L === 'subject' || R === 'subject') {
+            if (typeof renderLessons === 'function') setTimeout(renderLessons, 80);
+        }
+        if (L === 'calendar' || R === 'calendar') {
+            if (typeof renderCalendar === 'function') setTimeout(renderCalendar, 80);
+        }
+        positionLayoutBtn();
+    }
+
+    function positionLayoutBtn() {
+        const btn   = document.getElementById('widgetLayoutBtn');
+        const left  = document.getElementById('leftWidgetContainer');
+        const right = document.getElementById('rightWidgetContainer');
+        if (!btn || !left || !right) return;
+        const lRect = left.getBoundingClientRect();
+        const rRect = right.getBoundingClientRect();
+        if (lRect.width === 0 || rRect.width === 0) return;
+        btn.style.left      = ((lRect.right + rRect.left) / 2) + 'px';
+        btn.style.top       = (lRect.top  + lRect.height  / 2) + 'px';
+        btn.style.transform = 'translate(-50%, -50%)';
+        btn.style.display   = 'flex';
+    }
+
+    window.openWidgetLayoutPanel = function() {
+        _wlpLeft  = window.widgetLayout.left;
+        _wlpRight = window.widgetLayout.right;
+        renderWlpOptions();
+        document.getElementById('widgetLayoutPanel').classList.add('show');
+    };
+
+    window.closeWidgetLayoutPanel = function() {
+        document.getElementById('widgetLayoutPanel').classList.remove('show');
+    };
+
+    function renderWlpOptions() {
+        ['wlpLeftOptions', 'wlpRightOptions'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = '';
+        });
+        window.widgetCatalog.forEach(w => {
+            ['Left', 'Right'].forEach(side => {
+                const isCurrent  = (side === 'Left' ? _wlpLeft  : _wlpRight) === w.id;
+                const isOpposite = (side === 'Left' ? _wlpRight : _wlpLeft)  === w.id;
+                const container  = document.getElementById('wlp' + side + 'Options');
+                if (!container) return;
+                const div = document.createElement('div');
+                div.className = 'wlp-option' + (isCurrent ? ' wlp-active' : '') + (isOpposite ? ' wlp-disabled' : '');
+                div.innerHTML =
+                    `<i class="${w.icon}" style="font-size:15px;width:18px;text-align:center;flex-shrink:0;"></i>` +
+                    `<span style="flex:1;">${w.label}</span>` +
+                    `<i class="fa-solid fa-check wlp-check"></i>`;
+                if (!isOpposite) {
+                    div.onclick = () => {
+                        if (side === 'Left') _wlpLeft  = w.id;
+                        else                 _wlpRight = w.id;
+                        renderWlpOptions();
+                    };
+                }
+                container.appendChild(div);
+            });
+        });
+    }
+
+    window.applyWidgetLayout = function() {
+        if (_wlpLeft === _wlpRight) return;
+        window.widgetLayout = { left: _wlpLeft, right: _wlpRight };
+        localStorage.setItem('widgetLayout', JSON.stringify(window.widgetLayout));
+        applyWidgetVisibility();
+        window.closeWidgetLayoutPanel();
+    };
+
+    window.addEventListener('resize', positionLayoutBtn);
+
+    function initWidgetLayout() {
+        applyWidgetVisibility();
+        setTimeout(positionLayoutBtn, 200);
+        setTimeout(positionLayoutBtn, 800);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWidgetLayout);
+    } else {
+        initWidgetLayout();
+    }
+    // Firebase yüklendikten sonra da bir kez uygula
+    setTimeout(initWidgetLayout, 1500);
+    </script>
+
+
+    <!-- ── SAAT WİDGET'I: GÖREV SEÇİCİ MODAL ── -->
+    <div id="clkTaskPickerModal" style="position:fixed; inset:0; z-index:5000; display:none; align-items:center; justify-content:center;">
+        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);" onclick="document.getElementById('clkTaskPickerModal').style.display='none'"></div>
+        <div style="position:relative; z-index:1; background:var(--color-bg-card); border-radius:var(--radius-xl); padding:0; width:90%; max-width:440px; box-shadow:var(--shadow-modal); display:flex; flex-direction:column; max-height:80vh;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--color-border); flex-shrink:0;">
+                <div>
+                    <div style="font-size:15px; font-weight:800; color:var(--color-text-main);" id="clkPickerTitle">Görev Seç</div>
+                    <div style="font-size:11px; font-weight:600; color:var(--color-text-muted); margin-top:2px;" id="clkPickerSub">Bugünün görevlerinden birini seçin</div>
+                </div>
+                <button onclick="document.getElementById('clkTaskPickerModal').style.display='none'"
+                    style="background:none; border:none; font-size:22px; color:var(--color-text-muted); cursor:pointer; line-height:1;">&times;</button>
+            </div>
+            <div id="clkTaskPickerList" style="overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; flex:1; min-height:0;"></div>
+        </div>
+    </div>
+
+    <!-- ── SAAT WİDGET'I: TAMAMLAMA DIALOGU ── -->
+    <div id="clkCompleteDialog" style="position:fixed; inset:0; z-index:5100; display:none; align-items:center; justify-content:center;">
+        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(4px);"></div>
+        <div style="position:relative; z-index:1; background:var(--color-bg-card); border-radius:var(--radius-xl); padding:28px 24px 22px; width:90%; max-width:400px; box-shadow:var(--shadow-modal); text-align:center;">
+            <div style="width:62px; height:62px; border-radius:50%; background:var(--color-success-light); color:var(--color-success); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:28px;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div style="font-size:17px; font-weight:800; color:var(--color-text-main); margin-bottom:6px;">Görevi Tamamla</div>
+            <div id="clkCompleteTaskName" style="font-size:13px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border-radius:var(--radius-md); padding:4px 12px; display:inline-block; margin-bottom:8px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+            <div id="clkCompleteTimeInfo" style="font-size:12px; font-weight:600; color:var(--color-text-muted); margin-bottom:20px;"></div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <button onclick="window.clkDoComplete('update')"
+                    style="padding:11px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:var(--transition-fast);"
+                    onmouseover="this.style.background='var(--color-success-hover)'" onmouseout="this.style.background='var(--color-success)'">
+                    <i class="fa-solid fa-floppy-disk"></i> Güncelle ve Tamamla
+                </button>
+                <button onclick="window.clkDoComplete('keep')"
+                    style="padding:11px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:14px; font-weight:800; cursor:pointer; transition:var(--transition-fast);"
+                    onmouseover="this.style.borderColor='var(--color-success)';this.style.color='var(--color-success)'" onmouseout="this.style.borderColor='var(--color-border)';this.style.color='var(--color-text-secondary)'">
+                    <i class="fa-solid fa-check"></i> Güncellemeden Tamamla
+                </button>
+                <button onclick="document.getElementById('clkCompleteDialog').style.display='none'"
+                    style="padding:9px; border:none; border-radius:var(--radius-lg); background:transparent; color:var(--color-text-muted); font-size:13px; font-weight:700; cursor:pointer;">
+                    İptal
+                </button>
             </div>
         </div>
     </div>
