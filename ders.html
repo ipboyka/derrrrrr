@@ -436,7 +436,7 @@
             height: 100%;
         }
 
-        /* Widget Layout Ayar Paneli */
+        /* --- YENİ WIDGET DÜZEN AYAR PANELİ TASARIMI --- */
         #widgetLayoutPanel {
             position: fixed;
             inset: 0;
@@ -446,49 +446,115 @@
             justify-content: center;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.25s ease, visibility 0.25s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         #widgetLayoutPanel.show { opacity: 1; visibility: visible; }
+        
         #widgetLayoutPanel .wlp-backdrop {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.45);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
         }
+        
+        /* Kutu Kesin Olarak Uzatıldı (65vh ve min-height eklendi) */
         #widgetLayoutPanel .wlp-box {
             position: relative;
             z-index: 1;
             background: var(--color-bg-card);
-            border-radius: 20px;
-            padding: 28px 30px 24px;
+            border-radius: 24px;
+            padding: 35px 40px;
             width: 90%;
-            max-width: 520px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-            transform: scale(0.92) translateY(12px);
-            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            max-width: 600px;
+            height: 65vh; /* Ekranın yüzde 65'ini zorunlu kaplar */
+            min-height: 550px;
+            max-height: 750px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(40px);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid var(--color-border);
         }
-        #widgetLayoutPanel.show .wlp-box { transform: scale(1) translateY(0); }
-        .wlp-title { font-size:17px; font-weight:800; color:var(--color-text-main); margin-bottom:5px; display:flex; align-items:center; gap:10px; }
-        .wlp-subtitle { font-size:12px; color:var(--color-text-muted); font-weight:600; margin-bottom:22px; }
-        .wlp-sides { display:grid; grid-template-columns:1fr 28px 1fr; gap:10px; align-items:start; }
-        .wlp-side-label { font-size:11px; font-weight:800; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+        #widgetLayoutPanel.show .wlp-box { transform: translateY(0); }
+        
+        .wlp-title { font-size: 22px; font-weight: 800; color: var(--color-text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .wlp-title i { color: var(--color-primary); font-size: 26px; }
+        .wlp-subtitle { font-size: 14px; color: var(--color-text-muted); font-weight: 600; margin-bottom: 25px; line-height: 1.4; flex-shrink: 0;}
+        
+        /* İçerik Boşluğa Göre Esnemeye Zorlandı */
+        .wlp-sides { 
+            display: grid; 
+            grid-template-columns: 1fr 30px 1fr; 
+            gap: 20px; 
+            align-items: stretch; 
+            flex: 1; /* Uzayan boşluğu tamamen doldurur */
+            min-height: 0;
+        }
+        
+        /* Kolonlar içindeki butonları düzenlemek için flex'e çevrildi */
+        .wlp-sides > div:not(.wlp-divider-col) {
+            display: flex;
+            flex-direction: column;
+            gap: 14px; /* Butonlar arası ferah boşluk */
+        }
+        
+        .wlp-side-label { 
+            font-size: 13px; font-weight: 800; color: var(--color-text-secondary); text-transform: uppercase; 
+            letter-spacing: 1px; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; 
+            justify-content: center; background: var(--color-bg-input); padding: 10px; 
+            border-radius: 12px; border: 1px dashed var(--color-border-strong); flex-shrink: 0;
+        }
+        .wlp-side-label i { color: var(--color-primary); }
+        
         .wlp-option {
-            display:flex; align-items:center; gap:10px;
-            padding:11px 13px; border-radius:10px;
-            border:2px solid var(--color-border);
-            background:var(--color-bg-input);
-            cursor:pointer; transition:var(--transition-fast);
-            font-size:13px; font-weight:700; color:var(--color-text-secondary);
-            margin-bottom:7px; user-select:none;
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px; 
+            border-radius: 14px;
+            border: 2px solid var(--color-border-medium);
+            background: var(--color-bg-card);
+            cursor: pointer; transition: all 0.2s ease;
+            font-size: 15px; font-weight: 700; color: var(--color-text-secondary);
+            user-select: none; position: relative; overflow: hidden;
+            flex: 1; /* MUCİZE BURADA: Butonlar dikeyde boşluğu doldurmak için otomatik uzar */
         }
-        .wlp-option:last-child { margin-bottom:0; }
-        .wlp-option:hover { border-color:var(--color-primary-border); background:var(--color-primary-lighter); color:var(--color-primary); }
-        .wlp-option.wlp-active { border-color:var(--color-primary); background:var(--color-primary-lighter); color:var(--color-primary); }
-        .wlp-option.wlp-active .wlp-check { opacity:1; }
-        .wlp-option.wlp-disabled { opacity:0.35; cursor:not-allowed; pointer-events:none; }
-        .wlp-check { margin-left:auto; color:var(--color-primary); opacity:0; transition:opacity 0.15s; font-size:14px; }
-        .wlp-divider-col { display:flex; align-items:center; justify-content:center; padding-top:32px; color:var(--color-text-light); font-size:18px; }
-        .wlp-footer { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--color-border); padding-top:16px; }
+        
+        .wlp-option:hover { 
+            border-color: var(--color-primary-border); 
+            background: var(--color-primary-lighter); 
+            color: var(--color-primary); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.08);
+        }
+        
+        .wlp-option.wlp-active { 
+            border-color: var(--color-primary); 
+            background: linear-gradient(135deg, var(--color-primary-lighter) 0%, #ffffff 100%);
+            color: var(--color-primary); 
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.15);
+        }
+        
+        .wlp-option.wlp-active .wlp-check { opacity: 1; transform: scale(1); }
+        .wlp-option.wlp-disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; background: #f9f9f9; }
+        
+        .wlp-check { 
+            margin-left: auto; color: #fff; background: var(--color-primary); 
+            width: 24px; height: 24px; border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; transform: scale(0.5); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            font-size: 13px; box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+        }
+        
+        .wlp-divider-col { 
+            display: flex; align-items: center; justify-content: center; 
+            color: var(--color-border-strong); font-size: 22px; margin-top: 45px; flex-shrink: 0;
+        }
+        
+        .wlp-footer { 
+            display: flex; justify-content: flex-end; gap: 15px; 
+            margin-top: 25px; 
+            border-top: 1px dashed var(--color-border-medium); padding-top: 25px; flex-shrink: 0;
+        }
 
         /* --- ORTAK MODÜL (BALON) TASARIMI --- */
         .widget-box {
@@ -3314,248 +3380,357 @@
         <div class="subject-content" id="subject-container"></div>
     </div>
 
-    <!-- ── SAAT WİDGET'I ── -->
-    <div id="widget-clock" class="widget-box" style="display:none; height:100%; min-height:0; flex-direction:column; overflow:hidden; position:relative;">
+    <div id="widget-clock" class="widget-box" style="display:none; height:100%; min-height:0; flex-direction:column; overflow:hidden; position:relative; background: var(--color-bg-card);">
 
-        <!-- Üst başlık çubuğu -->
-        <div id="clkTopBar" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px 6px; flex-shrink:0; position:relative;">
+        <div id="clkTopBar" style="display:flex; align-items:center; justify-content:space-between; padding:0px 8px 8px; margin-bottom: 12px; margin-left:-5px; margin-right:-5px; flex-shrink:0; position:relative; border-bottom: 1px solid rgba(0,0,0,0.05);">
 
-            <!-- Sol: Mod butonu + aşağı açılan dropdown -->
             <div style="position:relative;">
                 <button id="clkModeBtn" onclick="window.clkToggleModeBar()"
-                    style="display:flex; align-items:center; gap:6px; padding:5px 11px; border-radius:var(--radius-md);
-                           border:1px solid var(--color-border); background:var(--color-bg-input);
-                           color:var(--color-text-secondary); font-size:12px; font-weight:700; cursor:pointer; transition:var(--transition-fast);"
-                    onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)'"
-                    onmouseout="this.style.borderColor='var(--color-border)';this.style.color='var(--color-text-secondary)'">
-                    <i class="fa-solid fa-sliders" style="font-size:11px;"></i>
+                    style="display:flex; align-items:center; gap:6px; padding:4px 12px; border-radius: 50px;
+                           border:1px solid var(--color-border-medium); background:var(--color-bg-input);
+                           color:var(--color-text-secondary); font-size:11px; font-weight:800; cursor:pointer; transition:all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.02);"
+                    onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)';this.style.boxShadow='0 4px 10px rgba(0,123,255,0.1)'"
+                    onmouseout="this.style.borderColor='var(--color-border-medium)';this.style.color='var(--color-text-secondary)';this.style.boxShadow='0 2px 5px rgba(0,0,0,0.02)'">
+                    <i class="fa-solid fa-sliders" style="font-size:11px; color:var(--color-primary);"></i>
                     <span id="clkActiveLabel">Saat</span>
-                    <i id="clkModeCaret" class="fa-solid fa-chevron-down" style="font-size:9px; transition:transform 0.2s;"></i>
+                    <i id="clkModeCaret" class="fa-solid fa-chevron-down" style="font-size:9px; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
                 </button>
 
-                <!-- Aşağı açılan mod menüsü -->
                 <div id="clkModeBar" style="display:none; position:absolute; top:calc(100% + 6px); left:0; z-index:500;
-                     background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-lg);
-                     box-shadow:var(--shadow-md); padding:4px; min-width:150px; flex-direction:column; gap:2px;">
-                    <button class="clk-tab active" data-mode="clock"      onclick="window.clkSetMode('clock')">
-                        <i class="fa-regular fa-clock"></i> Saat
+                     background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px;
+                     box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding:4px; min-width:140px; flex-direction:column; gap:2px; transform-origin: top left; animation: scaleUp 0.2s ease;">
+                    <button class="clk-tab active" data-mode="clock" onclick="window.clkSetMode('clock')" style="padding: 8px 12px; border-radius: 8px; border: none; text-align: left; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-regular fa-clock" style="font-size: 14px; width: 14px; color: var(--color-primary);"></i> Saat
                     </button>
-                    <button class="clk-tab"        data-mode="stopwatch"  onclick="window.clkSetMode('stopwatch')">
-                        <i class="fa-solid fa-stopwatch"></i> Kronometre
+                    <button class="clk-tab" data-mode="stopwatch" onclick="window.clkSetMode('stopwatch')" style="padding: 8px 12px; border-radius: 8px; border: none; text-align: left; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-stopwatch" style="font-size: 14px; width: 14px; color: var(--color-primary);"></i> Kronometre
                     </button>
-                    <button class="clk-tab"        data-mode="timer"      onclick="window.clkSetMode('timer')">
-                        <i class="fa-solid fa-hourglass-half"></i> Zamanlayıcı
+                    <button class="clk-tab" data-mode="timer" onclick="window.clkSetMode('timer')" style="padding: 8px 12px; border-radius: 8px; border: none; text-align: left; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-hourglass-half" style="font-size: 14px; width: 14px; color: var(--color-primary);"></i> Zamanlayıcı
                     </button>
                 </div>
             </div>
 
-            <!-- Sağ: Tam ekran butonu -->
             <button onclick="window.clkOpenFullscreen()"
-                style="display:flex; align-items:center; justify-content:center; width:30px; height:30px;
-                       border-radius:var(--radius-md); border:1px solid var(--color-border);
+                style="display:flex; align-items:center; justify-content:center; width:28px; height:28px;
+                       border-radius:50%; border:1px solid var(--color-border-medium);
                        background:var(--color-bg-input); color:var(--color-text-secondary);
-                       cursor:pointer; transition:var(--transition-fast); font-size:13px;"
-                onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)';this.style.background='var(--color-primary-lighter)'"
-                onmouseout="this.style.borderColor='var(--color-border)';this.style.color='var(--color-text-secondary)';this.style.background='var(--color-bg-input)'"
+                       cursor:pointer; transition:all 0.3s ease; font-size:12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);"
+                onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)';this.style.background='var(--color-primary-lighter)';this.style.transform='scale(1.1)';"
+                onmouseout="this.style.borderColor='var(--color-border-medium)';this.style.color='var(--color-text-secondary)';this.style.background='var(--color-bg-input)';this.style.transform='scale(1)';"
                 title="Tam Ekran">
                 <i class="fa-solid fa-expand"></i>
             </button>
         </div>
 
-        <!-- ── SAAT MODU ── -->
-        <div id="clkFaceClock" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:0; padding:0 10px 14px;">
-            <div id="clkTime" style="font-size:clamp(38px,6vw,68px); font-weight:800; color:var(--color-text-main); letter-spacing:2px; font-variant-numeric:tabular-nums; line-height:1;"></div>
-            <div id="clkSeconds" style="font-size:clamp(14px,2.2vw,20px); font-weight:600; color:var(--color-primary); letter-spacing:1px; font-variant-numeric:tabular-nums;"></div>
-            <div id="clkDate" style="font-size:13px; font-weight:700; color:var(--color-text-muted); margin-top:4px; text-align:center;"></div>
-            <div id="clkDay" style="font-size:12px; font-weight:600; color:var(--color-text-light);"></div>
+        <div id="clkFaceClock" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:0; padding:10px 10px 20px;">
+            <div style="position: relative; display: flex; align-items: flex-end;">
+                <div id="clkTime" style="font-size:clamp(48px, 7vw, 76px); font-weight:900; background: linear-gradient(135deg, var(--color-text-main) 0%, var(--color-text-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing:1px; font-variant-numeric:tabular-nums; line-height:1; drop-shadow: 0 4px 10px rgba(0,0,0,0.05);"></div>
+                <div id="clkSeconds" style="font-size:clamp(16px, 2.5vw, 24px); font-weight:800; color:var(--color-primary); letter-spacing:1px; font-variant-numeric:tabular-nums; margin-left: 5px; margin-bottom: 8px; text-shadow: 0 2px 5px rgba(0,123,255,0.2);"></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; background: var(--color-bg-input); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--color-border);">
+                <div id="clkDate" style="font-size:14px; font-weight:800; color:var(--color-primary);"></div>
+                <div style="width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-muted); opacity: 0.5;"></div>
+                <div id="clkDay" style="font-size:13px; font-weight:800; color:var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px;"></div>
+            </div>
         </div>
 
-        <!-- ── KRONOMETRE MODU ── -->
-        <div id="clkFaceStopwatch" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; padding:0 10px 12px;">
-            <!-- Görev etiketi -->
-            <div id="swTaskLabel" style="display:none; font-size:11px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:3px 10px; max-width:90%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
-            <!-- Süre göstergesi: XX:XX.xx / YY dk -->
-            <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; justify-content:center;">
-                <div id="swDisplay" style="font-size:clamp(30px,5.5vw,54px); font-weight:800; color:var(--color-text-main); letter-spacing:2px; font-variant-numeric:tabular-nums; line-height:1;">00:00.00</div>
-                <div id="swTaskTarget" style="display:none; font-size:clamp(12px,1.8vw,16px); font-weight:700; color:var(--color-text-muted); font-variant-numeric:tabular-nums; white-space:nowrap;"></div>
+        <div id="clkFaceStopwatch" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:15px; min-height:0; padding:10px 10px 20px;">
+            
+            <div id="swTaskLabel"></div>
+            <div id="swTaskTarget"></div>
+            
+            <div style="display:flex; align-items:baseline; justify-content:center; gap:8px; margin-bottom: 5px;">
+                <div id="swDisplay" style="font-size:clamp(36px, 5.5vw, 56px); font-weight:900; color:var(--color-text-main); letter-spacing:1px; font-variant-numeric:tabular-nums; line-height:1;">00:00.00</div>
             </div>
-            <!-- Butonlar -->
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+            
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
                 <button id="swStartBtn" onclick="window.swToggle()"
-                    style="padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:82px;">
+                    style="padding:10px 24px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-success) 0%, #20c997 100%); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:100px; box-shadow: 0 6px 15px rgba(40,167,69,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(40,167,69,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 15px rgba(40,167,69,0.3)';">
                     <i class="fa-solid fa-play"></i> Başlat
                 </button>
                 <button id="swResetBtn" onclick="window.swReset()"
-                    style="padding:8px 14px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-border-strong); border-radius:50%; background:var(--color-bg-card); color:var(--color-text-secondary); font-size:14px; cursor:pointer; transition:all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);"
+                    onmouseover="this.style.background='var(--color-bg-input)'; this.style.color='var(--color-text-main)'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='var(--color-bg-card)'; this.style.color='var(--color-text-secondary)'; this.style.transform='rotate(0)';">
                     <i class="fa-solid fa-rotate-left"></i>
                 </button>
-                <button id="swPickTaskBtn" onclick="window.clkPickTask('sw')"
-                    style="padding:8px 14px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
-                    <i class="fa-solid fa-list-check"></i>
-                </button>
+                
+                <div id="swTaskPill" style="display:flex; align-items:center; background:var(--color-bg-card); border:2px solid var(--color-primary-border); border-radius:50px; padding:4px; box-shadow:0 4px 10px rgba(0,123,255,0.05); transition:all 0.3s; box-sizing:border-box;">
+                    <button id="swPickTaskBtn" onclick="window.clkPickTask('sw')"
+                        style="width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--color-primary-lighter); color:var(--color-primary); font-size:14px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                        onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='var(--color-primary-lighter)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                        <i class="fa-solid fa-list-check"></i>
+                    </button>
+                    
+                    <div id="swTaskActiveArea" style="display:none; align-items:center; gap:8px; padding-left:10px; padding-right:4px;">
+                        <span id="swPillLessonName" style="font-size:13px; font-weight:800; color:var(--color-text-main); white-space:nowrap;">Ders</span>
+                        
+                        <button id="swCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:6px 12px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:12px; font-weight:800; cursor:pointer; transition:0.2s; align-items:center; gap:6px; box-shadow: 0 2px 5px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <i class="fa-solid fa-check"></i> Tamamla
+                        </button>
+                        
+                        <button id="swClearTaskBtn" onclick="window.clearActiveTask('sw')" style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:12px; cursor:pointer; transition:0.2s; box-shadow: 0 2px 5px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <!-- Tamamla butonu (durdurulunca görünür) -->
-            <button id="swCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
-                <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
-            </button>
         </div>
 
-        <!-- ── ZAMANLAYıCı MODU ── -->
-        <div id="clkFaceTimer" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; padding:0 10px 12px;">
-            <!-- Görev etiketi -->
-            <div id="tmTaskLabel" style="display:none; font-size:11px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:3px 10px; max-width:90%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
-            <div id="timerInputRow" style="display:flex; align-items:center; gap:8px;">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-                    <input id="timerH" type="number" min="0" max="99" value="0"
-                        style="width:52px; text-align:center; font-size:22px; font-weight:800; border:2px solid var(--color-border); border-radius:var(--radius-md); padding:6px 4px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
-                        onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
-                    <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">SAAT</span>
+        <div id="clkFaceTimer" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:15px; min-height:0; padding:10px 10px 20px;">
+            
+            <div id="tmTaskLabel"></div>
+            
+            <div style="display:flex; align-items:center; justify-content:center; gap:12px; width:100%; margin-bottom: 5px;">
+                <div id="timerInputRow" style="display:flex; align-items:center; gap:8px;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <input id="timerH" type="number" min="0" max="99" value="0"
+                                style="width:58px; height:58px; text-align:center; font-size:26px; font-weight:900; border:none; border-radius:16px; padding:0; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent; transition: 0.2s;"
+                                onfocus="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px var(--color-primary)'" onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent'">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerH', 1)"><i class="fa-solid fa-chevron-up" style="font-size:10px;"></i></button>
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerH', -1)"><i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <span style="font-size:10px; font-weight:800; color:var(--color-text-muted); letter-spacing: 0.5px;">SAAT</span>
+                    </div>
+                    
+                    <div style="font-size:28px; font-weight:900; color:var(--color-border-strong); margin-bottom: 20px;">:</div>
+                    
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <input id="timerM" type="number" min="0" max="59" value="0"
+                                style="width:58px; height:58px; text-align:center; font-size:26px; font-weight:900; border:none; border-radius:16px; padding:0; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent; transition: 0.2s;"
+                                onfocus="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px var(--color-primary)'" onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent'">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerM', 1)"><i class="fa-solid fa-chevron-up" style="font-size:10px;"></i></button>
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerM', -1)"><i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <span style="font-size:10px; font-weight:800; color:var(--color-text-muted); letter-spacing: 0.5px;">DAKİKA</span>
+                    </div>
+                    
+                    <div style="font-size:28px; font-weight:900; color:var(--color-border-strong); margin-bottom: 20px;">:</div>
+                    
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <input id="timerS" type="number" min="0" max="59" value="0"
+                                style="width:58px; height:58px; text-align:center; font-size:26px; font-weight:900; border:none; border-radius:16px; padding:0; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent; transition: 0.2s;"
+                                onfocus="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px var(--color-primary)'" onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent'">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerS', 1)"><i class="fa-solid fa-chevron-up" style="font-size:10px;"></i></button>
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerS', -1)"><i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <span style="font-size:10px; font-weight:800; color:var(--color-text-muted); letter-spacing: 0.5px;">SANİYE</span>
+                    </div>
                 </div>
-                <span style="font-size:24px; font-weight:800; color:var(--color-text-muted); margin-bottom:12px;">:</span>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-                    <input id="timerM" type="number" min="0" max="59" value="0"
-                        style="width:52px; text-align:center; font-size:22px; font-weight:800; border:2px solid var(--color-border); border-radius:var(--radius-md); padding:6px 4px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
-                        onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
-                    <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">DAKİKA</span>
-                </div>
-                <span style="font-size:24px; font-weight:800; color:var(--color-text-muted); margin-bottom:12px;">:</span>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-                    <input id="timerS" type="number" min="0" max="59" value="0"
-                        style="width:52px; text-align:center; font-size:22px; font-weight:800; border:2px solid var(--color-border); border-radius:var(--radius-md); padding:6px 4px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
-                        onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
-                    <span style="font-size:10px; font-weight:700; color:var(--color-text-muted);">SANİYE</span>
-                </div>
+                
+                <div id="timerDisplay" style="display:none; font-size:clamp(36px, 5.5vw, 56px); font-weight:900; color:var(--color-text-main); letter-spacing:1px; font-variant-numeric:tabular-nums; line-height:1;">00:00:00</div>
             </div>
-            <div id="timerDisplay" style="display:none; font-size:clamp(34px,6vw,60px); font-weight:800; color:var(--color-text-main); letter-spacing:2px; font-variant-numeric:tabular-nums; line-height:1;">00:00:00</div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+            
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
                 <button id="timerStartBtn" onclick="window.timerToggle()"
-                    style="padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-primary); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:82px;">
+                    style="padding:10px 24px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-primary) 0%, #00d2ff 100%); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:100px; box-shadow: 0 6px 15px rgba(0,123,255,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,123,255,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 15px rgba(0,123,255,0.3)';">
                     <i class="fa-solid fa-play"></i> Başlat
                 </button>
                 <button id="timerResetBtn" onclick="window.timerReset()"
-                    style="padding:8px 14px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-border-strong); border-radius:50%; background:var(--color-bg-card); color:var(--color-text-secondary); font-size:14px; cursor:pointer; transition:all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);"
+                    onmouseover="this.style.background='var(--color-bg-input)'; this.style.color='var(--color-text-main)'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='var(--color-bg-card)'; this.style.color='var(--color-text-secondary)'; this.style.transform='rotate(0)';">
                     <i class="fa-solid fa-rotate-left"></i>
                 </button>
-                <button id="tmPickTaskBtn" onclick="window.clkPickTask('tm')"
-                    style="padding:8px 14px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
-                    <i class="fa-solid fa-list-check"></i>
-                </button>
+                
+                <div id="tmTaskPill" style="display:flex; align-items:center; background:var(--color-bg-card); border:2px solid var(--color-primary-border); border-radius:50px; padding:4px; box-shadow:0 4px 10px rgba(0,123,255,0.05); transition:all 0.3s; box-sizing:border-box;">
+                    <button id="tmPickTaskBtn" onclick="window.clkPickTask('tm')"
+                        style="width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--color-primary-lighter); color:var(--color-primary); font-size:14px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                        onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='var(--color-primary-lighter)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                        <i class="fa-solid fa-list-check"></i>
+                    </button>
+                    
+                    <div id="tmTaskActiveArea" style="display:none; align-items:center; gap:8px; padding-left:10px; padding-right:4px;">
+                        <span id="tmPillLessonName" style="font-size:13px; font-weight:800; color:var(--color-text-main); white-space:nowrap;">Ders</span>
+                        
+                        <button id="tmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:6px 12px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:12px; font-weight:800; cursor:pointer; transition:0.2s; align-items:center; gap:6px; box-shadow: 0 2px 5px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <i class="fa-solid fa-check"></i> Tamamla
+                        </button>
+                        
+                        <button id="tmClearTaskBtn" onclick="window.clearActiveTask('tm')" style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:12px; cursor:pointer; transition:0.2s; box-shadow: 0 2px 5px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div id="timerDoneMsg" style="display:none; font-size:15px; font-weight:800; color:var(--color-success); ">
-                <i class="fa-solid fa-bell"></i> Süre doldu!
+            
+            <div id="timerDoneMsg" style="display:none; font-size:16px; font-weight:800; color:var(--color-success); background: var(--color-success-light); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--color-success-border); animation: pulse 1.5s infinite; margin-top:10px;">
+                <i class="fa-solid fa-bell fa-shake"></i> Süre doldu!
             </div>
-            <!-- Tamamla butonu (durdurulunca görünür) -->
-            <button id="tmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:8px 20px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
-                <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
-            </button>
         </div>
 
     </div>
 
-    <!-- ── TAM EKRAN SAAT MODALi ── -->
     <div id="clkFullscreenModal" class="custom-modal" style="z-index:2000;">
-        <div class="custom-modal-content" style="max-width:95%; width:1500px; height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+        <div class="custom-modal-content" style="max-width:95%; width:1500px; height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden; background: #0a0a0f; border: 1px solid #1f1f27; box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
 
-            <!-- Modal Başlık -->
-            <div class="modal-header" style="padding:16px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <!-- Mod tabları (modal içinde yatay) -->
-                    <button class="clk-tab-fs active" data-mode="clock"     onclick="window.clkFsSetMode('clock')">
-                        <i class="fa-regular fa-clock"></i> Saat
+            <div class="modal-header" style="padding:20px 30px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div style="display:flex; align-items:center; gap:16px; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05);">
+                    <button class="clk-tab-fs active" data-mode="clock" onclick="window.clkFsSetMode('clock')" style="background: transparent; border: none; color: #888; font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-regular fa-clock" style="font-size: 16px;"></i> Saat
                     </button>
-                    <button class="clk-tab-fs"        data-mode="stopwatch" onclick="window.clkFsSetMode('stopwatch')">
-                        <i class="fa-solid fa-stopwatch"></i> Kronometre
+                    <button class="clk-tab-fs" data-mode="stopwatch" onclick="window.clkFsSetMode('stopwatch')" style="background: transparent; border: none; color: #888; font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-stopwatch" style="font-size: 16px;"></i> Kronometre
                     </button>
-                    <button class="clk-tab-fs"        data-mode="timer"     onclick="window.clkFsSetMode('timer')">
-                        <i class="fa-solid fa-hourglass-half"></i> Zamanlayıcı
+                    <button class="clk-tab-fs" data-mode="timer" onclick="window.clkFsSetMode('timer')" style="background: transparent; border: none; color: #888; font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-hourglass-half" style="font-size: 16px;"></i> Zamanlayıcı
                     </button>
                 </div>
-                <span class="close-modal-btn" id="clkFsCloseBtn" style="font-size:28px;">&times;</span>
+                <button id="clkFsCloseBtn" style="width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.05); color: #fff; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <style>
+                    /* Fullscreen Dark Theme Tab Active State Fix */
+                    .clk-tab-fs.active {
+                        background: rgba(255,255,255,0.1) !important;
+                        color: #fff !important;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+                    }
+                    .clk-tab-fs:hover:not(.active) {
+                        color: #ccc !important;
+                    }
+                </style>
             </div>
 
-            <!-- Modal İçerik -->
-            <div style="flex:1; display:flex; align-items:center; justify-content:center; min-height:0; padding:20px;">
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; min-height:0; padding:20px; position: relative;">
+                
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(0,123,255,0.05) 0%, rgba(0,0,0,0) 70%); pointer-events: none;"></div>
 
-                <!-- SAAT (fullscreen) -->
-                <div id="clkFsModeClock" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center;">
-                    <div id="clkFsTime"    style="font-size:clamp(80px,14vw,160px); font-weight:900; color:var(--color-text-main); letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1;"></div>
-                    <div id="clkFsSeconds" style="font-size:clamp(28px,5vw,56px); font-weight:600; color:var(--color-primary); letter-spacing:2px; font-variant-numeric:tabular-nums;"></div>
-                    <div id="clkFsDate"    style="font-size:clamp(16px,2.5vw,28px); font-weight:700; color:var(--color-text-muted); margin-top:8px;"></div>
-                    <div id="clkFsDay"     style="font-size:clamp(14px,2vw,22px); font-weight:600; color:var(--color-text-light);"></div>
+                <div id="clkFsModeClock" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; z-index: 1;">
+                    <div style="display: flex; align-items: flex-end;">
+                        <div id="clkFsTime" style="font-size:clamp(100px, 18vw, 220px); font-weight:900; background: linear-gradient(180deg, #ffffff 0%, #aaaaaa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:0.9; drop-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
+                        <div id="clkFsSeconds" style="font-size:clamp(30px, 6vw, 70px); font-weight:800; color:var(--color-primary); letter-spacing:2px; font-variant-numeric:tabular-nums; margin-left: 15px; margin-bottom: 20px; text-shadow: 0 4px 15px rgba(0,123,255,0.3);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px; background: rgba(255,255,255,0.03); padding: 12px 30px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div id="clkFsDate" style="font-size:clamp(18px, 3vw, 32px); font-weight:800; color:#e0e0e0;"></div>
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary);"></div>
+                        <div id="clkFsDay" style="font-size:clamp(16px, 2.5vw, 26px); font-weight:700; color:#888; text-transform: uppercase; letter-spacing: 2px;"></div>
+                    </div>
                 </div>
 
-                <!-- KRONOMETRE (fullscreen) -->
-                <div id="clkFsModeStopwatch" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:20px; text-align:center;">
-                    <div id="fswTaskLabel" style="display:none; font-size:14px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:5px 16px; max-width:80%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
-                    <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; justify-content:center;">
-                        <div id="clkFsSwDisplay" style="font-size:clamp(60px,10vw,120px); font-weight:900; color:var(--color-text-main); letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1;">00:00.00</div>
-                        <div id="fswTaskTarget" style="display:none; font-size:clamp(18px,3vw,32px); font-weight:700; color:var(--color-text-muted); font-variant-numeric:tabular-nums;"></div>
+                <div id="clkFsModeStopwatch" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:30px; text-align:center; z-index: 1;">
+                    <div id="fswTaskLabel"></div>
+                    <div id="fswTaskTarget"></div>
+                    
+                    <div style="display:flex; flex-direction: column; align-items:center; gap:10px; justify-content:center;">
+                        <div id="clkFsSwDisplay" style="font-size:clamp(80px, 14vw, 180px); font-weight:900; color:#fff; letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1; text-shadow: 0 10px 30px rgba(0,0,0,0.5);">00:00.00</div>
                     </div>
-                    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                    
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center; margin-top: 10px;">
                         <button id="clkFsSwStartBtn" onclick="window.swFsToggle()"
-                            style="padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:130px;">
-                            <i class="fa-solid fa-play"></i> Başlat
+                            style="padding:20px 50px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-success) 0%, #20c997 100%); color:#fff; font-size:22px; font-weight:900; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:200px; box-shadow: 0 10px 25px rgba(40,167,69,0.3); letter-spacing: 1px;"
+                            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 15px 35px rgba(40,167,69,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(40,167,69,0.3)';">
+                            <i class="fa-solid fa-play" style="margin-right: 8px;"></i> Başlat
                         </button>
                         <button onclick="window.swFsReset()"
-                            style="padding:14px 22px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                            style="width:70px; height:70px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); border-radius:50%; background:rgba(255,255,255,0.03); color:#aaa; font-size:24px; cursor:pointer; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.color='#aaa'; this.style.transform='rotate(0)';">
                             <i class="fa-solid fa-rotate-left"></i>
                         </button>
-                        <button onclick="window.clkPickTask('sw')"
-                            style="padding:14px 22px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);" title="Görev Seç">
-                            <i class="fa-solid fa-list-check"></i>
-                        </button>
+                        
+                        <div id="fswTaskPill" style="display:flex; align-items:center; background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.1); border-radius:50px; padding:6px; box-shadow:0 8px 20px rgba(0,0,0,0.2); transition:all 0.3s; box-sizing:border-box;">
+                            <button onclick="window.clkPickTask('sw')"
+                                style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:rgba(0,123,255,0.2); color:var(--color-primary); font-size:24px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                                onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(0,123,255,0.2)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                                <i class="fa-solid fa-list-check"></i>
+                            </button>
+                            
+                            <div id="fswTaskActiveArea" style="display:none; align-items:center; gap:12px; padding-left:16px; padding-right:6px;">
+                                <span id="fswPillLessonName" style="font-size:18px; font-weight:800; color:#fff; white-space:nowrap; letter-spacing:1px;">Ders</span>
+                                
+                                <button id="fswCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:12px 24px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:16px; font-weight:800; cursor:pointer; transition:0.3s; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <i class="fa-solid fa-check"></i> Tamamla
+                                </button>
+                                
+                                <button id="fswClearTaskBtn" onclick="window.clearActiveTask('sw')" style="width:46px; height:46px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:18px; cursor:pointer; transition:0.2s; box-shadow: 0 4px 10px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <button id="fswCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
-                        <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
-                    </button>
                 </div>
 
-                <!-- ZAMANLAYıCı (fullscreen) -->
-                <div id="clkFsModeTimer" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:24px; text-align:center;">
-                    <div id="clkFsTimerInputRow" style="display:flex; align-items:center; gap:14px;">
-                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <div id="clkFsModeTimer" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:35px; text-align:center; z-index: 1;">
+                    
+                    <div id="fstmTaskLabel"></div>
+                    
+                    <div id="clkFsTimerInputRow" style="display:flex; align-items:center; gap:20px;">
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerH', 1)"><i class="fa-solid fa-chevron-up"></i></button>
                             <input id="clkFsTimerH" type="number" min="0" max="99" value="0"
-                                style="width:80px; text-align:center; font-size:38px; font-weight:800; border:3px solid var(--color-border); border-radius:var(--radius-lg); padding:10px 6px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
-                                onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
-                            <span style="font-size:13px; font-weight:800; color:var(--color-text-muted); letter-spacing:1px;">SAAT</span>
+                                style="width:120px; height:120px; text-align:center; font-size:56px; font-weight:900; border:2px solid rgba(255,255,255,0.05); border-radius:24px; padding:0; color:#fff; background:rgba(0,0,0,0.2); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s;"
+                                onfocus="this.style.borderColor='var(--color-primary)'; this.style.background='rgba(0,123,255,0.15)';" onblur="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.background='rgba(0,0,0,0.2)';">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerH', -1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <span style="font-size:16px; font-weight:800; color:#aaa; letter-spacing:2px;">SAAT</span>
                         </div>
-                        <span style="font-size:42px; font-weight:800; color:var(--color-text-muted); margin-bottom:18px;">:</span>
-                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="font-size:60px; font-weight:900; color:#aaaaaa; padding-bottom: 40px;">:</div>
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerM', 1)"><i class="fa-solid fa-chevron-up"></i></button>
                             <input id="clkFsTimerM" type="number" min="0" max="59" value="0"
-                                style="width:80px; text-align:center; font-size:38px; font-weight:800; border:3px solid var(--color-border); border-radius:var(--radius-lg); padding:10px 6px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
-                                onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
-                            <span style="font-size:13px; font-weight:800; color:var(--color-text-muted); letter-spacing:1px;">DAKİKA</span>
+                                style="width:120px; height:120px; text-align:center; font-size:56px; font-weight:900; border:2px solid rgba(255,255,255,0.05); border-radius:24px; padding:0; color:#fff; background:rgba(0,0,0,0.2); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s;"
+                                onfocus="this.style.borderColor='var(--color-primary)'; this.style.background='rgba(0,123,255,0.15)';" onblur="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.background='rgba(0,0,0,0.2)';">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerM', -1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <span style="font-size:16px; font-weight:800; color:#aaa; letter-spacing:2px;">DAKİKA</span>
                         </div>
-                        <span style="font-size:42px; font-weight:800; color:var(--color-text-muted); margin-bottom:18px;">:</span>
-                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="font-size:60px; font-weight:900; color:#aaaaaa; padding-bottom: 40px;">:</div>
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerS', 1)"><i class="fa-solid fa-chevron-up"></i></button>
                             <input id="clkFsTimerS" type="number" min="0" max="59" value="0"
-                                style="width:80px; text-align:center; font-size:38px; font-weight:800; border:3px solid var(--color-border); border-radius:var(--radius-lg); padding:10px 6px; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums;"
-                                onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
-                            <span style="font-size:13px; font-weight:800; color:var(--color-text-muted); letter-spacing:1px;">SANİYE</span>
+                                style="width:120px; height:120px; text-align:center; font-size:56px; font-weight:900; border:2px solid rgba(255,255,255,0.05); border-radius:24px; padding:0; color:#fff; background:rgba(0,0,0,0.2); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s;"
+                                onfocus="this.style.borderColor='var(--color-primary)'; this.style.background='rgba(0,123,255,0.15)';" onblur="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.background='rgba(0,0,0,0.2)';">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerS', -1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <span style="font-size:16px; font-weight:800; color:#aaa; letter-spacing:2px;">SANİYE</span>
                         </div>
                     </div>
-                    <div id="fstmTaskLabel" style="display:none; font-size:14px; font-weight:700; color:var(--color-primary); background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-md); padding:5px 16px; max-width:80%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:4px;"></div>
-                    <div id="clkFsTimerDisplay" style="display:none; font-size:clamp(60px,10vw,120px); font-weight:900; color:var(--color-text-main); letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1;">00:00:00</div>
-                    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                    
+                    <div id="clkFsTimerDisplay" style="display:none; font-size:clamp(80px, 14vw, 180px); font-weight:900; color:#fff; letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1; text-shadow: 0 10px 30px rgba(0,0,0,0.5);">00:00:00</div>
+                    
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center;">
                         <button id="clkFsTimerStartBtn" onclick="window.tmFsToggle()"
-                            style="padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-primary); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); min-width:130px;">
-                            <i class="fa-solid fa-play"></i> Başlat
+                            style="padding:20px 50px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-primary) 0%, #00d2ff 100%); color:#fff; font-size:22px; font-weight:900; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:200px; box-shadow: 0 10px 25px rgba(0,123,255,0.3); letter-spacing: 1px;"
+                            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 15px 35px rgba(0,123,255,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,123,255,0.3)';">
+                            <i class="fa-solid fa-play" style="margin-right: 8px;"></i> Başlat
                         </button>
                         <button onclick="window.tmFsReset()"
-                            style="padding:14px 22px; border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-bg-input); color:var(--color-text-secondary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                            style="width:70px; height:70px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); border-radius:50%; background:rgba(255,255,255,0.03); color:#aaa; font-size:24px; cursor:pointer; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.color='#aaa'; this.style.transform='rotate(0)';">
                             <i class="fa-solid fa-rotate-left"></i>
                         </button>
-                        <button onclick="window.clkPickTask('tm')"
-                            style="padding:14px 22px; border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); background:var(--color-primary-lighter); color:var(--color-primary); font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast);" title="Görev Seç">
-                            <i class="fa-solid fa-list-check"></i>
-                        </button>
+                        
+                        <div id="fstmTaskPill" style="display:flex; align-items:center; background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.1); border-radius:50px; padding:6px; box-shadow:0 8px 20px rgba(0,0,0,0.2); transition:all 0.3s; box-sizing:border-box;">
+                            <button onclick="window.clkPickTask('tm')"
+                                style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:rgba(0,123,255,0.2); color:var(--color-primary); font-size:24px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                                onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(0,123,255,0.2)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                                <i class="fa-solid fa-list-check"></i>
+                            </button>
+                            
+                            <div id="fstmTaskActiveArea" style="display:none; align-items:center; gap:12px; padding-left:16px; padding-right:6px;">
+                                <span id="fstmPillLessonName" style="font-size:18px; font-weight:800; color:#fff; white-space:nowrap; letter-spacing:1px;">Ders</span>
+                                
+                                <button id="fstmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:12px 24px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:16px; font-weight:800; cursor:pointer; transition:0.3s; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <i class="fa-solid fa-check"></i> Tamamla
+                                </button>
+                                
+                                <button id="fstmClearTaskBtn" onclick="window.clearActiveTask('tm')" style="width:46px; height:46px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:18px; cursor:pointer; transition:0.2s; box-shadow: 0 4px 10px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div id="clkFsTimerDone" style="display:none; font-size:22px; font-weight:800; color:var(--color-success); ">
-                        <i class="fa-solid fa-bell"></i> Süre doldu!
+                    
+                    <div id="clkFsTimerDone" style="display:none; font-size:32px; font-weight:900; color:var(--color-success); background: rgba(40, 167, 69, 0.1); padding: 15px 40px; border-radius: 50px; border: 1px solid rgba(40, 167, 69, 0.3); animation: pulse 1.5s infinite; letter-spacing: 1px;">
+                        <i class="fa-solid fa-bell fa-shake" style="margin-right: 10px;"></i> Süre doldu!
                     </div>
-                    <button id="fstmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:14px 36px; border:none; border-radius:var(--radius-lg); background:var(--color-success); color:#fff; font-size:17px; font-weight:800; cursor:pointer; transition:var(--transition-fast); ">
-                        <i class="fa-solid fa-circle-check"></i> Görevi Tamamla
-                    </button>
                 </div>
 
             </div>
@@ -3563,7 +3738,7 @@
     </div>
 
     <!-- WIDGET DÜZEN AYAR BUTONU -->
-    <button id="widgetLayoutBtn" onclick="window.openWidgetLayoutPanel()" title="Widget Düzenini Ayarla"
+    <button id="widgetLayoutBtn" onclick="window.openWidgetLayoutPanel()" data-custom-title="Widget Düzenini Ayarla"
         style="position:fixed; z-index:200; display:none; align-items:center; justify-content:center;
                width:34px; height:34px; border-radius:50%; border:2px solid var(--color-primary-border);
                background:var(--color-bg-card); color:var(--color-primary); cursor:pointer;
@@ -4066,6 +4241,12 @@
                                 <input type="hidden" id="taskSubject" value="Türkçe">
                             </div>
                         </div>
+                    </div>
+
+                    <!-- ALT DERS SATIRI -->
+                    <div class="input-group" id="taskSubLessonGroup" style="display:none;">
+                        <label>Alt Ders</label>
+                        <select id="taskSubLesson" style="width:100%; padding:10px 12px; border:1px solid var(--color-border-strong); border-radius:var(--radius-md); font-size:14px; font-weight:700; background:var(--color-bg-card); color:var(--color-text-main); cursor:pointer; outline:none; appearance:none; -webkit-appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path fill=%22%23888%22 d=%22M8 11L2 5h12z%22/></svg>'); background-repeat:no-repeat; background-position:right 10px center; background-size:12px; padding-right:30px;"></select>
                     </div>
 
                     <div class="input-group">
@@ -4595,6 +4776,12 @@
                     </div>
                 </div>
                 
+                <!-- PLAYLIST ALT DERS -->
+                <div class="input-group" id="playlistSubLessonGroup" style="display:none;">
+                    <label>Alt Ders</label>
+                    <select id="playlistSubLesson" style="width:100%; padding:10px 12px; border:1px solid var(--color-border-strong); border-radius:var(--radius-md); font-size:14px; font-weight:700; background:var(--color-bg-card); color:var(--color-text-main); cursor:pointer; outline:none; appearance:none; -webkit-appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path fill=%22%23888%22 d=%22M8 11L2 5h12z%22/></svg>'); background-repeat:no-repeat; background-position:right 10px center; background-size:12px; padding-right:30px;"></select>
+                </div>
+
                 <div class="input-group">
                     <label>Playlist Adı <span class="required-star">*</span></label>
                     <input type="text" id="yeniGercekIsimKutusu" class="modal-input" placeholder="Örn: Dr. Biyoloji Sistemler Kampı">
@@ -8277,7 +8464,7 @@
         const weeklyGrid = document.getElementById('weeklyGrid');
 
         let currentWeekStart = new Date(); 
-        var userTasks = {}; 
+        var userTasks = window.userTasks = window.userTasks || {}; 
 
         // --- YENİ: ÇOĞALTMA VE SİLME MODU DEĞİŞKENLERİ ---
         let appMode = 'NORMAL'; // NORMAL, DUP_SELECT_TASK, DUP_SELECT_DAYS, DELETE_SELECT_TASKS
@@ -8543,7 +8730,7 @@
                     <div class="planner-task-card${extraClass}" onclick="window.viewTaskDetails('${dateKey}', ${task.id})" style="cursor: pointer; position: relative; border-left-color: ${sColor}; ${filterOpacityStyle}">
                         ${completedTickHtml}
                         <div class="task-card-header" style="align-items: center; flex-wrap: wrap; gap: 5px;">
-                            <span class="task-card-subject">${task.subject}</span>
+                            <span class="task-card-subject">${(task.subLesson && task.subLesson !== "Genel") ? task.subLesson : task.subject}</span>
                             <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800;">
                                 <span class="task-card-type" class="icon-primary"><i class="fa-solid fa-layer-group" style="font-size: 12px;"></i> ${task.taskType}</span>
                                 ${task.questionCount ? `<span style="color: #fd7e14;"><i class="fa-solid fa-clipboard-question" style="font-size: 12px;"></i> ${task.questionCount} Soru</span>` : ''}
@@ -8743,7 +8930,7 @@
                     tasksHtml += `
                             <div class="planner-task-card${taskCardExtraClass}" ${draggableAttr} ${dragEvents} onclick="window.handleTaskClick(event, '${dateKey}', ${task.id})" style="position: relative; cursor: ${appMode === 'NORMAL' ? 'grab' : 'pointer'}; border-left-color: ${sColor}; ${filterOpacityStyle}" data-custom-title="Görev">
                                 <div class="task-card-header" style="align-items: flex-start;">
-                                    <span class="task-card-subject" class="flex-1">${task.subject}</span>
+                                    <span class="task-card-subject" class="flex-1">${(task.subLesson && task.subLesson !== "Genel") ? task.subLesson : task.subject}</span>
                                     <span class="task-card-badge ${badgeClass}" style="margin-left: 5px;">${displayExamType}</span>
                                 </div>
                                 <div class="task-card-desc">${task.desc || ''}</div>
@@ -8968,6 +9155,7 @@
 
                 if(hiddenInput.id === 'taskSubject') {
                     checkGenelDenemeLock();
+                    updateTaskSubLessonDropdown(value);
                     // Panel açıksa ve playlist listesi görünüyorsa güncelle
                     const tvPanelEl = document.getElementById('taskVideoPanel');
                     const tvFooterEl = document.getElementById('taskVideoPanelFooter');
@@ -8990,6 +9178,9 @@
                 }
                 if(hiddenInput.id === 'playlistTrack') {
                     updatePlaylistSubjectDropdown();
+                }
+                if(hiddenInput.id === 'playlistSubject') {
+                    updatePlaylistSubLessonDropdown(value);
                 }
             });
         });
@@ -9020,15 +9211,69 @@
 
             hiddenInput.value = subjects[0];
             subjectTextDisplay.innerText = subjects[0];
+            updatePlaylistSubLessonDropdown(subjects[0]);
         }
 
-        document.addEventListener('click', function() {
+        document.addEventListener('click', function(e) {
             document.querySelectorAll('.task-custom-select').forEach(select => {
-                select.classList.remove('open');
+                // Tıklama bu select'in içindeyse kapatma
+                if (!select.contains(e.target)) {
+                    select.classList.remove('open');
+                    const tr = select.querySelector('.tcs-trigger');
+                    if (tr) tr.classList.remove('active');
+                }
             });
         });
 
         // DERSLERİ SEÇİME GÖRE DOLDURAN ZEKİ FONKSİYON
+        // ── ALT DERS VERİ TABLOSU ──
+        const subLessonData = {
+            "Sosyal Bilimler": ["Genel", "Tarih", "Coğrafya", "Felsefe", "Din Kültürü ve Ahlak Bilgisi"],
+            "Fen Bilimleri":   ["Genel", "Fizik", "Kimya", "Biyoloji"]
+        };
+
+        // Native <select> tabanlı alt ders builder — garantili çalışır
+        function _buildSubLessonDropdown(groupId, containerId, inputId, selectId, subject) {
+            const group  = document.getElementById(groupId);
+            const select = document.getElementById(inputId); // <select> elementi
+            if (!group || !select) return;
+
+            const opts = subLessonData[subject];
+            if (!opts) {
+                group.style.display = 'none';
+                select.innerHTML = '';
+                return;
+            }
+
+            group.style.display = 'block';
+            select.innerHTML = opts.map(o => `<option value="${o}">${o}</option>`).join('');
+            select.value = opts[0];
+
+            // Değer değişince playlist panelini güncelle (zaten açıksa)
+            // Eski listener'ı temizlemek için cloneNode
+            const newSel = select.cloneNode(true);
+            select.parentNode.replaceChild(newSel, select);
+            newSel.addEventListener('change', function() {
+                // Görev modalındaki playlist paneli açıksa yenile
+                const tvPanel = document.getElementById('taskVideoPanel');
+                const tvFooter = document.getElementById('taskVideoPanelFooter');
+                if (tvPanel && tvPanel.style.display === 'flex' && tvFooter && tvFooter.style.display !== 'flex') {
+                    const subj = document.getElementById('taskSubject') ? document.getElementById('taskSubject').value : '';
+                    window.renderPlaylistCardsForSelection && window.renderPlaylistCardsForSelection(false, subj);
+                }
+                // Video özet listesini de güncelle
+                window.renderTaskVideoSummary && window.renderTaskVideoSummary(false);
+            });
+        }
+
+        function updateTaskSubLessonDropdown(subject) {
+            _buildSubLessonDropdown('taskSubLessonGroup', null, 'taskSubLesson', null, subject);
+        }
+
+        function updatePlaylistSubLessonDropdown(subject) {
+            _buildSubLessonDropdown('playlistSubLessonGroup', null, 'playlistSubLesson', null, subject);
+        }
+
         function updateTaskSubjectDropdown() {
             const type = taskExamTypeInput.value;
             const track = taskTrackInput.value;
@@ -9073,7 +9318,8 @@
             subjectTextDisplay.innerText = defaultSubject;
             subjectTextDisplay.style.color = defaultSubject === "Genel Deneme" ? "#800000" : "";
             
-            checkGenelDenemeLock(); 
+            checkGenelDenemeLock();
+            updateTaskSubLessonDropdown(defaultSubject);
         }
 
         function checkGenelDenemeLock() {
@@ -9170,7 +9416,8 @@
             currentViewingTask = task;
             selectedDateForTask = dateKey; 
 
-            document.getElementById('viewTaskSubject').innerText = task.subject;
+            document.getElementById('viewTaskSubject').innerText =
+                (task.subLesson) ? task.subject + ' · ' + task.subLesson : task.subject;
             
             const badge = document.getElementById('viewTaskBadge');
             badge.className = 'task-card-badge ' + (task.examType === 'tyt' ? 'badge-tyt' : (task.examType === 'ayt' ? 'badge-ayt' : 'badge-genel'));
@@ -9283,6 +9530,11 @@
             setTimeout(() => {
                 setTaskCustomSelectValue('tcs-subject', currentViewingTask.subject);
                 checkGenelDenemeLock();
+                updateTaskSubLessonDropdown(currentViewingTask.subject);
+                if (currentViewingTask.subLesson) {
+                    const _slI = document.getElementById('taskSubLesson');
+                    if (_slI) _slI.value = currentViewingTask.subLesson;
+                }
                 if(currentViewingTask.subject !== 'Genel Deneme') {
                     setTaskCustomSelectValue('tcs-taskType', currentViewingTask.taskType);
                 }
@@ -9346,6 +9598,7 @@
             // ki "Genel Deneme" kilidi çalışıp bunu tekrar ezebilsin!
             setTaskCustomSelectValue('tcs-taskType', 'Konu Anlatımı');
             updateTaskSubjectDropdown();
+            updateTaskSubLessonDropdown(document.getElementById('taskSubject').value);
             
             taskDesc.value = '';
             taskDuration.value = '';
@@ -9555,7 +9808,10 @@
                 // Ders değiştiyse uyumsuz videoları temizle
                 const incompatible = finalTaskVideos.filter(v => {
                     const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
-                    return pl && pl.subject !== currentSubjectVal;
+                    // Genel değilse subLesson, Genel ise parent subject ile karşılaştır
+                    const _sl = document.getElementById('taskSubLesson') ? document.getElementById('taskSubLesson').value : '';
+                    const _eff = (_sl && _sl !== 'Genel') ? _sl : currentSubjectVal;
+                    return pl && pl.subject !== _eff && pl.subject !== currentSubjectVal;
                 });
                 if (incompatible.length > 0) {
                     incompatible.forEach(v => {
@@ -9567,7 +9823,9 @@
                     });
                     finalTaskVideos = finalTaskVideos.filter(v => {
                         const pl = savedPlaylists.find(p => p.id.toString() === v.plId.toString());
-                        return !(pl && pl.subject !== currentSubjectVal);
+                        const _sl2 = document.getElementById('taskSubLesson') ? document.getElementById('taskSubLesson').value : '';
+                    const _eff2 = (_sl2 && _sl2 !== 'Genel') ? _sl2 : currentSubjectVal;
+                    return !(pl && pl.subject !== _eff2 && pl.subject !== currentSubjectVal);
                     });
                     currentTaskVideos = [...finalTaskVideos];
                 }
@@ -9580,11 +9838,13 @@
                 });
             }
 
+            const _slEl = document.getElementById('taskSubLesson');
             const newTask = {
                 id: editingTaskId ? editingTaskId : Date.now(),
                 profileId: document.getElementById('currentPlannerProfile') ? document.getElementById('currentPlannerProfile').value : 'main_profile',                examType: taskExamTypeInput.value,
                 track: taskExamTypeInput.value === 'ayt' ? taskTrackInput.value : null,
                 subject: taskSubjectInput.value,
+                subLesson: (_slEl && _slEl.value) ? _slEl.value : null,
                 taskType: taskTypeVal,
                 questionCount: finalQuestionCount,
                 desc: taskDesc.value.trim(),
@@ -9598,13 +9858,14 @@
                 const taskDocRef = doc(db, "users", currentUserUid, "userTasks", newTask.id.toString());
                 await setDoc(taskDocRef, newTask);
 
-                if (!userTasks[selectedDateForTask]) userTasks[selectedDateForTask] = [];
+                if (!window.userTasks) window.userTasks = {};
+                if (!window.userTasks[selectedDateForTask]) window.userTasks[selectedDateForTask] = [];
                 
                 if (editingTaskId) {
-                    const index = userTasks[selectedDateForTask].findIndex(t => t.id === editingTaskId);
-                    if (index !== -1) userTasks[selectedDateForTask][index] = newTask;
+                    const index = window.userTasks[selectedDateForTask].findIndex(t => t.id === editingTaskId);
+                    if (index !== -1) window.userTasks[selectedDateForTask][index] = newTask;
                 } else {
-                    userTasks[selectedDateForTask].push(newTask);
+                    window.userTasks[selectedDateForTask].push(newTask);
                 }
 
                 closeTaskModalAndClear();
@@ -10801,7 +11062,13 @@
                     // Ekrandaki seçili ders ve alanları alır
                     window.tempPlaylistData.examType = document.getElementById('playlistExamType').value;
                     window.tempPlaylistData.track = document.getElementById('playlistExamType').value === 'ayt' ? document.getElementById('playlistTrack').value : null;
-                    window.tempPlaylistData.subject = document.getElementById('playlistSubject').value;
+                    const _plSubject = document.getElementById('playlistSubject').value;
+                    const _plSL = document.getElementById('playlistSubLesson');
+                    const _plSLVal = (_plSL && _plSL.value) ? _plSL.value : '';
+                    // Alt ders "Genel" veya boşsa parent subject kullan, değilse alt ders adı subject olur
+                    window.tempPlaylistData.subject = (_plSLVal && _plSLVal !== 'Genel') ? _plSLVal : _plSubject;
+                    window.tempPlaylistData.parentSubject = _plSubject;
+                    window.tempPlaylistData.subLesson = _plSLVal || null;
 
                     // Firebase'e yaz
                     const playlistDocRef = doc(db, "users", currentUserUid, "userPlaylists", window.tempPlaylistData.id.toString());
@@ -11137,7 +11404,9 @@
             const subject = subjectOverride || document.getElementById('taskSubject').value;
 
             // Panel başlık
-            tvPanelTitle.textContent = (showAll ? 'Tüm Playlistler' : 'Ana Playlistler') + ' (' + subject + ')';
+            const _slLabel = document.getElementById('taskSubLesson') ? document.getElementById('taskSubLesson').value : '';
+            const _displayLabel = (_slLabel && _slLabel !== 'Genel') ? _slLabel : subject;
+            tvPanelTitle.textContent = (showAll ? 'Tüm Playlistler' : 'Ana Playlistler') + ' (' + _displayLabel + ')';
 
             // Panel aksiyon butonları
             if (showAll) {
@@ -11159,14 +11428,22 @@
             tvPanelFooter.style.display = 'none';
             tvPanelBody.innerHTML = '';
 
+            // subLesson mantığı: Genel/boş → parent derse ait playlistler
+            //                      diğer alt ders → o alt derse ait playlistler
+            const _subLesson = document.getElementById('taskSubLesson') ? document.getElementById('taskSubLesson').value : '';
+            const _effectiveSubject = (_subLesson && _subLesson !== 'Genel') ? _subLesson : subject;
             let listToShow = showAll
-                ? savedPlaylists.filter(p => p.subject === subject)
-                : savedPlaylists.filter(p => p.isMain && p.subject === subject);
+                ? savedPlaylists.filter(p => p.subject === _effectiveSubject || p.subject === subject)
+                : savedPlaylists.filter(p => p.isMain && (p.subject === _effectiveSubject || (_subLesson === 'Genel' && p.subject === subject)));
+            // Genel dışı alt ders seçiliyse sadece o alt ders + parent dersin playlistleri
+            if (_subLesson && _subLesson !== 'Genel') {
+                listToShow = listToShow.filter(p => p.subject === _effectiveSubject);
+            }
 
             if (listToShow.length === 0 && !showAll) {
                 tvPanelBody.innerHTML = `<div style="text-align:center; padding:30px 15px; color:#888;">
                     <i class="fa-solid fa-star" style="font-size:35px; color:var(--color-primary-border); margin-bottom:12px; display:block;"></i>
-                    <b>${subject}</b> için "Ana" playlist bulunamadı.<br>
+                    <b>${_effectiveSubject !== subject ? _effectiveSubject : subject}</b> için "Ana" playlist bulunamadı.<br>
                     <span style="font-size:11px;">Sağ üstteki butondan tüm playlistlere ulaşabilirsin.</span></div>`;
                 return;
             }
@@ -13379,7 +13656,7 @@
                             <div style="font-size:14px;font-weight:800;color:${isCompleted?'#888':'#fff'};margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; line-height:1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${task.desc||task.subject||'Görev'}</div>
                             <div style="font-size:12px;color:${isCompleted?'#1f8a3d':'#a0a0b0'};font-weight:700; display:flex; align-items:center; gap:8px;">
                                 <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;"><i class="fa-solid fa-film" style="color:#ff3333;"></i> ${task.taskVideos.length} video</span> 
-                                <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;"><i class="fa-solid fa-book" style="color:#4da3ff;"></i> ${task.subject||''}</span>
+                                <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;"><i class="fa-solid fa-book" style="color:#4da3ff;"></i> ${(task.subLesson && task.subLesson !== "Genel") ? task.subLesson : (task.subject||"")}</span>
                             </div>
                         </div>
                     `;
@@ -14106,7 +14383,7 @@
                         tasksHtml += `
                                 <div class="planner-task-card${taskCardExtraClass}" ${draggableAttr} ${dragEvents} onclick="window.handleTaskClick(event, '${dateKey}', ${task.id})" style="position: relative; cursor: ${appMode === 'NORMAL' ? 'grab' : 'pointer'}; border-left-color: ${sColor}; ${filterOpacityStyle}" data-custom-title="Görev">
                                     <div class="task-card-header" style="align-items: flex-start;">
-                                        <span class="task-card-subject" class="flex-1">${task.subject}</span>
+                                        <span class="task-card-subject" class="flex-1">${(task.subLesson && task.subLesson !== "Genel") ? task.subLesson : task.subject}</span>
                                         <span class="task-card-badge ${badgeClass}" style="margin-left: 5px;">${displayExamType}</span>
                                     </div>
                                     <div class="task-card-desc">${task.desc || ''}</div>
@@ -17228,6 +17505,271 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        // --- GÖREV SİLME / TEMİZLEME SİSTEMİ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // JS sistemine dokunmadan, görev etiketi görünür olduğunda Çarpı butonunu da görünür yapan gözlemci
+            const syncClearBtn = (labelId, btnId) => {
+                const label = document.getElementById(labelId);
+                const btn = document.getElementById(btnId);
+                if(!label || !btn) return;
+                
+                const observer = new MutationObserver(() => {
+                    if(label.style.display !== 'none' && label.innerText.trim() !== '') {
+                        btn.style.display = 'flex';
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                });
+                observer.observe(label, { attributes: true, attributeFilter: ['style'], childList: true });
+            };
+
+            syncClearBtn('swTaskLabel', 'swClearTaskBtn');
+            syncClearBtn('tmTaskLabel', 'tmClearTaskBtn');
+            syncClearBtn('fswTaskLabel', 'fswClearTaskBtn');
+            syncClearBtn('fstmTaskLabel', 'fstmClearTaskBtn');
+        });
+
+    </script>
+
+    <style>
+        /* Tarayıcı varsayılan input oklarını kalıcı olarak gizle */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] { 
+            -moz-appearance: textfield; 
+        }
+        
+        /* Yeni küçük özel buton tasarımları */
+        .tm-spin-btn { 
+            display:flex; align-items:center; justify-content:center; 
+            width:30px; height:20px; background:transparent; border:none; 
+            color:var(--color-text-muted); cursor:pointer; border-radius:4px; transition:0.2s; 
+        }
+        .tm-spin-btn:hover { background:var(--color-bg-input); color:var(--color-primary); }
+        .tm-spin-btn:active { transform:scale(0.85); }
+        
+        /* Yeni devasa (Fullscreen) özel buton tasarımları */
+        .tm-spin-btn-fs { 
+            display:flex; align-items:center; justify-content:center; 
+            width:40px; height:26px; background:transparent; border:none; 
+            color:rgba(255,255,255,0.4); cursor:pointer; border-radius:6px; transition:0.2s; 
+        }
+        .tm-spin-btn-fs:hover { background:rgba(255,255,255,0.1); color:var(--color-primary); }
+        .tm-spin-btn-fs:active { transform:scale(0.85); }
+
+        /* --- GÖREV HAPI (PILL) SİSTEMİ İÇİN KALKAN --- */
+        /* Eski etiketleri ve hedefleri kalıcı olarak gizle */
+        #swTaskLabel, #tmTaskLabel, #fswTaskLabel, #fstmTaskLabel, #swTaskTarget, #fswTaskTarget {
+            display: none !important;
+        }
+        /* JS butonu görünür yaparken yapısını bozmasın diye koruma */
+        #swCompleteBtn[style*="display: block"], 
+        #tmCompleteBtn[style*="display: block"],
+        #fswCompleteBtn[style*="display: block"],
+        #fstmCompleteBtn[style*="display: block"] {
+            display: flex !important;
+        }
+
+        /* --- KİLİTLİ (DISABLED) KUTU TASARIMLARI (Okunabilirlik İçin) --- */
+        /* Tarayıcının varsayılan silik/gri rengini engelle ve yazıyı fosforlu mavi yap */
+        input[type=number]:disabled, 
+        input[type=number]:read-only {
+            opacity: 1 !important;
+            -webkit-text-fill-color: var(--color-primary) !important; 
+            color: var(--color-primary) !important;
+        }
+
+        /* Küçük ekran kilitli kutu arka planı */
+        #timerH:disabled, #timerM:disabled, #timerS:disabled {
+            background: transparent !important;
+            border: 1px dashed var(--color-border-medium) !important;
+            box-shadow: none !important;
+        }
+
+        /* Tam Ekran kilitli kutu arka planı */
+        #clkFsTimerH:disabled, #clkFsTimerM:disabled, #clkFsTimerS:disabled {
+            background: rgba(0, 0, 0, 0.5) !important; /* Gri rengi yutar, şık bir karanlık atar */
+            border: 2px dashed rgba(255, 255, 255, 0.1) !important;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5) !important;
+        }
+    </style>
+
+    <script>
+        // Özel butonların işlevi (Başa sarma mantığı ile)
+        window.adjTm = function(inputId, amount) {
+            const input = document.getElementById(inputId);
+            if(!input) return;
+            
+            let val = parseInt(input.value) || 0;
+            let max = parseInt(input.getAttribute('max')) || 59;
+            let min = parseInt(input.getAttribute('min')) || 0;
+            
+            val += amount;
+            
+            // Eğer maksimum limiti geçerse başa (0'a) sar, sıfırdan aşağı inerse de max değere (ör. 59) dön
+            if(val > max) val = min; 
+            if(val < min) val = max;
+            
+            input.value = val;
+        };
+    </script>
+
+    <script>
+        // --- YENİ DİNAMİK GÖREV HAPI (PILL) SİSTEMİ MOTORU ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Arka planda JS tarafından güncellenen eski label'ı dinleyip, yeni HAP sistemine "sadece ders adını" aktarır
+            const syncPill = (labelId, activeAreaId, lessonSpanId) => {
+                const label = document.getElementById(labelId);
+                const activeArea = document.getElementById(activeAreaId);
+                const lessonSpan = document.getElementById(lessonSpanId);
+                
+                if(!label || !activeArea) return;
+                
+                const observer = new MutationObserver(() => {
+                    const text = label.innerText.trim();
+                    if(text !== '') {
+                        activeArea.style.display = 'flex'; // Görev seçiliyse hapı uzat ve içerikleri göster
+                        if(lessonSpan) {
+                            // "Matematik - Türev çözümü" formatından sadece "Matematik" kısmını (çizgiden öncesini) alır
+                            const lessonName = text.split('-')[0].trim();
+                            lessonSpan.innerText = lessonName;
+                        }
+                    } else {
+                        activeArea.style.display = 'none'; // Görev yoksa hapı kapat, sadece yuvarlak kalsın
+                    }
+                });
+                
+                observer.observe(label, { attributes: true, childList: true, characterData: true, subtree: true });
+            };
+
+            syncPill('swTaskLabel', 'swTaskActiveArea', 'swPillLessonName');
+            syncPill('tmTaskLabel', 'tmTaskActiveArea', 'tmPillLessonName');
+            syncPill('fswTaskLabel', 'fswTaskActiveArea', 'fswPillLessonName');
+            syncPill('fstmTaskLabel', 'fstmTaskActiveArea', 'fstmPillLessonName');
+        });
+
+        // --- GÖREV SİLME / TEMİZLEME SİSTEMİ (EN GÜNCEL TEK VERSİYON) ---
+        window.clearActiveTask = function(mode) {
+            if(mode === 'sw') {
+                if(document.getElementById('swTaskLabel')) document.getElementById('swTaskLabel').innerText = '';
+                if(document.getElementById('fswTaskLabel')) document.getElementById('fswTaskLabel').innerText = '';
+                if(document.getElementById('swCompleteBtn')) document.getElementById('swCompleteBtn').style.display = 'none';
+                if(document.getElementById('fswCompleteBtn')) document.getElementById('fswCompleteBtn').style.display = 'none';
+            } else if(mode === 'tm') {
+                if(document.getElementById('tmTaskLabel')) document.getElementById('tmTaskLabel').innerText = '';
+                if(document.getElementById('fstmTaskLabel')) document.getElementById('fstmTaskLabel').innerText = '';
+                if(document.getElementById('tmCompleteBtn')) document.getElementById('tmCompleteBtn').style.display = 'none';
+                if(document.getElementById('fstmCompleteBtn')) document.getElementById('fstmCompleteBtn').style.display = 'none';
+
+                // --- ZAMANLAYICI KUTULARININ KİLİDİNİ GERİ AÇ VE RENKLERİ KORU ---
+                const tmInputs = ['timerH', 'timerM', 'timerS', 'clkFsTimerH', 'clkFsTimerM', 'clkFsTimerS'];
+                tmInputs.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) {
+                        el.disabled = false;
+                        el.readOnly = false;
+                        
+                        // Eğer tam ekran kutusuysa siyah arka planı ve renkleri zorla geri getir
+                        if(id.startsWith('clkFsTimer')) {
+                            el.style.background = 'rgba(0,0,0,0.2)';
+                            el.style.borderColor = 'rgba(255,255,255,0.05)';
+                            el.style.color = '#fff';
+                        } else {
+                            // Küçük ekran kutusuysa kendi temasına dönsün
+                            el.style.background = 'var(--color-bg-input)';
+                            el.style.color = 'var(--color-text-main)';
+                        }
+                    }
+                });
+                
+                // Eğer +/- butonları kilitlenmişse onları da serbest bırak
+                document.querySelectorAll('.tm-spin-btn, .tm-spin-btn-fs').forEach(btn => {
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.opacity = '1';
+                });
+            }
+
+            // --- KESİN ÇÖZÜM: Görevi hafızadan TAMAMEN silen kod ---
+            try {
+                if(typeof currentClkTask !== 'undefined') currentClkTask = null;
+                if(typeof activeTask !== 'undefined') activeTask = null;
+                if(typeof window.selectedTask !== 'undefined') window.selectedTask = null;
+                window._clkLinkedTask = null;
+                _clkLinkedTask = null;
+            } catch (e) { 
+                // Güvenlik kalkanı
+            }
+        };
+    </script>
+
+    <script>
+        // --- KRONOMETRE VE ZAMANLAYICI SABİT KUTU (TİTREME ÖNLEYİCİ) MOTORU ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const makeStableTime = (elementId) => {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+                
+                const formatTime = () => {
+                    // Sistemin kendini tekrar edip kilitlenmesini engeller
+                    if (el.innerHTML.includes('<span')) return;
+                    
+                    const text = el.innerText.trim();
+                    if(!text) return;
+                    
+                    let html = '';
+                    
+                    if (text.includes('.')) {
+                        // Kronometre (Saliseli)
+                        const parts = text.split('.');
+                        const mainTime = parts[0]; // Örn: "00:00"
+                        const ms = parts[1];       // Örn: "00"
+                        
+                        // Dakika ve saniyeyi ayırıp sabit genişlikli (2.2ch) görünmez bloklara hapsediyoruz
+                        const timeSegments = mainTime.split(':');
+                        const formattedSegments = timeSegments.map(seg => 
+                            `<span style="display:inline-block; min-width: 2.2ch; text-align: center; font-variant-numeric: tabular-nums; letter-spacing: 0;">${seg}</span>`
+                        );
+                        
+                        // Parçaları araya şeffaf bir ":" koyarak birleştir
+                        html = formattedSegments.join(`<span style="opacity: 0.5; margin: 0 2px;">:</span>`);
+                        
+                        // Salise kısmını da kendine has sabit bir bloğa al ve küçült
+                        html += `<span style="opacity: 0.5; margin: 0 2px;">.</span>` + 
+                                `<span style="display:inline-block; min-width: 2.2ch; text-align: left; font-size: 0.55em; font-variant-numeric: tabular-nums; color: var(--color-primary); letter-spacing: 0;">${ms}</span>`;
+                                
+                    } else {
+                        // Zamanlayıcı (Salisesiz, sadece saat/dakika/saniye)
+                        const timeSegments = text.split(':');
+                        const formattedSegments = timeSegments.map(seg => 
+                            `<span style="display:inline-block; min-width: 2.2ch; text-align: center; font-variant-numeric: tabular-nums; letter-spacing: 0;">${seg}</span>`
+                        );
+                        
+                        html = formattedSegments.join(`<span style="opacity: 0.5; margin: 0 2px;">:</span>`);
+                    }
+                    
+                    el.innerHTML = html;
+                };
+
+                const observer = new MutationObserver(formatTime);
+                // Kutunun içindeki en ufak rakam değişimini yakalar ve anında kutulara koyar
+                observer.observe(el, { childList: true, characterData: true, subtree: true });
+                
+                formatTime();
+            };
+
+            // Tüm ekranlardaki saat modüllerine bu taş gibi sabitleyiciyi uygula
+            makeStableTime('swDisplay');
+            makeStableTime('clkFsSwDisplay');
+            makeStableTime('timerDisplay');
+            makeStableTime('clkFsTimerDisplay');
+        });
+    </script>
 
 </body>
 </html>
